@@ -3,17 +3,30 @@
   inset: -2.5%;
   background-image:
     radial-gradient(ellipse at 52% 48%, rgba(7, 7, 6, 0) 0%, rgba(7, 7, 6, 0.02) 52%, rgba(7, 7, 6, 0.14) 92%),
-    linear-gradient(90deg, rgba(7, 7, 6, 0.34) 0%, rgba(7, 7, 6, 0.12) 11%, rgba(7, 7, 6, 0.008) 30%, rgba(7, 7, 6, 0.008) 70%, rgba(7, 7, 6, 0.14) 89%, rgba(7, 7, 6, 0.36) 100%),
-    linear-gradient(180deg, rgba(7, 7, 6, 0.24) 0%, rgba(7, 7, 6, 0.012) 18%, rgba(7, 7, 6, 0.006) 72%, rgba(7, 7, 6, 0.28) 100%),
+    linear-gradient(90deg, rgba(7, 7, 6, 0.32) 0%, rgba(7, 7, 6, 0.1) 11%, rgba(7, 7, 6, 0.006) 30%, rgba(7, 7, 6, 0.006) 70%, rgba(7, 7, 6, 0.12) 89%, rgba(7, 7, 6, 0.34) 100%),
+    linear-gradient(180deg, rgba(7, 7, 6, 0.18) 0%, rgba(7, 7, 6, 0.008) 18%, rgba(7, 7, 6, 0.004) 72%, rgba(7, 7, 6, 0.24) 100%),
+    url("/images/site/universe-vertical.png"),
     url("/images/site/universe-4k.png"),
     url("/images/site/site-evaluation-world.png");
-  background-position: center 50%;
+  background-position:
+    center,
+    center,
+    center,
+    center 100%,
+    center 50%,
+    center 48%;
   background-repeat: no-repeat;
-  background-size: cover;
-  filter: saturate(0.96) sepia(0.05) contrast(1.035) brightness(1.06);
+  background-size:
+    cover,
+    cover,
+    cover,
+    cover,
+    cover,
+    cover;
+  filter: saturate(0.98) sepia(0.045) contrast(1.025) brightness(1.08);
   opacity: 1;
   transform: scale(1.025);
-  transform-origin: 50% 48%;
+  transform-origin: 50% 70%;
   will-change: transform;
 }
 
@@ -21,27 +34,39 @@
   position: absolute;
   inset: 0;
   background:
-    radial-gradient(ellipse at 52% 48%, transparent 0%, rgba(7, 7, 6, 0.008) 48%, rgba(7, 7, 6, 0.09) 90%),
-    linear-gradient(180deg, rgba(7, 7, 6, 0.055), transparent 24%, transparent 78%, rgba(7, 7, 6, 0.11));
+    radial-gradient(ellipse at 52% 48%, transparent 0%, rgba(7, 7, 6, 0.006) 48%, rgba(7, 7, 6, 0.075) 90%),
+    linear-gradient(180deg, rgba(7, 7, 6, 0.045), transparent 24%, transparent 78%, rgba(7, 7, 6, 0.095));
   mix-blend-mode: normal;
 }
 
 @media (max-width: 900px) {
   .worldBackground {
     inset: -1%;
-    background-position: 52% center;
+    background-position:
+      center,
+      center,
+      center,
+      52% 100%,
+      52% center,
+      52% center;
     background-size: cover;
-    filter: saturate(0.93) sepia(0.045) contrast(1.025) brightness(1.01);
+    filter: saturate(0.95) sepia(0.04) contrast(1.02) brightness(1.04);
     opacity: 1;
-    transform: scale(1.05);
+    transform: scale(1.045);
   }
 }
 
 @media (max-width: 640px) {
   .worldBackground {
-    background-position: 51% center;
-    background-size: auto 100%;
-    filter: saturate(0.9) sepia(0.04) contrast(1.02) brightness(0.98);
+    background-position:
+      center,
+      center,
+      center,
+      51% 100%,
+      51% center,
+      51% center;
+    background-size: cover;
+    filter: saturate(0.93) sepia(0.035) contrast(1.015) brightness(1.02);
     opacity: 1;
   }
 }
