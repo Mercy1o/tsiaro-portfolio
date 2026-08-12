@@ -38,17 +38,18 @@ export default function CinematicUniverseIntro() {
   );
   const sceneScale = useTransform(scrollYProgress, [0, 0.55, 1], [1.015, 1.006, 1]);
 
-  // Keep the first view almost text-free. The main name enters only after the
-  // visitor has begun the descent, roughly after two small wheel movements.
+  // Keep the very first frame almost text-free, then reveal the main name quickly.
+  // It is fully visible by ~4% of the descent so it appears around the first
+  // meaningful wheel movement, matching the visual position of the planet reveal.
   const introOpacity = useTransform(
     scrollYProgress,
-    [0, 0.055, 0.105, 0.225, 0.315],
+    [0, 0.015, 0.04, 0.22, 0.315],
     [0, 0, 1, 1, 0],
   );
   const introY = useTransform(
     scrollYProgress,
-    [0.055, 0.105, 0.315],
-    [30, 0, -30],
+    [0.015, 0.04, 0.315],
+    [28, 0, -30],
   );
 
   const fieldOpacity = useTransform(
