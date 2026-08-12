@@ -1,7 +1,9 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getProjectBySlug, projects } from "@/data/projects";
+import { getProjectMedia } from "@/data/projectMedia";
 
 export function generateStaticParams() {
   return projects.map((project) => ({ slug: project.slug }));
@@ -19,13 +21,14 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
   const project = getProjectBySlug(slug);
   if (!project) notFound();
 
+  const media = getProjectMedia(project.slug);
   const currentIndex = projects.findIndex((item) => item.slug === project.slug);
   const nextProject = projects[(currentIndex + 1) % projects.length];
 
   return (
     <main className="bg-space text-bone">
-      <section className="space-field cinematic-grid min-h-[92svh] px-5 pb-12 pt-36 md:px-10 md:pt-44 lg:px-14">
-        <div className="mx-auto flex min-h-[72svh] max-w-[1600px] flex-col justify-between">
+      <section className="space-field cinematic-grid min-h-[82svh] px-5 pb-12 pt-36 md:px-10 md:pt-44 lg:px-14">
+        <div className="mx-auto flex min-h-[64svh] max-w-[1600px] flex-col justify-between">
           <div className="flex justify-between gap-6 font-mono text-[10px] uppercase tracking-[.18em] text-bone/40">
             <span>{project.number} / {project.category}</span>
             <span>{project.year}</span>
@@ -43,13 +46,20 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
         </div>
       </section>
 
-      <section className="px-5 py-8 md:px-10 lg:px-14">
-        <div className="placeholder-frame mx-auto aspect-[16/9] max-w-[1600px]">
-          <div className="absolute inset-0 z-10 flex items-center justify-center">
-            <span className="font-mono text-[10px] uppercase tracking-[.22em] text-bone/35">{project.coverLabel}</span>
+      {media.cover ? (
+        <section className="px-5 py-8 md:px-10 lg:px-14">
+          <div className="relative mx-auto aspect-[16/9] max-w-[1600px] overflow-hidden bg-graphite">
+            <Image
+              src={media.cover}
+              alt={`${project.title} — ${project.subtitle}`}
+              fill
+              priority
+              sizes="100vw"
+              className="object-cover"
+            />
           </div>
-        </div>
-      </section>
+        </section>
+      ) : null}
 
       <section className="mx-auto max-w-[1600px] px-5 py-24 md:px-10 md:py-36 lg:px-14">
         {[
@@ -64,6 +74,37 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
           </div>
         ))}
       </section>
+
+      {media.gallery.length > 0 ? (
+        <section className="mx-auto max-w-[1600px] px-5 pb-28 md:px-10 md:pb-36 lg:px-14">
+          <div className="mb-10 flex items-end justify-between border-b border-white/10 pb-5">
+            <p className="font-mono text-[10px] uppercase tracking-[.18em] text-bone/35">Visual archive</p>
+            <p className="font-mono text-[9px] uppercase tracking-[.18em] text-bone/25">{String(media.gallery.length).padStart(2, "0")} images</p>
+          </div>
+
+          <div className="grid gap-4 md:grid-cols-2">
+            {media.gallery.map((src, index) => (
+              <figure
+                key={src}
+                className={`${index % 5 === 0 ? "md:col-span-2" : ""}`}
+              >
+                <div className={`relative overflow-hidden bg-graphite ${index % 5 === 0 ? "aspect-[16/9]" : "aspect-[4/3]"}`}>
+                  <Image
+                    src={src}
+                    alt={`${project.title} visual ${index + 1}`}
+                    fill
+                    sizes={index % 5 === 0 ? "100vw" : "(max-width: 768px) 100vw, 50vw"}
+                    className="object-contain"
+                  />
+                </div>
+                <figcaption className="mt-2 font-mono text-[9px] uppercase tracking-[.16em] text-bone/25">
+                  {String(index + 1).padStart(2, "0")} / {project.title}
+                </figcaption>
+              </figure>
+            ))}
+          </div>
+        </section>
+      ) : null}
 
       <section className="paper-noise px-5 py-24 text-space md:px-10 md:py-32 lg:px-14">
         <Link href={`/work/${nextProject.slug}`} className="group mx-auto block max-w-[1600px]">
