@@ -43,6 +43,19 @@
   --font-mono: var(--font-mono-ui);
 }
 
+@view-transition {
+  navigation: auto;
+}
+
+::view-transition-old(root) {
+  animation: 480ms cubic-bezier(.76,0,.24,1) both route-old;
+}
+
+::view-transition-new(root) {
+  animation: 760ms cubic-bezier(.22,1,.36,1) both route-new;
+  mix-blend-mode: normal;
+}
+
 * { box-sizing: border-box; }
 html { scroll-behavior: smooth; background: var(--deep); }
 body {
@@ -249,6 +262,16 @@ a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visib
 .hairline-dark { border-color: rgba(184,148,100,.1); }
 .route-stage { min-height: 100%; }
 
+@keyframes route-old {
+  from { opacity: 1; filter: blur(0); transform: scale(1); }
+  to { opacity: 0; filter: blur(7px); transform: scale(.992); }
+}
+
+@keyframes route-new {
+  from { opacity: 0; filter: blur(9px); transform: scale(1.012); }
+  to { opacity: 1; filter: blur(0); transform: scale(1); }
+}
+
 @keyframes chroma-breathe {
   from { transform: rotate(-8deg) scale(1.12) translate3d(-1%, 0, 0); }
   to { transform: rotate(-5deg) scale(1.18) translate3d(1.5%, -1%, 0); }
@@ -259,6 +282,19 @@ a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visib
   to { transform: translate3d(1.5%, -1%, 0) scale(1.035); }
 }
 
+@supports (animation-timeline: view()) {
+  .image-reveal {
+    animation: field-reveal linear both;
+    animation-timeline: view();
+    animation-range: entry 10% cover 34%;
+  }
+}
+
+@keyframes field-reveal {
+  from { opacity: .35; clip-path: inset(6% 8% 6% 8%); }
+  to { opacity: 1; clip-path: inset(0 0 0 0); }
+}
+
 @media (max-width: 767px) {
   .cinematic-grid { background-size: 42px 42px; }
   .display-title { font-size: clamp(3.4rem, 18vw, 6.4rem); }
@@ -267,6 +303,8 @@ a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visib
 
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
+  ::view-transition-old(root),
+  ::view-transition-new(root) { animation: none !important; }
   .chroma-field::before,
   .topographic-svg { animation: none !important; }
   *, *::before, *::after {
