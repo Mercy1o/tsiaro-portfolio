@@ -12,13 +12,15 @@ type PointerState = {
   targetActive: number;
 };
 
-type Anchor = {
+type Organism = {
   x: number;
   y: number;
-  angle: number;
+  radiusX: number;
+  radiusY: number;
+  rotation: number;
+  tentacles: number;
+  tentacleLength: number;
   spread: number;
-  length: number;
-  strands: number;
   phase: number;
   bend: number;
 };
@@ -27,23 +29,20 @@ type Point = { x: number; y: number };
 
 const TAU = Math.PI * 2;
 
-// Dense organism-like bases. Strands begin almost on top of one another and
-// progressively separate, which creates the requested dense-root / loose-tip
-// relationship without drawing any solid ribbon.
-const ANCHORS: Anchor[] = [
-  { x: 0.02, y: 0.18, angle: -0.1, spread: 0.78, length: 0.46, strands: 34, phase: 0.2, bend: 0.24 },
-  { x: 0.34, y: 0.08, angle: 0.66, spread: 0.64, length: 0.39, strands: 28, phase: 1.2, bend: -0.2 },
-  { x: 0.76, y: 0.04, angle: 1.04, spread: 0.72, length: 0.42, strands: 32, phase: 2.3, bend: 0.18 },
-  { x: 0.97, y: 0.38, angle: 2.62, spread: 0.82, length: 0.44, strands: 36, phase: 3.4, bend: -0.28 },
-  { x: 0.11, y: 0.62, angle: -0.42, spread: 0.82, length: 0.48, strands: 38, phase: 4.5, bend: 0.26 },
-  { x: 0.54, y: 0.52, angle: 0.34, spread: 0.7, length: 0.43, strands: 34, phase: 5.6, bend: -0.22 },
-  { x: 0.9, y: 0.78, angle: 2.88, spread: 0.74, length: 0.42, strands: 30, phase: 6.8, bend: 0.2 },
-  { x: 0.33, y: 0.92, angle: -0.9, spread: 0.66, length: 0.38, strands: 28, phase: 7.7, bend: -0.18 },
+const ORGANISMS: Organism[] = [
+  { x: 0.1, y: 0.14, radiusX: 0.055, radiusY: 0.038, rotation: 0.08, tentacles: 6, tentacleLength: 0.34, spread: 1.45, phase: 0.2, bend: 0.28 },
+  { x: 0.42, y: 0.1, radiusX: 0.048, radiusY: 0.035, rotation: 0.72, tentacles: 5, tentacleLength: 0.31, spread: 1.3, phase: 1.4, bend: -0.24 },
+  { x: 0.78, y: 0.17, radiusX: 0.06, radiusY: 0.041, rotation: 1.12, tentacles: 7, tentacleLength: 0.36, spread: 1.52, phase: 2.5, bend: 0.22 },
+  { x: 0.94, y: 0.5, radiusX: 0.052, radiusY: 0.039, rotation: 2.88, tentacles: 6, tentacleLength: 0.35, spread: 1.38, phase: 3.7, bend: -0.3 },
+  { x: 0.18, y: 0.61, radiusX: 0.062, radiusY: 0.043, rotation: -0.34, tentacles: 7, tentacleLength: 0.37, spread: 1.55, phase: 4.9, bend: 0.3 },
+  { x: 0.58, y: 0.58, radiusX: 0.05, radiusY: 0.037, rotation: 0.35, tentacles: 5, tentacleLength: 0.32, spread: 1.25, phase: 6.1, bend: -0.22 },
+  { x: 0.8, y: 0.86, radiusX: 0.057, radiusY: 0.04, rotation: 2.65, tentacles: 6, tentacleLength: 0.34, spread: 1.42, phase: 7.2, bend: 0.25 },
+  { x: 0.29, y: 0.9, radiusX: 0.046, radiusY: 0.034, rotation: -0.9, tentacles: 5, tentacleLength: 0.3, spread: 1.28, phase: 8.4, bend: -0.2 },
 ];
 
-const POINTER_RADIUS = 0.16;
-const POINTER_PUSH = 0.036;
-const POINTER_SWIRL = 0.018;
+const POINTER_RADIUS = 0.15;
+const POINTER_PUSH = 0.03;
+const POINTER_SWIRL = 0.014;
 
 function clamp(value: number, min: number, max: number) {
   return Math.min(max, Math.max(min, value));
@@ -56,11 +55,6 @@ function normalize(x: number, y: number): Point {
 
 function fract(value: number) {
   return value - Math.floor(value);
-}
-
-function smoothstep(edge0: number, edge1: number, value: number) {
-  const t = clamp((value - edge0) / Math.max(edge1 - edge0, 0.00001), 0, 1);
-  return t * t * (3 - 2 * t);
 }
 
 export default function InteractiveFilamentField() {
@@ -112,21 +106,21 @@ export default function InteractiveFilamentField() {
     function drawBackdrop(scroll: number) {
       const gradient = ctx.createLinearGradient(0, 0, width, height);
       gradient.addColorStop(0, "#251d17");
-      gradient.addColorStop(0.45, "#1a1511");
+      gradient.addColorStop(0.46, "#1a1511");
       gradient.addColorStop(1, "#2a1d14");
       ctx.fillStyle = gradient;
       ctx.fillRect(0, 0, width, height);
 
       const glow = ctx.createRadialGradient(
-        width * (0.24 + scroll * 0.12),
-        height * 0.34,
+        width * (0.28 + scroll * 0.1),
+        height * 0.38,
         0,
-        width * (0.24 + scroll * 0.12),
-        height * 0.34,
-        Math.max(width, height) * 0.72,
+        width * (0.28 + scroll * 0.1),
+        height * 0.38,
+        Math.max(width, height) * 0.75,
       );
-      glow.addColorStop(0, "rgba(145,101,62,0.11)");
-      glow.addColorStop(0.55, "rgba(95,66,43,0.045)");
+      glow.addColorStop(0, "rgba(147,102,62,0.11)");
+      glow.addColorStop(0.55, "rgba(97,66,42,0.045)");
       glow.addColorStop(1, "rgba(0,0,0,0)");
       ctx.fillStyle = glow;
       ctx.fillRect(0, 0, width, height);
@@ -147,109 +141,198 @@ export default function InteractiveFilamentField() {
       };
     }
 
-    function strandPoint(
-      anchor: Anchor,
-      anchorIndex: number,
-      strandIndex: number,
-      p: number,
-      time: number,
-      scroll: number,
-    ): Point {
-      const strandT = strandIndex / Math.max(anchor.strands - 1, 1);
-      const centered = strandT - 0.5;
-
-      // Dense at the root, open at the tip: separation grows non-linearly with p.
-      const separation = Math.pow(p, 1.58);
-      const fanAngle = centered * anchor.spread * separation;
-      const scrollTurn = (scroll - 0.5) * 0.42;
-      const baseAngle = anchor.angle + fanAngle + scrollTurn;
-
-      const seedJitter = (fract(strandIndex * 0.618 + anchorIndex * 0.173) - 0.5) * 0.012;
-      const rootTightness = 1 - smoothstep(0, 0.28, p);
-      const originX = anchor.x + Math.cos(anchor.angle + Math.PI / 2) * seedJitter * rootTightness;
-      const originY = anchor.y + Math.sin(anchor.angle + Math.PI / 2) * seedJitter * rootTightness;
-
-      // Underwater current. Motion amplitude increases toward the free end.
-      const currentAmplitude = 0.008 + Math.pow(p, 1.7) * 0.055;
-      const currentPhase =
-        time * 0.22 +
-        anchor.phase +
-        strandIndex * 0.065 +
-        p * 5.4 +
-        scroll * 2.2;
-      const currentX = Math.sin(currentPhase) * currentAmplitude;
-      const currentY = Math.cos(currentPhase * 0.72 + anchor.phase) * currentAmplitude * 0.58;
-
-      // A slow downward underwater weight / sag. It is subtle near the root and
-      // strongest at the loose end, so strands feel suspended rather than rigid.
-      const gravity = Math.pow(p, 1.85) * (0.055 + scroll * 0.018);
-
-      // Broad bend keeps groups from reading as straight fans.
-      const bend = Math.sin(p * Math.PI) * anchor.bend * 0.18;
-      const angle = baseAngle + bend;
-      const distance = anchor.length * p;
-
-      const point = {
-        x: originX + Math.cos(angle) * distance + currentX,
-        y: originY + Math.sin(angle) * distance + currentY + gravity,
+    function dynamicHead(org: Organism, index: number, time: number, scroll: number) {
+      return {
+        x: org.x + Math.sin(time * 0.035 + org.phase + scroll * 2.0) * 0.008,
+        y: org.y + Math.cos(time * 0.028 + org.phase * 1.1 + scroll * 1.5) * 0.007,
+        rotation: org.rotation + Math.sin(time * 0.024 + index + scroll * 1.4) * 0.055,
       };
-
-      return applyPointer(point);
     }
 
-    function drawAnchorMass(anchor: Anchor, anchorIndex: number, time: number, scroll: number) {
+    function drawHead(org: Organism, orgIndex: number, time: number, scroll: number) {
       const mobile = width < 720;
-      const strands = mobile ? Math.max(16, Math.floor(anchor.strands * 0.58)) : anchor.strands;
-      const points = mobile ? 38 : 58;
+      const head = dynamicHead(org, orgIndex, time, scroll);
+      const rings = mobile ? 6 : 10;
+      const points = mobile ? 54 : 78;
 
       ctx.save();
       ctx.globalCompositeOperation = "screen";
       ctx.lineCap = "round";
       ctx.lineJoin = "round";
 
-      for (let strand = 0; strand < strands; strand += 1) {
-        const mappedStrand = mobile
-          ? Math.round((strand / Math.max(strands - 1, 1)) * (anchor.strands - 1))
-          : strand;
-
+      for (let ring = 0; ring < rings; ring += 1) {
+        const ringT = ring / Math.max(rings - 1, 1);
+        const scale = 0.46 + ringT * 0.82;
         ctx.beginPath();
+
         for (let pointIndex = 0; pointIndex <= points; pointIndex += 1) {
-          const p = pointIndex / points;
-          const point = strandPoint(anchor, anchorIndex, mappedStrand, p, time, scroll);
-          const x = point.x * width;
-          const y = point.y * height;
-          if (pointIndex === 0) ctx.moveTo(x, y);
-          else ctx.lineTo(x, y);
+          const theta = (pointIndex / points) * TAU;
+          const wobble =
+            1 +
+            Math.sin(theta * 3 + org.phase + time * 0.045) * 0.09 +
+            Math.sin(theta * 5 - org.phase * 0.8 + scroll * 1.3) * 0.045;
+          const localX = Math.cos(theta) * org.radiusX * scale * wobble;
+          const localY = Math.sin(theta) * org.radiusY * scale * wobble;
+          const ca = Math.cos(head.rotation);
+          const sa = Math.sin(head.rotation);
+          const point = applyPointer({
+            x: head.x + localX * ca - localY * sa,
+            y: head.y + localX * sa + localY * ca,
+          });
+
+          if (pointIndex === 0) ctx.moveTo(point.x * width, point.y * height);
+          else ctx.lineTo(point.x * width, point.y * height);
         }
 
-        const edge = Math.abs(mappedStrand / Math.max(anchor.strands - 1, 1) - 0.5) * 2;
-        const alpha = 0.105 + (1 - edge) * 0.075;
-        const copper = mappedStrand % 9 === 0;
-        ctx.strokeStyle = copper
-          ? `rgba(197,154,104,${alpha * 0.9})`
-          : `rgba(231,218,197,${alpha})`;
-        ctx.lineWidth = mobile ? 0.58 : 0.78;
+        ctx.strokeStyle = `rgba(231,216,194,${0.08 + (1 - ringT) * 0.09})`;
+        ctx.lineWidth = mobile ? 0.56 : 0.78;
         ctx.stroke();
       }
 
-      // Reinforce only the first portion of the organism. Many fine lines are
-      // still visible, but their overlap forms the dense parasitic-looking base.
-      const rootLines = mobile ? 9 : 15;
-      for (let line = 0; line < rootLines; line += 1) {
-        const source = Math.round((line / Math.max(rootLines - 1, 1)) * (anchor.strands - 1));
-        ctx.beginPath();
-        const rootPoints = mobile ? 18 : 26;
-        for (let pointIndex = 0; pointIndex <= rootPoints; pointIndex += 1) {
-          const p = (pointIndex / rootPoints) * 0.32;
-          const point = strandPoint(anchor, anchorIndex, source, p, time, scroll);
-          const x = point.x * width;
-          const y = point.y * height;
-          if (pointIndex === 0) ctx.moveTo(x, y);
-          else ctx.lineTo(x, y);
+      ctx.restore();
+    }
+
+    function majorTentaclePoint(
+      org: Organism,
+      orgIndex: number,
+      tentacleIndex: number,
+      p: number,
+      strandOffset: number,
+      time: number,
+      scroll: number,
+    ): Point {
+      const head = dynamicHead(org, orgIndex, time, scroll);
+      const tentacleT = org.tentacles <= 1 ? 0.5 : tentacleIndex / (org.tentacles - 1);
+      const centered = tentacleT - 0.5;
+
+      const baseAngle =
+        head.rotation +
+        centered * org.spread +
+        (scroll - 0.5) * 0.32 +
+        Math.sin(time * 0.06 + org.phase + tentacleIndex * 0.7) * 0.045;
+
+      const rootRadius = org.radiusX * 0.72;
+      const rootX = head.x + Math.cos(baseAngle) * rootRadius;
+      const rootY = head.y + Math.sin(baseAngle) * org.radiusY * 0.72;
+
+      const currentStrength = 0.008 + Math.pow(p, 1.5) * 0.046;
+      const currentPhase =
+        time * 0.24 +
+        org.phase +
+        tentacleIndex * 0.8 +
+        p * 5.8 +
+        scroll * 2.3;
+
+      const currentX = Math.sin(currentPhase) * currentStrength;
+      const currentY = Math.cos(currentPhase * 0.7 + org.phase) * currentStrength * 0.5;
+      const gravity = Math.pow(p, 1.85) * (0.045 + scroll * 0.018);
+      const bend = Math.sin(p * Math.PI) * org.bend * 0.25;
+      const angle = baseAngle + bend;
+      const distance = org.tentacleLength * p;
+
+      // Bundle width is dense at the head and opens gradually farther away.
+      const normal = { x: -Math.sin(angle), y: Math.cos(angle) };
+      const bundleSpread = strandOffset * (0.002 + Math.pow(p, 1.45) * 0.0085);
+
+      return applyPointer({
+        x: rootX + Math.cos(angle) * distance + normal.x * bundleSpread + currentX,
+        y: rootY + Math.sin(angle) * distance + normal.y * bundleSpread + currentY + gravity,
+      });
+    }
+
+    function drawMajorTentacles(org: Organism, orgIndex: number, time: number, scroll: number) {
+      const mobile = width < 720;
+      const bundleLines = mobile ? 4 : 7;
+      const points = mobile ? 42 : 62;
+
+      ctx.save();
+      ctx.globalCompositeOperation = "screen";
+      ctx.lineCap = "round";
+      ctx.lineJoin = "round";
+
+      for (let tentacle = 0; tentacle < org.tentacles; tentacle += 1) {
+        for (let strand = 0; strand < bundleLines; strand += 1) {
+          const offset = strand - (bundleLines - 1) * 0.5;
+          ctx.beginPath();
+
+          for (let pointIndex = 0; pointIndex <= points; pointIndex += 1) {
+            const p = pointIndex / points;
+            const point = majorTentaclePoint(
+              org,
+              orgIndex,
+              tentacle,
+              p,
+              offset,
+              time,
+              scroll,
+            );
+            if (pointIndex === 0) ctx.moveTo(point.x * width, point.y * height);
+            else ctx.lineTo(point.x * width, point.y * height);
+          }
+
+          const centerWeight = 1 - Math.abs(offset) / Math.max(bundleLines * 0.5, 1);
+          ctx.strokeStyle = strand === Math.floor(bundleLines / 2)
+            ? `rgba(231,215,192,${0.18 + centerWeight * 0.06})`
+            : `rgba(226,211,190,${0.095 + centerWeight * 0.055})`;
+          ctx.lineWidth = mobile ? 0.58 : 0.82;
+          ctx.stroke();
         }
-        ctx.strokeStyle = "rgba(236,219,190,0.18)";
-        ctx.lineWidth = mobile ? 0.82 : 1.05;
-        ctx.stroke();
+      }
+
+      ctx.restore();
+    }
+
+    function drawMicroTentacles(org: Organism, orgIndex: number, time: number, scroll: number) {
+      const mobile = width < 720;
+      const branchesPerTentacle = mobile ? 4 : 7;
+      const branchPoints = mobile ? 20 : 30;
+
+      ctx.save();
+      ctx.globalCompositeOperation = "screen";
+      ctx.lineCap = "round";
+      ctx.lineJoin = "round";
+
+      for (let tentacle = 0; tentacle < org.tentacles; tentacle += 1) {
+        for (let branch = 0; branch < branchesPerTentacle; branch += 1) {
+          const branchT = branch / Math.max(branchesPerTentacle - 1, 1);
+          const startP = 0.22 + branchT * 0.62;
+          const base = majorTentaclePoint(org, orgIndex, tentacle, startP, 0, time, scroll);
+          const ahead = majorTentaclePoint(org, orgIndex, tentacle, Math.min(1, startP + 0.02), 0, time, scroll);
+          const tangent = normalize(ahead.x - base.x, ahead.y - base.y);
+          const normal = { x: -tangent.y, y: tangent.x };
+          const side = (branch + tentacle + orgIndex) % 2 === 0 ? 1 : -1;
+          const branchLength = 0.032 + (1 - startP) * 0.055 + fract(branch * 0.381 + tentacle * 0.17) * 0.025;
+
+          ctx.beginPath();
+          for (let pointIndex = 0; pointIndex <= branchPoints; pointIndex += 1) {
+            const p = pointIndex / branchPoints;
+            const waterWave = Math.sin(
+              time * 0.28 +
+              org.phase +
+              tentacle * 0.7 +
+              branch * 0.9 +
+              p * 4.2,
+            ) * (0.002 + p * 0.009);
+            const drift = Math.pow(p, 1.7) * 0.014;
+            const branchDir = normalize(
+              normal.x * side + tangent.x * 0.32,
+              normal.y * side + tangent.y * 0.32,
+            );
+            const point = applyPointer({
+              x: base.x + branchDir.x * branchLength * p + tangent.x * waterWave,
+              y: base.y + branchDir.y * branchLength * p + tangent.y * waterWave + drift,
+            });
+
+            if (pointIndex === 0) ctx.moveTo(point.x * width, point.y * height);
+            else ctx.lineTo(point.x * width, point.y * height);
+          }
+
+          ctx.strokeStyle = branch % 3 === 0
+            ? "rgba(200,157,105,0.085)"
+            : "rgba(230,216,195,0.075)";
+          ctx.lineWidth = mobile ? 0.34 : 0.48;
+          ctx.stroke();
+        }
       }
 
       ctx.restore();
@@ -257,8 +340,8 @@ export default function InteractiveFilamentField() {
 
     function drawLooseWaterFibers(time: number, scroll: number) {
       const mobile = width < 720;
-      const count = mobile ? 20 : 38;
-      const points = mobile ? 34 : 52;
+      const count = mobile ? 12 : 22;
+      const points = mobile ? 26 : 38;
 
       ctx.save();
       ctx.globalCompositeOperation = "screen";
@@ -268,27 +351,23 @@ export default function InteractiveFilamentField() {
       for (let index = 0; index < count; index += 1) {
         const startX = fract(index * 0.6180339 + 0.13);
         const startY = fract(index * 0.4142135 + 0.27);
-        const direction = -0.12 + Math.sin(index * 1.37) * 0.28 + scroll * 0.32;
-        const length = 0.18 + fract(index * 0.271) * 0.22;
+        const direction = -0.12 + Math.sin(index * 1.37) * 0.22 + scroll * 0.2;
+        const length = 0.12 + fract(index * 0.271) * 0.16;
 
         ctx.beginPath();
         for (let pointIndex = 0; pointIndex <= points; pointIndex += 1) {
           const p = pointIndex / points;
-          const wave = Math.sin(time * 0.16 + index * 0.7 + p * 5.2) * (0.006 + p * 0.018);
-          const gravity = p * p * 0.018;
+          const wave = Math.sin(time * 0.15 + index * 0.7 + p * 5.2) * (0.004 + p * 0.01);
           const point = applyPointer({
             x: startX + Math.cos(direction) * length * p + wave,
-            y: startY + Math.sin(direction) * length * p + gravity + Math.cos(time * 0.11 + p * 4 + index) * 0.006,
+            y: startY + Math.sin(direction) * length * p + p * p * 0.012,
           });
-          const x = point.x * width;
-          const y = point.y * height;
-          if (pointIndex === 0) ctx.moveTo(x, y);
-          else ctx.lineTo(x, y);
+          if (pointIndex === 0) ctx.moveTo(point.x * width, point.y * height);
+          else ctx.lineTo(point.x * width, point.y * height);
         }
-        ctx.strokeStyle = index % 7 === 0
-          ? "rgba(195,151,101,0.07)"
-          : "rgba(229,215,194,0.055)";
-        ctx.lineWidth = mobile ? 0.38 : 0.5;
+
+        ctx.strokeStyle = "rgba(229,215,194,0.04)";
+        ctx.lineWidth = mobile ? 0.3 : 0.42;
         ctx.stroke();
       }
 
@@ -315,7 +394,12 @@ export default function InteractiveFilamentField() {
       ctx.clearRect(0, 0, width, height);
       drawBackdrop(scroll);
       drawLooseWaterFibers(time, scroll);
-      ANCHORS.forEach((anchor, anchorIndex) => drawAnchorMass(anchor, anchorIndex, time, scroll));
+
+      ORGANISMS.forEach((org, orgIndex) => {
+        drawHead(org, orgIndex, time, scroll);
+        drawMajorTentacles(org, orgIndex, time, scroll);
+        drawMicroTentacles(org, orgIndex, time, scroll);
+      });
 
       if (!reduceMotion) frame = window.requestAnimationFrame(draw);
     }
