@@ -1,13 +1,30 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Cormorant_Garamond, Geist_Mono, Inter } from "next/font/google";
 import "./globals.css";
 import MotionProvider from "@/components/MotionProvider";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { siteConfig } from "@/data/site";
 
-const geistSans = Geist({ variable: "--font-geist-sans", subsets: ["latin"] });
-const geistMono = Geist_Mono({ variable: "--font-geist-mono", subsets: ["latin"] });
+const displaySans = Inter({
+  variable: "--font-display-sans",
+  subsets: ["latin"],
+  display: "swap",
+});
+
+const editorialSerif = Cormorant_Garamond({
+  variable: "--font-editorial-serif",
+  subsets: ["latin"],
+  weight: ["400", "500", "600"],
+  style: ["normal", "italic"],
+  display: "swap",
+});
+
+const mono = Geist_Mono({
+  variable: "--font-mono-ui",
+  subsets: ["latin"],
+  display: "swap",
+});
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://tsiaro-portfolio.vercel.app"),
@@ -16,6 +33,8 @@ export const metadata: Metadata = {
     template: "%s — Tsiaro Rakototiana",
   },
   description: siteConfig.description,
+  applicationName: "Tsiaro Rakototiana Portfolio",
+  creator: siteConfig.name,
   openGraph: {
     type: "website",
     title: siteConfig.title,
@@ -32,13 +51,8 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="en">
-      <body className={`${geistSans.variable} ${geistMono.variable}`}>
-        <a
-          href="#main-content"
-          className="fixed left-3 top-3 z-[100] -translate-y-24 bg-bone px-4 py-2 text-xs text-space focus:translate-y-0"
-        >
-          Skip to content
-        </a>
+      <body className={`${displaySans.variable} ${editorialSerif.variable} ${mono.variable}`}>
+        <a href="#main-content" className="skip-link">Skip to content</a>
         <MotionProvider>
           <Navbar />
           <div id="main-content">{children}</div>
