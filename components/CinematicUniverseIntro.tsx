@@ -38,15 +38,25 @@ export default function CinematicUniverseIntro() {
   );
   const sceneScale = useTransform(scrollYProgress, [0, 0.55, 1], [1.015, 1.006, 1]);
 
-  const introOpacity = useTransform(scrollYProgress, [0, 0.08, 0.2, 0.3], [1, 1, 1, 0]);
-  const introY = useTransform(scrollYProgress, [0, 0.3], [0, -34]);
+  // Keep the first view almost text-free. The main name enters only after the
+  // visitor has begun the descent, roughly after two small wheel movements.
+  const introOpacity = useTransform(
+    scrollYProgress,
+    [0, 0.055, 0.105, 0.225, 0.315],
+    [0, 0, 1, 1, 0],
+  );
+  const introY = useTransform(
+    scrollYProgress,
+    [0.055, 0.105, 0.315],
+    [30, 0, -30],
+  );
 
   const fieldOpacity = useTransform(
     scrollYProgress,
-    [0.2, 0.34, 0.52, 0.64],
+    [0.25, 0.36, 0.52, 0.64],
     [0, 1, 1, 0],
   );
-  const fieldY = useTransform(scrollYProgress, [0.2, 0.64], [34, -34]);
+  const fieldY = useTransform(scrollYProgress, [0.25, 0.64], [34, -34]);
 
   const planetOpacity = useTransform(
     scrollYProgress,
