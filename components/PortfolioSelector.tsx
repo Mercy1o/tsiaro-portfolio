@@ -8,7 +8,11 @@ import {
   type Project,
 } from "@/data/projects";
 
-type PortfolioMode = "architecture" | "creative";
+export type PortfolioMode = "architecture" | "creative";
+
+type PortfolioSelectorProps = {
+  initialMode?: PortfolioMode | null;
+};
 
 const portfolioOptions: Array<{
   id: PortfolioMode;
@@ -35,8 +39,8 @@ const portfolioOptions: Array<{
   },
 ];
 
-export default function PortfolioSelector() {
-  const [mode, setMode] = useState<PortfolioMode | null>(null);
+export default function PortfolioSelector({ initialMode = null }: PortfolioSelectorProps) {
+  const [mode, setMode] = useState<PortfolioMode | null>(initialMode);
 
   const activeProjects: Project[] = useMemo(() => {
     if (mode === "architecture") return architecturalProjects;
@@ -59,48 +63,24 @@ export default function PortfolioSelector() {
               type="button"
               onClick={() => setMode(option.id)}
               aria-pressed={active}
-              className={`group min-h-[360px] border-b border-black/15 p-7 text-left transition-colors duration-500 md:min-h-[460px] md:border-b-0 md:p-10 ${
+              className={`group min-h-[320px] border-b border-black/15 p-7 text-left transition-colors duration-500 md:min-h-[410px] md:border-b-0 md:p-10 ${
                 option.id === "architecture" ? "md:border-r md:border-black/15" : ""
               } ${active ? "bg-space text-bone" : "bg-transparent text-space hover:bg-black/[0.035]"}`}
             >
               <div className="flex h-full flex-col justify-between">
                 <div className="flex items-start justify-between gap-6">
-                  <span
-                    className={`font-mono text-[10px] tracking-[.18em] ${
-                      active ? "text-bone/45" : "text-black/40"
-                    }`}
-                  >
+                  <span className={`font-mono text-[10px] tracking-[.18em] ${active ? "text-bone/45" : "text-black/40"}`}>
                     {option.index} / PORTFOLIO
                   </span>
-
-                  <span
-                    aria-hidden="true"
-                    className={`text-xl transition-transform duration-300 group-hover:translate-x-1 ${
-                      active ? "text-bone" : "text-black/55"
-                    }`}
-                  >
-                    ↘
-                  </span>
+                  <span aria-hidden="true" className={`text-xl transition-transform duration-300 group-hover:translate-x-1 ${active ? "text-bone" : "text-black/55"}`}>↘</span>
                 </div>
 
-                <div className="mt-24">
-                  <p
-                    className={`mb-4 font-mono text-[10px] uppercase tracking-[.16em] ${
-                      active ? "text-sand" : "text-black/40"
-                    }`}
-                  >
+                <div className="mt-20">
+                  <p className={`mb-4 font-mono text-[10px] uppercase tracking-[.16em] ${active ? "text-sand" : "text-black/40"}`}>
                     {option.subtitle}
                   </p>
-
-                  <h2 className="max-w-xl text-5xl font-medium tracking-[-.055em] md:text-6xl lg:text-7xl">
-                    {option.title}
-                  </h2>
-
-                  <p
-                    className={`mt-7 max-w-lg text-sm leading-6 md:text-base md:leading-7 ${
-                      active ? "text-bone/55" : "text-black/50"
-                    }`}
-                  >
+                  <h2 className="max-w-xl text-5xl font-medium tracking-[-.055em] md:text-6xl lg:text-7xl">{option.title}</h2>
+                  <p className={`mt-7 max-w-lg text-sm leading-6 md:text-base md:leading-7 ${active ? "text-bone/55" : "text-black/50"}`}>
                     {option.description}
                   </p>
                 </div>
@@ -117,11 +97,8 @@ export default function PortfolioSelector() {
               <p className="font-mono text-[10px] uppercase tracking-[.2em] text-black/40">
                 {mode === "architecture" ? "ARCH / 01—04" : "CREATIVE / 01—14 + HE"}
               </p>
-              <h2 className="mt-3 text-3xl font-medium tracking-[-.04em] md:text-5xl">
-                {activeLabel}
-              </h2>
+              <h2 className="mt-3 text-3xl font-medium tracking-[-.04em] md:text-5xl">{activeLabel}</h2>
             </div>
-
             <button
               type="button"
               onClick={() => setMode(null)}
