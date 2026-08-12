@@ -4,6 +4,7 @@ import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import MathematicalWindField from "@/components/MathematicalWindField";
+import CelestialAtmosphere from "@/components/CelestialAtmosphere";
 
 export default function ImmersiveIntro() {
   const pathname = usePathname();
@@ -24,7 +25,7 @@ export default function ImmersiveIntro() {
     const timer = window.setTimeout(() => {
       setVisible(false);
       root.style.overflow = previousOverflow;
-    }, reduceMotion ? 120 : 4700);
+    }, reduceMotion ? 160 : 9800);
 
     return () => {
       window.clearTimeout(timer);
@@ -42,93 +43,88 @@ export default function ImmersiveIntro() {
       {visible && pathname === "/" ? (
         <motion.div
           key="immersive-entry"
-          className="fixed inset-0 z-[200] overflow-hidden bg-[#070706] text-[#d4bd96]"
-          initial={{ opacity: 1, clipPath: "inset(0% 0% 0% 0%)" }}
-          animate={{ opacity: 1, clipPath: "inset(0% 0% 0% 0%)" }}
+          className="fixed inset-0 z-[200] overflow-hidden bg-[#070706] text-[#d1ba94]"
+          initial={{ opacity: 1 }}
+          animate={{ opacity: 1 }}
           exit={
             reduceMotion
               ? { opacity: 0 }
               : {
                   opacity: 0,
-                  clipPath: "inset(49.85% 0% 49.85% 0%)",
-                  filter: "blur(5px)",
+                  scale: 1.035,
+                  filter: "blur(7px)",
                 }
           }
-          transition={{ duration: reduceMotion ? 0.12 : 1.15, ease: [0.76, 0, 0.24, 1] }}
+          transition={{ duration: reduceMotion ? 0.14 : 1.75, ease: [0.76, 0, 0.24, 1] }}
         >
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_52%_48%,rgba(161,116,63,.13),transparent_24%),radial-gradient(circle_at_70%_22%,rgba(186,146,92,.07),transparent_16%),linear-gradient(180deg,#0b0907_0%,#070706_58%,#0b0907_100%)]" />
-          <MathematicalWindField intensity="strong" />
+          <CelestialAtmosphere />
+          <MathematicalWindField intensity="strong" className="opacity-80" />
 
           <motion.div
-            className="absolute left-1/2 top-1/2 h-[46vw] max-h-[620px] w-[46vw] max-w-[620px] -translate-x-1/2 -translate-y-1/2 rounded-full border border-[#b89464]/12"
-            initial={{ scale: 0.42, opacity: 0, rotate: -8 }}
-            animate={reduceMotion ? { opacity: 0.25 } : { scale: [0.42, 1, 1.06], opacity: [0, 0.32, 0.08], rotate: [-8, 0, 2] }}
-            transition={{ duration: 3.9, times: [0, 0.56, 1], ease: [0.22, 1, 0.36, 1] }}
+            className="absolute left-1/2 top-[58%] h-[62vw] max-h-[780px] w-[62vw] max-w-[780px] -translate-x-1/2 -translate-y-1/2 rounded-full border border-[#d8c5a4]/8"
+            initial={{ scale: 0.52, opacity: 0, rotate: -7 }}
+            animate={
+              reduceMotion
+                ? { opacity: 0.12 }
+                : { scale: [0.52, 0.92, 1.04, 1.08], opacity: [0, 0.2, 0.1, 0.04], rotate: [-7, -2, 0.5, 1.5] }
+            }
+            transition={{ duration: 8.2, times: [0, 0.34, 0.72, 1], ease: [0.22, 1, 0.36, 1] }}
           />
 
           <motion.div
-            className="absolute left-1/2 top-1/2 h-px w-[72vw] -translate-x-1/2 bg-gradient-to-r from-transparent via-[#d2b37d]/72 to-transparent"
+            className="absolute left-1/2 top-[58%] h-px w-[68vw] -translate-x-1/2 bg-gradient-to-r from-transparent via-[#d8c5a4]/48 to-transparent"
             initial={{ scaleX: 0, opacity: 0 }}
-            animate={reduceMotion ? { opacity: 0.28 } : { scaleX: [0, 1, 0.4], opacity: [0, 1, 0.32] }}
-            transition={{ duration: 3.6, times: [0, 0.34, 1], ease: [0.22, 1, 0.36, 1] }}
+            animate={reduceMotion ? { opacity: 0.18 } : { scaleX: [0, 0.55, 1, 0.72], opacity: [0, 0.26, 0.62, 0.18] }}
+            transition={{ duration: 8.4, times: [0, 0.25, 0.64, 1], ease: [0.22, 1, 0.36, 1] }}
           />
 
           <div className="relative z-10 flex h-full flex-col justify-between px-5 py-7 md:px-10 md:py-9 lg:px-14">
             <motion.div
-              className="flex items-start justify-between gap-6 font-mono text-[10px] uppercase tracking-[.2em] text-[#ad8f67]/72 md:text-[11px]"
-              initial={{ opacity: 0, y: -10 }}
+              className="flex items-start justify-between gap-6 font-mono text-[10px] uppercase tracking-[.2em] text-[#ad9875]/62 md:text-[11px]"
+              initial={{ opacity: 0, y: -8 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: reduceMotion ? 0 : 0.22, duration: 0.8 }}
+              transition={{ delay: reduceMotion ? 0 : 0.55, duration: 1.4 }}
             >
-              <div>
-                <p>TR / FIELD SYSTEM / 2026</p>
-                <p className="mt-2 text-[#7e6a50]/60">Initializing spatial archive</p>
-              </div>
-              <div className="text-right">
-                <p>Signal / stable</p>
-                <p className="mt-2 text-[#7e6a50]/60">Wind vector / 04.82</p>
-              </div>
+              <p>TR / FIELD / 2026</p>
+              <p className="text-right">wind 04.82 / stable</p>
             </motion.div>
 
             <div className="relative mx-auto w-full max-w-[1600px]">
               <motion.p
-                className="font-mono text-[10px] uppercase tracking-[.24em] text-[#b89464]/72 md:text-[11px]"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: [0, 0, 1] }}
-                transition={{ duration: 1.6, times: [0, 0.45, 1] }}
+                className="mb-5 font-mono text-[10px] uppercase tracking-[.26em] text-[#b99b70]/60 md:text-[11px]"
+                initial={{ opacity: 0, y: 8 }}
+                animate={{ opacity: [0, 0, 1], y: [8, 8, 0] }}
+                transition={{ duration: 3.6, times: [0, 0.56, 1] }}
               >
-                Terrain / memory / signal
+                terrain / memory / signal
               </motion.p>
 
               <motion.h1
-                className="mt-5 max-w-[1500px] text-[clamp(4rem,11vw,11.5rem)] font-medium uppercase leading-[.74] tracking-[-.075em] text-[#d6bf99]"
-                initial={{ opacity: 0, y: 60, letterSpacing: "-.02em", filter: "blur(14px)" }}
+                className="max-w-[1350px] text-[clamp(4.2rem,10.5vw,10.8rem)] font-medium uppercase leading-[.74] tracking-[-.075em] text-[#d4be98]"
+                initial={{ opacity: 0, y: 52, filter: "blur(18px)" }}
                 animate={
                   reduceMotion
                     ? { opacity: 1, y: 0, filter: "blur(0px)" }
                     : {
-                        opacity: [0, 0, 1],
-                        y: [60, 28, 0],
-                        letterSpacing: ["-.02em", "-.04em", "-.075em"],
-                        filter: ["blur(14px)", "blur(7px)", "blur(0px)"],
+                        opacity: [0, 0, 0.5, 1],
+                        y: [52, 52, 22, 0],
+                        filter: ["blur(18px)", "blur(18px)", "blur(8px)", "blur(0px)"],
                       }
                 }
-                transition={{ duration: 2.7, times: [0, 0.46, 1], ease: [0.22, 1, 0.36, 1] }}
+                transition={{ duration: 5.6, times: [0, 0.28, 0.64, 1], ease: [0.22, 1, 0.36, 1] }}
               >
                 Tsiaro<br />Rakototiana
               </motion.h1>
 
               <motion.div
-                className="mt-8 grid gap-6 border-t border-[#b89464]/18 pt-5 md:grid-cols-12"
-                initial={{ opacity: 0, y: 16 }}
+                className="mt-7 flex max-w-3xl items-center gap-4 border-t border-[#b89464]/14 pt-4"
+                initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: reduceMotion ? 0 : 2.15, duration: 1 }}
+                transition={{ delay: reduceMotion ? 0 : 5.1, duration: 1.6 }}
               >
-                <p className="font-mono text-[10px] uppercase tracking-[.18em] text-[#a88b65]/70 md:col-span-4 md:text-[11px]">
-                  The archive is not a page.<br />It is a terrain.
-                </p>
-                <p className="max-w-xl text-sm leading-6 text-[#a99a82]/68 md:col-span-4 md:col-start-9 md:text-base">
-                  Architecture, art and making converge inside one continuous field.
+                <span className="h-px w-10 bg-[#b89464]/38" />
+                <p className="font-mono text-[10px] uppercase tracking-[.17em] text-[#aa9370]/62 md:text-[11px]">
+                  architecture / art / making
                 </p>
               </motion.div>
             </div>
@@ -137,17 +133,17 @@ export default function ImmersiveIntro() {
               className="flex items-end justify-between gap-6"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              transition={{ delay: reduceMotion ? 0 : 1.3, duration: 1.2 }}
+              transition={{ delay: reduceMotion ? 0 : 6.1, duration: 1.5 }}
             >
-              <div className="font-mono text-[9px] uppercase leading-5 tracking-[.18em] text-[#806b50]/55 md:text-[10px]">
-                <p>∇ field resolved / 98.4%</p>
+              <div className="font-mono text-[9px] uppercase leading-5 tracking-[.18em] text-[#7f6d54]/52 md:text-[10px]">
+                <p>∇ field resolved</p>
                 <p>Σ layers / 07</p>
               </div>
 
               <button
                 type="button"
                 onClick={closeIntro}
-                className="border-b border-[#b89464]/30 pb-1 font-mono text-[10px] uppercase tracking-[.18em] text-[#b59a72]/72 transition-colors hover:text-[#dbc49d] focus-visible:outline focus-visible:outline-1 focus-visible:outline-offset-4 focus-visible:outline-[#b89464] md:text-[11px]"
+                className="border-b border-[#b89464]/28 pb-1 font-mono text-[10px] uppercase tracking-[.18em] text-[#baa078]/68 transition-colors hover:text-[#dec9a5] focus-visible:outline focus-visible:outline-1 focus-visible:outline-offset-4 focus-visible:outline-[#b89464] md:text-[11px]"
               >
                 Enter archive ↘
               </button>
@@ -155,10 +151,10 @@ export default function ImmersiveIntro() {
           </div>
 
           <motion.div
-            className="absolute inset-x-0 bottom-0 h-[2px] origin-left bg-gradient-to-r from-[#6f4c2e] via-[#d5b579] to-[#6f4c2e]"
-            initial={{ scaleX: 0 }}
-            animate={{ scaleX: 1 }}
-            transition={{ duration: reduceMotion ? 0.1 : 4.15, ease: "linear" }}
+            className="absolute inset-x-0 bottom-0 h-px origin-left bg-gradient-to-r from-transparent via-[#d3b57d]/72 to-transparent"
+            initial={{ scaleX: 0, opacity: 0 }}
+            animate={{ scaleX: 1, opacity: 1 }}
+            transition={{ duration: reduceMotion ? 0.1 : 8.6, ease: "linear" }}
           />
         </motion.div>
       ) : null}
