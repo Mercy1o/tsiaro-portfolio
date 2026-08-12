@@ -1,50 +1,100 @@
 "use client";
 
 import { FormEvent, useState } from "react";
-import { siteConfig } from "@/data/site";
+
+type FormStatus = "idle" | "sending" | "success" | "error";
 
 export default function ContactForm() {
-  const [status, setStatus] = useState("");
+  const [status, setStatus] = useState<FormStatus>("idle");
+  const [statusMessage, setStatusMessage] = useState("");
 
-  function handleSubmit(event: FormEvent<HTMLFormElement>) {
+  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    const form = new FormData(event.currentTarget);
-    const name = String(form.get("name") ?? "").trim();
-    const email = String(form.get("email") ?? "").trim();
-    const subject = String(form.get("subject") ?? "Portfolio enquiry").trim();
-    const message = String(form.get("message") ?? "").trim();
 
-    if (!name || !email || !message) {
-      setStatus("Please complete your name, email and message.");
+    if (status === "sending") return;
+
+    const formElement = event.currentTarget;
+    const form = new FormData(formElement);
+    const payload = {
+      name: String(form.get("name") ?? "").trim(),
+      email: String(form.get("email") ?? "").trim(),
+      subject: String(form.get("subject") ?? "").trim(),
+      message: String(form.get("message") ?? "").trim(),
+      website: String(form.get("website") ?? "").trim(),
+    };
+
+    if (!payload.name || !payload.email || !payload.message) {
+      setStatus("error");
+      setStatusMessage("Please complete your name, email and message.");
       return;
     }
 
-    const body = `Name: ${name}\nEmail: ${email}\n\n${message}`;
-    const href = `mailto:${siteConfig.email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-    setStatus("Opening your email application…");
-    window.location.href = href;
+    setStatus("sending");
+    setStatusMessage("Sending message…");
+
+    try {
+      const response = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+
+      const result = (await response.json()) as { ok?: boolean; message?: string };
+
+      if (!response.ok || !result.ok) {
+        throw new Error(result.message || "Your message could not be sent.");
+      }
+
+      formElement.reset();
+      setStatus("success");
+      setStatusMessage(result.message || "Message sent. Thank you — I’ll get back to you soon.");
+    } catch (error) {
+      setStatus("error");
+      setStatusMessage(error instanceof Error ? error.message : "Your message could not be sent. Please try again.");
+    }
   }
 
-  const fieldClass = "mt-3 w-full border-b border-[#c8a878]/20 bg-transparent py-3 text-base text-[#e7ddca] outline-none transition-colors placeholder:text-[#d8cbb6]/26 focus:border-[#c8a878]";
-  const labelClass = "font-mono text-[9px] uppercase tracking-[.18em] text-[#c8a878]/58";
+  const fieldClass =
+    "mt-3 w-full border-b border-[#c8a878]/20 bg-transparent py-3 text-base text-[#e7ddca] outline-none transition-colors placeholder:text-[#d8cbb6]/26 focus:border-[#c8a878]";
+  const labelClass = "font-mono text-[10px] uppercase tracking-[.16em] text-[#c8a878]/66";
 
   return (
     <form onSubmit={handleSubmit} className="space-y-8" noValidate>
+      <div className="absolute left-[-10000px] top-auto h-px w-px overflow-hidden" aria-hidden="true">
+        <label>
+          Website
+          <input name="website" tabIndex={-1} autoComplete="off" />
+        </label>
+      </div>
+
       <div className="grid gap-8 sm:grid-cols-2">
         <label className="block">
           <span className={labelClass}>Name *</span>
-          <input name="name" autoComplete="name" required className={fieldClass} placeholder="Your name" />
+          <input name="name" autoComplete="name" required maxLength={100} className={fieldClass} placeholder="Your name" />
         </label>
 
         <label className="block">
           <span className={labelClass}>Email *</span>
-          <input name="email" type="email" autoComplete="email" required className={fieldClass} placeholder="you@example.com" />
+          <input
+            name="email"
+            type="email"
+            autoComplete="email"
+            required
+            maxLength={180}
+            className={fieldClass}
+            placeholder="you@example.com"
+          />
         </label>
       </div>
 
       <label className="block">
         <span className={labelClass}>Subject</span>
-        <input name="subject" className={fieldClass} placeholder="Opportunity, collaboration, project…" />
+        <input
+          name="subject"
+          maxLength={140}
+          className={fieldClass}
+          placeholder="Opportunity, collaboration, project…"
+        />
       </label>
 
       <label className="block">
@@ -53,6 +103,7 @@ export default function ContactForm() {
           name="message"
           rows={6}
           required
+          maxLength={6000}
           className={`${fieldClass} resize-y leading-7`}
           placeholder="Tell me what you would like to discuss."
         />
@@ -61,11 +112,19 @@ export default function ContactForm() {
       <div className="flex flex-wrap items-center justify-between gap-5">
         <button
           type="submit"
-          className="border border-[#c8a878]/32 px-6 py-3 text-xs uppercase tracking-[.16em] text-[#e7ddca] transition-colors hover:border-[#c8a878] hover:bg-[#c8a878]/10 hover:text-[#c8a878]"
+          disabled={status === "sending"}
+          className="border border-[#c8a878]/32 px-6 py-3 text-[11px] uppercase tracking-[.14em] text-[#e7ddca] transition-colors hover:border-[#c8a878] hover:bg-[#c8a878]/10 hover:text-[#c8a878] disabled:cursor-wait disabled:opacity-45"
         >
-          Prepare email ↗
+          {status === "sending" ? "Sending…" : "Send message ↗"}
         </button>
-        <p role="status" className="text-sm text-[#d8cbb6]/48">{status}</p>
+
+        <p
+          role="status"
+          aria-live="polite"
+          className={`max-w-md text-sm ${status === "success" ? "text-[#c8a878]" : status === "error" ? "text-[#c98e72]" : "text-[#d8cbb6]/52"}`}
+        >
+          {statusMessage}
+        </p>
       </div>
     </form>
   );
