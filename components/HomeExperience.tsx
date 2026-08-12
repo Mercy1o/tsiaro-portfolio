@@ -28,15 +28,27 @@ export default function HomeExperience() {
     mass: 0.3,
     restDelta: 0.5,
   });
+
+  // A separate, slower spring is used only by the narrative layers.
+  // The universe keeps its current scroll response while the typography glides
+  // in and out with more inertia and longer overlaps between scenes.
+  const textY = useSpring(scrollY, {
+    stiffness: 42,
+    damping: 30,
+    mass: 0.62,
+    restDelta: 0.5,
+  });
+
   const y = reduceMotion ? scrollY : smoothY;
+  const narrativeY = reduceMotion ? scrollY : textY;
 
   useMotionValueEvent(scrollY, "change", (latest) => {
     const nextStage: Stage =
-      latest < 980
+      latest < 1080
         ? "hero"
-        : latest < 2450
+        : latest < 2550
           ? "choice"
-          : latest < 4050
+          : latest < 4140
             ? "profile"
             : "contact";
 
@@ -50,29 +62,29 @@ export default function HomeExperience() {
   const windOpacity = useTransform(y, [0, 900, 2800, 5000, 6000], [0.12, 0.28, 0.38, 0.3, 0.2]);
   const veilOpacity = useTransform(y, [0, 1000, 3200, 5600], [0.3, 0.16, 0.12, 0.22]);
 
-  // HERO — intentionally starts after roughly 1.5 normal wheel gestures.
-  const heroOpacity = useTransform(y, [0, 105, 170, 810, 1080], [0, 0, 1, 1, 0]);
-  const heroY = useTransform(y, [105, 170, 810, 1080], [58, 0, 0, -78]);
-  const heroScale = useTransform(y, [105, 170, 810, 1080], [0.985, 1, 1, 0.975]);
-  const heroBlur = useTransform(y, [105, 170, 810, 1080], ["blur(12px)", "blur(0px)", "blur(0px)", "blur(14px)"]);
+  // HERO — appears after the initial sky view, then exits gradually.
+  const heroOpacity = useTransform(narrativeY, [0, 105, 260, 900, 1260], [0, 0, 1, 1, 0]);
+  const heroY = useTransform(narrativeY, [105, 260, 900, 1260], [54, 0, 0, -64]);
+  const heroScale = useTransform(narrativeY, [105, 260, 900, 1260], [0.99, 1, 1, 0.98]);
+  const heroBlur = useTransform(narrativeY, [105, 260, 900, 1260], ["blur(10px)", "blur(0px)", "blur(0px)", "blur(10px)"]);
 
-  // CHOICE — overlaps the hero exit so there is never a hard visual cut.
-  const choiceOpacity = useTransform(y, [860, 1040, 2110, 2390], [0, 1, 1, 0]);
-  const choiceY = useTransform(y, [860, 1040, 2110, 2390], [72, 0, 0, -68]);
-  const choiceScale = useTransform(y, [860, 1040, 2110, 2390], [0.975, 1, 1, 0.975]);
-  const choiceBlur = useTransform(y, [860, 1040, 2110, 2390], ["blur(14px)", "blur(0px)", "blur(0px)", "blur(14px)"]);
+  // CHOICE — enters while the hero is still leaving, producing a slower crossfade.
+  const choiceOpacity = useTransform(narrativeY, [850, 1120, 2200, 2580], [0, 1, 1, 0]);
+  const choiceY = useTransform(narrativeY, [850, 1120, 2200, 2580], [58, 0, 0, -56]);
+  const choiceScale = useTransform(narrativeY, [850, 1120, 2200, 2580], [0.982, 1, 1, 0.982]);
+  const choiceBlur = useTransform(narrativeY, [850, 1120, 2200, 2580], ["blur(10px)", "blur(0px)", "blur(0px)", "blur(10px)"]);
 
-  // PROFILE — same entrance/exit language as the field selector.
-  const profileOpacity = useTransform(y, [2190, 2430, 3650, 3980], [0, 1, 1, 0]);
-  const profileY = useTransform(y, [2190, 2430, 3650, 3980], [76, 0, 0, -72]);
-  const profileScale = useTransform(y, [2190, 2430, 3650, 3980], [0.975, 1, 1, 0.975]);
-  const profileBlur = useTransform(y, [2190, 2430, 3650, 3980], ["blur(14px)", "blur(0px)", "blur(0px)", "blur(14px)"]);
+  // PROFILE — longer entrance and exit windows preserve the same cinematic rhythm.
+  const profileOpacity = useTransform(narrativeY, [2180, 2550, 3700, 4160], [0, 1, 1, 0]);
+  const profileY = useTransform(narrativeY, [2180, 2550, 3700, 4160], [60, 0, 0, -58]);
+  const profileScale = useTransform(narrativeY, [2180, 2550, 3700, 4160], [0.982, 1, 1, 0.982]);
+  const profileBlur = useTransform(narrativeY, [2180, 2550, 3700, 4160], ["blur(10px)", "blur(0px)", "blur(0px)", "blur(10px)"]);
 
-  // CONTACT — arrives before Profile has fully disappeared, then stays through the terrain landing.
-  const contactOpacity = useTransform(y, [3740, 4030, 5520, 5900], [0, 1, 1, 0.92]);
-  const contactY = useTransform(y, [3740, 4030, 5520], [78, 0, -18]);
-  const contactScale = useTransform(y, [3740, 4030, 5520], [0.975, 1, 1]);
-  const contactBlur = useTransform(y, [3740, 4030], ["blur(14px)", "blur(0px)"]);
+  // CONTACT — starts before Profile has fully disappeared and settles slowly.
+  const contactOpacity = useTransform(narrativeY, [3700, 4140, 5520, 5900], [0, 1, 1, 0.92]);
+  const contactY = useTransform(narrativeY, [3700, 4140, 5520], [62, 0, -18]);
+  const contactScale = useTransform(narrativeY, [3700, 4140, 5520], [0.982, 1, 1]);
+  const contactBlur = useTransform(narrativeY, [3700, 4140], ["blur(10px)", "blur(0px)"]);
 
   return (
     <main
