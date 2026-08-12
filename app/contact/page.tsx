@@ -1,62 +1,68 @@
 import type { Metadata } from "next";
-import ContactForm from "@/components/ContactForm";
 import AtmosphericTerrain from "@/components/AtmosphericTerrain";
 import { siteConfig } from "@/data/site";
 
 export const metadata: Metadata = {
   title: "Contact",
-  description: "Contact Tsiaro Rakototiana for opportunities, collaborations and portfolio enquiries.",
+  description: `Contact ${siteConfig.name} / ${siteConfig.brand}.`,
 };
 
 export default function ContactPage() {
   return (
-    <main className="relative min-h-screen overflow-hidden bg-[#090806] px-5 pb-20 pt-32 text-[#cbb798] md:px-10 md:pb-28 md:pt-40 lg:px-14">
-      <AtmosphericTerrain variant="liquid" tone="dark" className="fixed inset-0 opacity-55" />
-      <div className="fixed inset-x-0 top-0 h-44 bg-gradient-to-b from-[#070706] via-[#070706]/76 to-transparent" />
-      <div className="fixed inset-x-0 bottom-0 h-48 bg-gradient-to-t from-[#070706] via-[#070706]/72 to-transparent" />
+    <main className="relative min-h-[100svh] overflow-hidden bg-[#080706] px-5 pb-10 pt-32 text-[#d0bd9e] md:px-10 md:pb-12 md:pt-36 lg:px-14">
+      <AtmosphericTerrain variant="liquid" tone="dark" className="fixed inset-0 opacity-24" />
+      <div className="fixed inset-0 bg-[radial-gradient(ellipse_at_68%_34%,rgba(171,112,57,.11),transparent_34%),linear-gradient(180deg,rgba(8,7,6,.22),rgba(8,7,6,.74))]" />
 
-      <div className="relative z-10 mx-auto max-w-[1600px]">
-        <header className="grid min-h-[58vh] gap-12 border-b border-[#a98758]/14 pb-16 md:grid-cols-12 md:items-end">
-          <div className="md:col-span-9">
-            <p className="font-mono text-[10px] uppercase tracking-[.2em] text-[#987d59]/68">CONTACT / TRANSMISSION</p>
-            <h1 className="mt-10 max-w-[1450px] text-[clamp(4rem,9vw,9.5rem)] font-medium uppercase leading-[.78] tracking-[-.07em] text-[#cdb896]">Start a<br />conversation.</h1>
-          </div>
-          <div className="md:col-span-3">
-            <p className="text-2xl font-light leading-[1] tracking-[-.035em] text-[#b39d7b] md:text-3xl">Open channel for ideas, work and collaboration.</p>
-            <p className="mt-6 max-w-md text-[15px] leading-7 text-[#978872]/68 md:text-base">Send your message directly from the portfolio. No external email application is required.</p>
-          </div>
-        </header>
+      <div className="relative z-10 mx-auto flex min-h-[calc(100svh-10rem)] max-w-[1600px] flex-col justify-between">
+        <div className="flex items-start justify-between border-t border-[#a98758]/16 pt-5 font-mono text-[10px] uppercase tracking-[.18em] text-[#927a5c]/68 md:text-[11px]">
+          <span>Contact</span>
+          <span>{siteConfig.location}</span>
+        </div>
 
-        <div className="grid gap-14 py-14 md:grid-cols-12 md:py-20">
-          <div className="md:col-span-7">
-            <div className="mb-10 flex justify-between border-b border-[#a98758]/14 pb-4 font-mono text-[10px] uppercase tracking-[.17em] text-[#8e7657]/58">
-              <span>Message interface / 01</span>
-              <span>Direct server delivery</span>
+        <section className="py-20 md:py-28">
+          <p className="text-[clamp(2.5rem,6vw,7rem)] font-medium leading-[.88] tracking-[-.06em] text-[#d9c4a2]">
+            {siteConfig.brand}
+          </p>
+
+          <a
+            href={`mailto:${siteConfig.email}`}
+            className="mt-8 block max-w-fit break-all text-[clamp(1.8rem,4.8vw,5.6rem)] font-light leading-[.96] tracking-[-.05em] text-[#ead7b8] transition-opacity duration-500 hover:opacity-58"
+          >
+            {siteConfig.email}
+          </a>
+        </section>
+
+        <div className="grid gap-10 border-t border-[#a98758]/16 pt-6 md:grid-cols-12 md:items-end">
+          <div className="md:col-span-5">
+            <p className="font-mono text-[10px] uppercase tracking-[.18em] text-[#8f7657]/62 md:text-[11px]">Social</p>
+            <div className="mt-4 flex flex-wrap gap-x-8 gap-y-3 text-lg tracking-[-.025em] text-[#c6b18f] md:text-xl">
+              <a
+                href={siteConfig.social.instagram}
+                target="_blank"
+                rel="noreferrer"
+                className="transition-opacity duration-300 hover:opacity-55"
+              >
+                Instagram ↗
+              </a>
+              <a
+                href={siteConfig.social.linkedin}
+                target="_blank"
+                rel="noreferrer"
+                className="transition-opacity duration-300 hover:opacity-55"
+              >
+                LinkedIn ↗
+              </a>
             </div>
-            <ContactForm />
           </div>
 
-          <aside className="flex flex-col justify-between gap-12 border-t border-[#a98758]/14 pt-8 md:col-span-4 md:col-start-9 md:border-l md:border-t-0 md:pl-8 md:pt-0">
-            <div className="space-y-10">
-              <div>
-                <p className="font-mono text-[10px] uppercase tracking-[.17em] text-[#8e7657]/58">Direct email</p>
-                <a href={`mailto:${siteConfig.email}`} className="mt-3 block break-all text-2xl font-medium tracking-[-.03em] text-[#bca786] transition-colors hover:text-[#cfb58d] md:text-3xl">{siteConfig.email}</a>
-              </div>
-              <div>
-                <p className="font-mono text-[10px] uppercase tracking-[.17em] text-[#8e7657]/58">Coordinates</p>
-                <p className="mt-3 text-[15px] text-[#958671]/68">{siteConfig.location}</p>
-              </div>
-              <div className="flex flex-col gap-4 font-mono text-[11px] uppercase tracking-[.15em] text-[#a0805e]/72">
-                <a href={siteConfig.social.linkedin} target="_blank" rel="noreferrer" className="transition-colors hover:text-[#c3ad89]">LinkedIn ↗</a>
-                <a href={siteConfig.social.instagram} target="_blank" rel="noreferrer" className="transition-colors hover:text-[#c3ad89]">Instagram ↗</a>
-              </div>
-            </div>
-
-            <div className="border-t border-[#a98758]/14 pt-5 font-mono text-[10px] uppercase leading-6 tracking-[.16em] text-[#8a7458]/54">
-              <p>System status / available</p>
-              <p>Response channel / direct email delivery</p>
-            </div>
-          </aside>
+          <div className="md:col-span-4 md:col-start-9 md:text-right">
+            <p className="text-[15px] leading-7 text-[#a99982]/76 md:text-base">
+              Architecture, design, making, collaborations and selected opportunities.
+            </p>
+            <p className="mt-4 font-mono text-[10px] uppercase tracking-[.16em] text-[#876f54]/58 md:text-[11px]">
+              {siteConfig.name} / {siteConfig.brand}
+            </p>
+          </div>
         </div>
       </div>
     </main>
