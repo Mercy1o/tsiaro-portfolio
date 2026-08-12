@@ -7,6 +7,7 @@ import { motion, useReducedMotion, useScroll, useTransform } from "motion/react"
 import AtmosphericTerrain from "@/components/AtmosphericTerrain";
 import { getProjectMedia } from "@/data/projectMedia";
 import { profileFacts, siteConfig } from "@/data/site";
+import styles from "./HomeExperience.module.css";
 
 export default function HomeExperience() {
   const rootRef = useRef<HTMLElement>(null);
@@ -27,7 +28,7 @@ export default function HomeExperience() {
   const aboutY = useTransform(scrollYProgress, [0.5, 0.64, 0.78], [56, 0, -50]);
   const contactOpacity = useTransform(scrollYProgress, [0.72, 0.84, 1], [0, 1, 1]);
   const contactY = useTransform(scrollYProgress, [0.73, 0.88], [50, 0]);
-  const imageFieldOpacity = useTransform(scrollYProgress, [0.15, 0.28, 0.5, 0.62], [0, 0.9, 0.7, 0]);
+  const imageFieldOpacity = useTransform(scrollYProgress, [0.15, 0.28, 0.5, 0.62], [0, 0.74, 0.56, 0]);
 
   const architectureCover = getProjectMedia("hikari").cover;
   const creativeCover = getProjectMedia("the-smiling-wound").cover;
@@ -36,30 +37,32 @@ export default function HomeExperience() {
     <main ref={rootRef} className="relative bg-[#090806] text-[#d5c5aa]">
       <div className="sticky top-0 h-[100svh] overflow-hidden">
         <motion.div style={{ scale: terrainScale, y: terrainY }} className="absolute inset-0">
-          <AtmosphericTerrain variant="hybrid" tone="dark" className="opacity-100" />
+          <div className={styles.worldBackground} />
+          <AtmosphericTerrain variant="hybrid" tone="dark" className="opacity-30 mix-blend-screen" />
+          <div className={styles.worldVeil} />
         </motion.div>
 
         <motion.div style={{ opacity: imageFieldOpacity }} className="absolute inset-0">
           <div
-            className={`absolute inset-y-0 left-0 w-[58%] transition-opacity duration-700 ${field === "creative" ? "opacity-[.02]" : field === "architecture" ? "opacity-[.24]" : "opacity-[.09]"}`}
-            style={{ WebkitMaskImage: "radial-gradient(ellipse at 24% 52%, black 0%, rgba(0,0,0,.84) 30%, transparent 72%)", maskImage: "radial-gradient(ellipse at 24% 52%, black 0%, rgba(0,0,0,.84) 30%, transparent 72%)" }}
+            className={`absolute inset-y-0 left-0 w-[55%] transition-opacity duration-700 ${field === "creative" ? "opacity-[.01]" : field === "architecture" ? "opacity-[.12]" : "opacity-[.035]"}`}
+            style={{ WebkitMaskImage: "radial-gradient(ellipse at 24% 52%, black 0%, rgba(0,0,0,.72) 26%, transparent 70%)", maskImage: "radial-gradient(ellipse at 24% 52%, black 0%, rgba(0,0,0,.72) 26%, transparent 70%)" }}
           >
             <Image src={architectureCover} alt="" fill sizes="60vw" className="object-cover grayscale contrast-125 saturate-50" />
           </div>
 
           <div
-            className={`absolute inset-y-0 right-0 w-[58%] transition-opacity duration-700 ${field === "architecture" ? "opacity-[.02]" : field === "creative" ? "opacity-[.22]" : "opacity-[.08]"}`}
-            style={{ WebkitMaskImage: "radial-gradient(ellipse at 76% 50%, black 0%, rgba(0,0,0,.8) 28%, transparent 70%)", maskImage: "radial-gradient(ellipse at 76% 50%, black 0%, rgba(0,0,0,.8) 28%, transparent 70%)" }}
+            className={`absolute inset-y-0 right-0 w-[55%] transition-opacity duration-700 ${field === "architecture" ? "opacity-[.01]" : field === "creative" ? "opacity-[.11]" : "opacity-[.03]"}`}
+            style={{ WebkitMaskImage: "radial-gradient(ellipse at 76% 50%, black 0%, rgba(0,0,0,.7) 26%, transparent 70%)", maskImage: "radial-gradient(ellipse at 76% 50%, black 0%, rgba(0,0,0,.7) 26%, transparent 70%)" }}
           >
             <Image src={creativeCover} alt="" fill sizes="60vw" className="object-cover grayscale contrast-125 saturate-50" />
           </div>
         </motion.div>
 
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_50%_46%,transparent_0%,rgba(8,7,6,.08)_38%,rgba(8,7,6,.64)_88%)]" />
-        <div className="absolute inset-x-0 top-0 h-48 bg-gradient-to-b from-[#070706] via-[#070706]/82 to-transparent" />
-        <div className="absolute inset-x-0 bottom-0 h-56 bg-gradient-to-t from-[#070706] via-[#070706]/78 to-transparent" />
-        <div className="absolute inset-y-0 left-0 w-24 bg-gradient-to-r from-[#070706]/72 to-transparent" />
-        <div className="absolute inset-y-0 right-0 w-24 bg-gradient-to-l from-[#070706]/72 to-transparent" />
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_50%_46%,transparent_0%,rgba(8,7,6,.03)_40%,rgba(8,7,6,.42)_90%)]" />
+        <div className="absolute inset-x-0 top-0 h-52 bg-gradient-to-b from-[#070706] via-[#070706]/82 to-transparent" />
+        <div className="absolute inset-x-0 bottom-0 h-64 bg-gradient-to-t from-[#070706] via-[#070706]/80 to-transparent" />
+        <div className="absolute inset-y-0 left-0 w-32 bg-gradient-to-r from-[#070706]/78 to-transparent" />
+        <div className="absolute inset-y-0 right-0 w-32 bg-gradient-to-l from-[#070706]/78 to-transparent" />
       </div>
 
       <div className="relative z-10 -mt-[100svh]">
