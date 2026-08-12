@@ -27,14 +27,14 @@ export default function Navbar() {
       <div className={`mx-auto flex max-w-[1600px] items-center justify-between px-5 transition-all duration-500 md:px-10 lg:px-14 ${scrolled ? "h-[66px]" : "h-[82px]"}`}>
         <Link
           href="/"
-          aria-label="Tsiaro Rakototiana home"
-          className="font-mono text-[11px] uppercase tracking-[.19em] text-[#c8b28e] transition-colors hover:text-[#ddc7a4]"
+          aria-label={`${siteConfig.brand} home`}
+          className="text-[15px] font-medium tracking-[-.035em] text-[#d2bea0] transition-colors hover:text-[#ead8bb] md:text-base"
         >
-          Tsiaro Rakototiana
+          {siteConfig.brand}
         </Link>
 
         <div className="hidden font-mono text-[10px] uppercase tracking-[.2em] text-[#9f825e]/55 md:block">
-          Archive / 2026 / Toronto
+          Tsiaro Rakototiana / Toronto
         </div>
 
         <nav aria-label="Main navigation" className="flex items-center gap-4 sm:gap-7 md:gap-9">
