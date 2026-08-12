@@ -1,275 +1,250 @@
 "use client";
 
-import Image from "next/image";
 import Link from "next/link";
 import { useRef, useState } from "react";
 import {
   motion,
+  useMotionValueEvent,
   useReducedMotion,
   useScroll,
   useSpring,
   useTransform,
 } from "motion/react";
-import AtmosphericTerrain from "@/components/AtmosphericTerrain";
-import MathematicalWindField from "@/components/MathematicalWindField";
-import { getProjectMedia } from "@/data/projectMedia";
+import RealtimeWindThreads from "@/components/RealtimeWindThreads";
 import { profileFacts, siteConfig } from "@/data/site";
-import styles from "./HomeExperience.module.css";
+
+type Stage = "hero" | "choice" | "profile" | "contact";
 
 export default function HomeExperience() {
   const rootRef = useRef<HTMLElement>(null);
   const reduceMotion = useReducedMotion();
+  const [activeStage, setActiveStage] = useState<Stage>("hero");
   const [field, setField] = useState<"architecture" | "creative" | null>(null);
-  const { scrollYProgress } = useScroll({
-    target: rootRef,
-    offset: ["start start", "end end"],
+
+  const { scrollY } = useScroll();
+  const smoothY = useSpring(scrollY, {
+    stiffness: 76,
+    damping: 26,
+    mass: 0.3,
+    restDelta: 0.5,
+  });
+  const y = reduceMotion ? scrollY : smoothY;
+
+  useMotionValueEvent(scrollY, "change", (latest) => {
+    const nextStage: Stage =
+      latest < 980
+        ? "hero"
+        : latest < 2450
+          ? "choice"
+          : latest < 4050
+            ? "profile"
+            : "contact";
+
+    setActiveStage((current) => (current === nextStage ? current : nextStage));
   });
 
-  const inertialProgress = useSpring(scrollYProgress, {
-    stiffness: 68,
-    damping: 24,
-    mass: 0.32,
-    restDelta: 0.0008,
-  });
-  const progress = reduceMotion ? scrollYProgress : inertialProgress;
+  // One uninterrupted vertical artwork. It is translated rather than background-covered,
+  // so the browser actually travels from deep sky to the ground without restarting the image.
+  const sceneY = useTransform(y, [0, 5650], ["0%", "-66%"]);
+  const sceneScale = useTransform(y, [0, 5650], [1.01, reduceMotion ? 1.01 : 1.035]);
+  const windOpacity = useTransform(y, [0, 900, 2800, 5000, 6000], [0.12, 0.28, 0.38, 0.3, 0.2]);
+  const veilOpacity = useTransform(y, [0, 1000, 3200, 5600], [0.3, 0.16, 0.12, 0.22]);
 
-  const terrainScale = useTransform(progress, [0, 1], [1.025, reduceMotion ? 1.025 : 1.12]);
-  const terrainY = useTransform(progress, [0, 1], [0, reduceMotion ? 0 : -58]);
-  const terrainRotate = useTransform(progress, [0, 1], [-0.2, reduceMotion ? -0.2 : 0.65]);
+  // HERO — intentionally starts after roughly 1.5 normal wheel gestures.
+  const heroOpacity = useTransform(y, [0, 105, 170, 810, 1080], [0, 0, 1, 1, 0]);
+  const heroY = useTransform(y, [105, 170, 810, 1080], [58, 0, 0, -78]);
+  const heroScale = useTransform(y, [105, 170, 810, 1080], [0.985, 1, 1, 0.975]);
+  const heroBlur = useTransform(y, [105, 170, 810, 1080], ["blur(12px)", "blur(0px)", "blur(0px)", "blur(14px)"]);
 
-  const heroOpacity = useTransform(progress, [0, 0.15, 0.255], [1, 1, 0]);
-  const heroY = useTransform(progress, [0, 0.255], [0, reduceMotion ? 0 : -86]);
-  const heroScale = useTransform(progress, [0, 0.255], [1, reduceMotion ? 1 : 0.955]);
+  // CHOICE — overlaps the hero exit so there is never a hard visual cut.
+  const choiceOpacity = useTransform(y, [860, 1040, 2110, 2390], [0, 1, 1, 0]);
+  const choiceY = useTransform(y, [860, 1040, 2110, 2390], [72, 0, 0, -68]);
+  const choiceScale = useTransform(y, [860, 1040, 2110, 2390], [0.975, 1, 1, 0.975]);
+  const choiceBlur = useTransform(y, [860, 1040, 2110, 2390], ["blur(14px)", "blur(0px)", "blur(0px)", "blur(14px)"]);
 
-  const choiceOpacity = useTransform(progress, [0.17, 0.285, 0.47, 0.575], [0, 1, 1, 0]);
-  const choiceY = useTransform(progress, [0.18, 0.34, 0.55], [70, 0, -62]);
-  const choiceScale = useTransform(progress, [0.18, 0.34, 0.55], [0.975, 1, 0.97]);
+  // PROFILE — same entrance/exit language as the field selector.
+  const profileOpacity = useTransform(y, [2190, 2430, 3650, 3980], [0, 1, 1, 0]);
+  const profileY = useTransform(y, [2190, 2430, 3650, 3980], [76, 0, 0, -72]);
+  const profileScale = useTransform(y, [2190, 2430, 3650, 3980], [0.975, 1, 1, 0.975]);
+  const profileBlur = useTransform(y, [2190, 2430, 3650, 3980], ["blur(14px)", "blur(0px)", "blur(0px)", "blur(14px)"]);
 
-  const aboutOpacity = useTransform(progress, [0.48, 0.595, 0.715, 0.805], [0, 1, 1, 0]);
-  const aboutY = useTransform(progress, [0.5, 0.64, 0.79], [60, 0, -56]);
-  const aboutScale = useTransform(progress, [0.5, 0.64, 0.79], [0.98, 1, 0.975]);
-
-  const contactOpacity = useTransform(progress, [0.73, 0.845, 1], [0, 1, 1]);
-  const contactY = useTransform(progress, [0.73, 0.88], [54, 0]);
-  const contactScale = useTransform(progress, [0.73, 0.9], [0.98, 1]);
-
-  const imageFieldOpacity = useTransform(progress, [0.14, 0.285, 0.51, 0.63], [0, 0.72, 0.52, 0]);
-  const mathFieldOpacity = useTransform(progress, [0, 0.24, 0.62, 1], [0.42, 0.24, 0.4, 0.18]);
-
-  const architectureCover = getProjectMedia("hikari").cover;
-  const creativeCover = getProjectMedia("the-smiling-wound").cover;
+  // CONTACT — arrives before Profile has fully disappeared, then stays through the terrain landing.
+  const contactOpacity = useTransform(y, [3740, 4030, 5520, 5900], [0, 1, 1, 0.92]);
+  const contactY = useTransform(y, [3740, 4030, 5520], [78, 0, -18]);
+  const contactScale = useTransform(y, [3740, 4030, 5520], [0.975, 1, 1]);
+  const contactBlur = useTransform(y, [3740, 4030], ["blur(14px)", "blur(0px)"]);
 
   return (
-    <main ref={rootRef} className="relative bg-[#090806] text-[#d5c5aa]">
-      <div className="sticky top-0 h-[100svh] overflow-hidden">
+    <main
+      ref={rootRef}
+      className="relative h-[6200px] overflow-clip bg-[#080706] text-[#d5c5aa] md:h-[6500px]"
+    >
+      <div className="sticky top-0 h-[100svh] overflow-hidden bg-[#080706]">
         <motion.div
-          style={{ scale: terrainScale, y: terrainY, rotate: terrainRotate }}
-          className="absolute inset-0"
+          aria-hidden="true"
+          className="absolute left-1/2 top-0 w-[100vw] -translate-x-1/2 will-change-transform max-md:w-[145vw]"
+          style={{ y: sceneY, scale: sceneScale }}
         >
-          <div className={styles.worldBackground} />
-          <AtmosphericTerrain variant="hybrid" tone="dark" className="opacity-26 mix-blend-screen" />
-          <motion.div style={{ opacity: mathFieldOpacity }} className="absolute inset-0">
-            <MathematicalWindField intensity="normal" />
-          </motion.div>
-          <div className={styles.worldVeil} />
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src="/images/site/universe-vertical.png"
+            alt=""
+            className="block h-auto w-full select-none"
+            draggable={false}
+          />
         </motion.div>
 
-        <motion.div style={{ opacity: imageFieldOpacity }} className="absolute inset-0">
-          <div
-            className={`absolute inset-y-0 left-0 w-[55%] transition-opacity duration-700 ${
-              field === "creative"
-                ? "opacity-[.01]"
-                : field === "architecture"
-                  ? "opacity-[.13]"
-                  : "opacity-[.035]"
-            }`}
-            style={{
-              WebkitMaskImage:
-                "radial-gradient(ellipse at 24% 52%, black 0%, rgba(0,0,0,.72) 26%, transparent 70%)",
-              maskImage:
-                "radial-gradient(ellipse at 24% 52%, black 0%, rgba(0,0,0,.72) 26%, transparent 70%)",
-            }}
-          >
-            <Image
-              src={architectureCover}
-              alt=""
-              fill
-              sizes="60vw"
-              className="object-cover grayscale contrast-125 saturate-50"
-            />
-          </div>
-
-          <div
-            className={`absolute inset-y-0 right-0 w-[55%] transition-opacity duration-700 ${
-              field === "architecture"
-                ? "opacity-[.01]"
-                : field === "creative"
-                  ? "opacity-[.12]"
-                  : "opacity-[.03]"
-            }`}
-            style={{
-              WebkitMaskImage:
-                "radial-gradient(ellipse at 76% 50%, black 0%, rgba(0,0,0,.7) 26%, transparent 70%)",
-              maskImage:
-                "radial-gradient(ellipse at 76% 50%, black 0%, rgba(0,0,0,.7) 26%, transparent 70%)",
-            }}
-          >
-            <Image
-              src={creativeCover}
-              alt=""
-              fill
-              sizes="60vw"
-              className="object-cover grayscale contrast-125 saturate-50"
-            />
-          </div>
+        <motion.div
+          aria-hidden="true"
+          className="absolute inset-0 mix-blend-screen"
+          style={{ opacity: windOpacity }}
+        >
+          <RealtimeWindThreads strength="normal" />
         </motion.div>
 
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_50%_46%,transparent_0%,rgba(8,7,6,.03)_40%,rgba(8,7,6,.42)_90%)]" />
-        <div className="absolute inset-x-0 top-0 h-52 bg-gradient-to-b from-[#070706] via-[#070706]/82 to-transparent" />
-        <div className="absolute inset-x-0 bottom-0 h-64 bg-gradient-to-t from-[#070706] via-[#070706]/80 to-transparent" />
-        <div className="absolute inset-y-0 left-0 w-32 bg-gradient-to-r from-[#070706]/78 to-transparent" />
-        <div className="absolute inset-y-0 right-0 w-32 bg-gradient-to-l from-[#070706]/78 to-transparent" />
-      </div>
+        <motion.div
+          aria-hidden="true"
+          className="absolute inset-0 bg-[radial-gradient(ellipse_at_50%_47%,transparent_0%,rgba(8,7,6,.02)_48%,rgba(8,7,6,.58)_100%)]"
+          style={{ opacity: veilOpacity }}
+        />
+        <div aria-hidden="true" className="absolute inset-x-0 top-0 h-48 bg-gradient-to-b from-[#070706]/76 via-[#070706]/26 to-transparent" />
+        <div aria-hidden="true" className="absolute inset-x-0 bottom-0 h-52 bg-gradient-to-t from-[#070706]/54 to-transparent" />
 
-      <div className="relative z-10 -mt-[100svh]">
-        <section className="relative min-h-[155svh]">
-          <motion.div
-            style={{ opacity: heroOpacity, y: heroY, scale: heroScale }}
-            className="sticky top-0 flex h-[100svh] items-center px-5 pt-24 md:px-10 lg:px-14"
-          >
-            <div className="mx-auto w-full max-w-[1600px]">
-              <div className="mb-9 flex items-center justify-between font-mono text-[10px] uppercase tracking-[.2em] text-[#aa8c63]/72 md:text-[11px]">
-                <span>{siteConfig.hero.eyebrow}</span>
-                <span className="hidden sm:block">Terrain / memory / making</span>
-              </div>
-
-              <h1 className="max-w-[1450px] text-[clamp(4.4rem,10.8vw,11rem)] font-medium uppercase leading-[.77] tracking-[-.072em] text-[#d7c6a7]">
-                Tsiaro<br />Rakototiana
-              </h1>
-
-              <div className="mt-11 grid gap-10 border-t border-[#ad8d61]/20 pt-7 md:grid-cols-12 md:items-end">
-                <p className="max-w-3xl text-[clamp(1.8rem,3.4vw,3.8rem)] font-light leading-[.98] tracking-[-.04em] text-[#bca887] md:col-span-7">
-                  Designing between matter, memory and the unknown.
+        <div className="absolute inset-0 z-10 px-5 pt-24 md:px-10 md:pt-28 lg:px-14">
+          <div className="relative mx-auto h-full w-full max-w-[1600px]">
+            <motion.section
+              aria-label="Introduction"
+              style={{ opacity: heroOpacity, y: heroY, scale: heroScale, filter: heroBlur }}
+              className="absolute inset-0 flex items-center"
+            >
+              <div className="w-full max-w-[1450px]">
+                <p className="font-mono text-[10px] uppercase tracking-[.21em] text-[#b79a70]/78 md:text-[11px]">
+                  {siteConfig.hero.eyebrow}
                 </p>
-                <div className="md:col-span-4 md:col-start-9">
-                  <p className="max-w-md text-[15px] leading-7 text-[#aa9a82]/74 md:text-base">
-                    {siteConfig.hero.description}
+                <h1 className="mt-5 text-[clamp(4.2rem,10.6vw,10.8rem)] font-medium uppercase leading-[.76] tracking-[-.07em] text-[#e4d3b5] [text-shadow:0_3px_34px_rgba(6,5,4,.62)]">
+                  Tsiaro<br />Rakototiana
+                </h1>
+
+                <div className="mt-9 grid gap-8 border-t border-[#c29d69]/24 pt-6 md:grid-cols-12 md:items-end">
+                  <p className="max-w-3xl text-[clamp(1.65rem,3.3vw,3.7rem)] font-light leading-[.98] tracking-[-.04em] text-[#cbb693] md:col-span-7">
+                    Designing between matter, memory and the unknown.
                   </p>
-                  <p className="mt-7 font-mono text-[10px] uppercase tracking-[.18em] text-[#9d815d]/68 md:text-[11px]">
-                    Scroll to enter ↓
-                  </p>
+                  <div className="md:col-span-4 md:col-start-9">
+                    <p className="max-w-lg text-[15px] leading-7 text-[#c0b099]/84 md:text-base">
+                      I work across architecture, technical development, drawing and making — connecting precision with experimentation and human experience.
+                    </p>
+                    <p className="mt-6 font-mono text-[10px] uppercase tracking-[.18em] text-[#b08c5c]/86 md:text-[11px]">
+                      Scroll to enter ↓
+                    </p>
+                  </div>
                 </div>
               </div>
-            </div>
-          </motion.div>
-        </section>
+            </motion.section>
 
-        <section className="relative min-h-[155svh]">
-          <motion.div
-            style={{ opacity: choiceOpacity, y: choiceY, scale: choiceScale }}
-            className="sticky top-0 flex h-[100svh] items-center px-5 pt-20 md:px-10 lg:px-14"
-          >
-            <div className="mx-auto w-full max-w-[1600px]">
-              <div className="mb-10 flex items-center justify-between font-mono text-[10px] uppercase tracking-[.19em] text-[#aa8c63]/68 md:text-[11px]">
-                <span>01 / Choose a field</span>
-                <span>One archive / two readings</span>
-              </div>
-
-              <div className="grid min-h-[60vh] items-center gap-8 md:grid-cols-[minmax(0,4fr)_minmax(180px,2fr)_minmax(0,4fr)]">
-                <Link
-                  href="/work?portfolio=architecture"
-                  onMouseEnter={() => setField("architecture")}
-                  onMouseLeave={() => setField(null)}
-                  onFocus={() => setField("architecture")}
-                  onBlur={() => setField(null)}
-                  className="group self-center py-10"
-                >
-                  <p className="mb-5 font-mono text-[10px] uppercase tracking-[.18em] text-[#a98758]/72 md:text-[11px]">
-                    01 / measured terrain
-                  </p>
-                  <h2 className="text-[clamp(3.4rem,6.8vw,7.6rem)] font-medium uppercase leading-[.8] tracking-[-.06em] text-[#b8a386]/62 transition-all duration-700 group-hover:translate-x-2 group-hover:text-[#d5c09a]">
-                    Architecture
-                  </h2>
-                  <p className="mt-7 max-w-md text-[15px] leading-7 text-[#9c8d77]/66 md:text-base">
-                    Space, systems, site evidence, technical development and professional work.
-                  </p>
-                </Link>
-
-                <div className="hidden h-[42vh] items-center justify-center md:flex" aria-hidden="true">
-                  <div className="h-full w-px bg-gradient-to-b from-transparent via-[#a98758]/24 to-transparent" />
+            <motion.section
+              aria-label="Choose a field"
+              style={{ opacity: choiceOpacity, y: choiceY, scale: choiceScale, filter: choiceBlur }}
+              className={`absolute inset-0 flex items-center ${activeStage === "choice" ? "pointer-events-auto" : "pointer-events-none"}`}
+            >
+              <div className="w-full">
+                <div className="mb-8 flex items-center justify-between font-mono text-[10px] uppercase tracking-[.19em] text-[#b59669]/80 md:text-[11px]">
+                  <span>01 / Choose a field</span>
+                  <span>One archive / two readings</span>
                 </div>
 
-                <Link
-                  href="/work?portfolio=creative"
-                  onMouseEnter={() => setField("creative")}
-                  onMouseLeave={() => setField(null)}
-                  onFocus={() => setField("creative")}
-                  onBlur={() => setField(null)}
-                  className="group self-center py-10 text-left md:text-right"
-                >
-                  <p className="mb-5 font-mono text-[10px] uppercase tracking-[.18em] text-[#a98758]/72 md:text-[11px]">
-                    02 / fluid memory
-                  </p>
-                  <h2 className="text-[clamp(3.4rem,6.8vw,7.6rem)] font-medium uppercase leading-[.8] tracking-[-.06em] text-[#b8a386]/62 transition-all duration-700 group-hover:-translate-x-2 group-hover:text-[#d5c09a]">
-                    Creative
-                  </h2>
-                  <p className="mt-7 max-w-md text-[15px] leading-7 text-[#9c8d77]/66 md:ml-auto md:text-base">
-                    Drawing, ceramics, collage, material experiments and personal visual work.
-                  </p>
-                </Link>
-              </div>
+                <div className="grid min-h-[56vh] items-center gap-8 md:grid-cols-[minmax(0,4fr)_minmax(120px,1.2fr)_minmax(0,4fr)]">
+                  <Link
+                    href="/work?portfolio=architecture"
+                    onMouseEnter={() => setField("architecture")}
+                    onMouseLeave={() => setField(null)}
+                    onFocus={() => setField("architecture")}
+                    onBlur={() => setField(null)}
+                    className={`group py-8 transition-opacity duration-500 ${field === "creative" ? "opacity-35" : "opacity-100"}`}
+                  >
+                    <p className="mb-4 font-mono text-[10px] uppercase tracking-[.18em] text-[#bb9560]/82 md:text-[11px]">
+                      01 / measured terrain
+                    </p>
+                    <h2 className="text-[clamp(3.5rem,7vw,7.7rem)] font-medium uppercase leading-[.8] tracking-[-.06em] text-[#d7c19d] transition-transform duration-700 group-hover:translate-x-3">
+                      Architecture
+                    </h2>
+                    <p className="mt-6 max-w-md text-[15px] leading-7 text-[#b6a68f]/82 md:text-base">
+                      Space, systems, site evidence, technical development and professional work.
+                    </p>
+                  </Link>
 
-              <div className="flex items-center justify-between border-t border-[#ad8d61]/18 pt-5 font-mono text-[10px] uppercase tracking-[.18em] text-[#92795a]/58 md:text-[11px]">
-                <span>Move across the field</span>
-                <span>Both belong to the same archive ↘</span>
-              </div>
-            </div>
-          </motion.div>
-        </section>
+                  <div className="hidden h-[38vh] items-center justify-center md:flex" aria-hidden="true">
+                    <div className="h-full w-px bg-gradient-to-b from-transparent via-[#c09b68]/30 to-transparent" />
+                  </div>
 
-        <section className="relative min-h-[145svh]">
-          <motion.div
-            style={{ opacity: aboutOpacity, y: aboutY, scale: aboutScale }}
-            className="sticky top-0 flex h-[100svh] items-center px-5 pt-20 md:px-10 lg:px-14"
-          >
-            <div className="mx-auto w-full max-w-[1600px]">
-              <div className="grid min-h-[58vh] gap-10 md:grid-cols-12 md:items-center">
-                <div className="md:col-span-4">
-                  <p className="font-mono text-[10px] uppercase tracking-[.19em] text-[#a98758]/66 md:text-[11px]">
+                  <Link
+                    href="/work?portfolio=creative"
+                    onMouseEnter={() => setField("creative")}
+                    onMouseLeave={() => setField(null)}
+                    onFocus={() => setField("creative")}
+                    onBlur={() => setField(null)}
+                    className={`group py-8 text-left transition-opacity duration-500 md:text-right ${field === "architecture" ? "opacity-35" : "opacity-100"}`}
+                  >
+                    <p className="mb-4 font-mono text-[10px] uppercase tracking-[.18em] text-[#bb9560]/82 md:text-[11px]">
+                      02 / fluid memory
+                    </p>
+                    <h2 className="text-[clamp(3.5rem,7vw,7.7rem)] font-medium uppercase leading-[.8] tracking-[-.06em] text-[#d7c19d] transition-transform duration-700 group-hover:-translate-x-3">
+                      Creative
+                    </h2>
+                    <p className="mt-6 max-w-md text-[15px] leading-7 text-[#b6a68f]/82 md:ml-auto md:text-base">
+                      Drawing, ceramics, collage, material experiments and personal visual work.
+                    </p>
+                  </Link>
+                </div>
+
+                <div className="flex items-center justify-between border-t border-[#c09b68]/22 pt-5 font-mono text-[10px] uppercase tracking-[.18em] text-[#a98a63]/78 md:text-[11px]">
+                  <span>Move across the field</span>
+                  <span>Both belong to the same archive ↘</span>
+                </div>
+              </div>
+            </motion.section>
+
+            <motion.section
+              aria-label="Profile field notes"
+              style={{ opacity: profileOpacity, y: profileY, scale: profileScale, filter: profileBlur }}
+              className={`absolute inset-0 flex items-center ${activeStage === "profile" ? "pointer-events-auto" : "pointer-events-none"}`}
+            >
+              <div className="grid w-full gap-10 md:grid-cols-12 md:items-center">
+                <div className="md:col-span-5">
+                  <p className="font-mono text-[10px] uppercase tracking-[.19em] text-[#b59669]/80 md:text-[11px]">
                     02 / Profile / field notes
                   </p>
-                  <h2 className="mt-7 max-w-xl text-[clamp(2.8rem,4.8vw,5.6rem)] font-medium leading-[.92] tracking-[-.05em] text-[#c9b595]">
+                  <h2 className="mt-6 max-w-xl text-[clamp(2.9rem,5vw,5.8rem)] font-medium leading-[.91] tracking-[-.052em] text-[#d9c3a0]">
                     Architecture is one layer of how I create.
                   </h2>
                   <Link
                     href="/about"
-                    className="mt-9 inline-block font-mono text-[11px] uppercase tracking-[.17em] text-[#b18f62]/76 transition-colors hover:text-[#d0b88f] md:text-xs"
+                    className="mt-8 inline-block font-mono text-[11px] uppercase tracking-[.17em] text-[#c09a67]/88 transition-colors hover:text-[#ead6b3] md:text-xs"
                   >
                     Open full profile ↗
                   </Link>
                 </div>
 
-                <div className="hidden md:col-span-4 md:block" aria-hidden="true" />
+                <div className="md:col-span-1" aria-hidden="true" />
 
-                <div className="md:col-span-4">
-                  <p className="max-w-lg text-base leading-8 text-[#a99a82]/72 md:text-lg">
-                    {siteConfig.about.description}
+                <div className="md:col-span-6">
+                  <p className="max-w-2xl text-base leading-8 text-[#c0b098]/84 md:text-lg">
+                    My work moves between spatial design, technical documentation, drawing, collage and physical making. I am interested in the point where structure, culture, memory and imagination begin to influence one another.
                   </p>
 
-                  <div className="mt-10 space-y-8 border-t border-[#ad8d61]/18 pt-7">
+                  <div className="mt-8 space-y-5 border-t border-[#c09b68]/22 pt-6">
                     {profileFacts.map((fact, index) => (
                       <div
                         key={fact.label}
-                        className="grid grid-cols-[72px_1fr] gap-5 border-b border-[#ad8d61]/12 pb-7 last:border-b-0"
+                        className="grid grid-cols-[52px_1fr] gap-4 border-b border-[#c09b68]/14 pb-5 last:border-b-0"
                       >
-                        <p className="font-mono text-[10px] uppercase tracking-[.16em] text-[#947a58]/62 md:text-[11px]">
+                        <p className="font-mono text-[10px] uppercase tracking-[.16em] text-[#ad8c61]/78 md:text-[11px]">
                           0{index + 1}
                         </p>
                         <div>
-                          <p className="text-lg font-medium tracking-[-.025em] text-[#bba888] md:text-xl">
+                          <p className="text-lg font-medium tracking-[-.025em] text-[#d0bb99] md:text-xl">
                             {fact.value}
                           </p>
-                          <p className="mt-2 text-[14px] leading-6 text-[#928573]/66 md:text-[15px]">
+                          <p className="mt-1 text-[14px] leading-6 text-[#aa9b84]/82 md:text-[15px]">
                             {fact.detail}
                           </p>
                         </div>
@@ -278,69 +253,60 @@ export default function HomeExperience() {
                   </div>
                 </div>
               </div>
-            </div>
-          </motion.div>
-        </section>
+            </motion.section>
 
-        <section className="relative min-h-[135svh]">
-          <motion.div
-            style={{ opacity: contactOpacity, y: contactY, scale: contactScale }}
-            className="sticky top-0 flex h-[100svh] items-center px-5 pt-20 md:px-10 lg:px-14"
-          >
-            <div className="mx-auto w-full max-w-[1600px]">
-              <div className="grid min-h-[56vh] gap-10 md:grid-cols-12 md:items-center">
-                <div className="md:col-span-5">
-                  <p className="font-mono text-[10px] uppercase tracking-[.19em] text-[#a98758]/68 md:text-[11px]">
-                    03 / Open channel
-                  </p>
-                  <h2 className="mt-8 text-[clamp(3.8rem,7.5vw,8rem)] font-medium uppercase leading-[.8] tracking-[-.065em] text-[#cfba98]">
-                    Let&apos;s create<br />what comes next.
-                  </h2>
-                </div>
+            <motion.section
+              aria-label="Contact"
+              style={{ opacity: contactOpacity, y: contactY, scale: contactScale, filter: contactBlur }}
+              className={`absolute inset-0 flex items-center ${activeStage === "contact" ? "pointer-events-auto" : "pointer-events-none"}`}
+            >
+              <div className="w-full">
+                <p className="font-mono text-[10px] uppercase tracking-[.2em] text-[#b59669]/82 md:text-[11px]">
+                  03 / Open channel
+                </p>
 
-                <div className="hidden md:col-span-3 md:block" aria-hidden="true" />
+                <div className="mt-6 grid gap-10 md:grid-cols-12 md:items-end">
+                  <div className="md:col-span-7">
+                    <h2 className="text-[clamp(4rem,9vw,9.4rem)] font-medium uppercase leading-[.78] tracking-[-.068em] text-[#e1ceb0]">
+                      Let&apos;s create<br />what comes next.
+                    </h2>
+                  </div>
 
-                <div className="md:col-span-4">
-                  <p className="max-w-md text-base leading-7 text-[#a99a82]/72">
-                    Opportunities, collaborations, project conversations and portfolio enquiries.
-                  </p>
-                  <Link
-                    href="/contact"
-                    className="mt-9 block text-lg text-[#c3ae8d] transition-colors hover:text-[#d8c09a]"
-                  >
-                    {siteConfig.email}
-                  </Link>
-                  <div className="mt-6 flex flex-wrap gap-x-7 gap-y-4 font-mono text-[11px] uppercase tracking-[.16em] text-[#a98758]/74 md:text-xs">
+                  <div className="md:col-span-4 md:col-start-9">
+                    <p className="max-w-lg text-[16px] leading-8 text-[#c0b098]/86 md:text-lg">
+                      Opportunities, collaborations, project conversations and portfolio enquiries.
+                    </p>
                     <a
-                      href={siteConfig.social.linkedin}
-                      target="_blank"
-                      rel="noreferrer"
-                      className="transition-colors hover:text-[#d0b88f]"
+                      href={`mailto:${siteConfig.email}`}
+                      className="mt-7 block text-lg text-[#ddc7a5] transition-colors hover:text-[#f0dfc3] md:text-xl"
                     >
-                      LinkedIn ↗
+                      {siteConfig.email}
                     </a>
-                    <a
-                      href={siteConfig.social.instagram}
-                      target="_blank"
-                      rel="noreferrer"
-                      className="transition-colors hover:text-[#d0b88f]"
-                    >
-                      Instagram ↗
-                    </a>
-                    <Link href="/contact" className="transition-colors hover:text-[#d0b88f]">
-                      Contact ↗
-                    </Link>
+
+                    <div className="mt-7 flex flex-wrap gap-x-7 gap-y-3 font-mono text-[11px] uppercase tracking-[.17em] text-[#b89464]/90 md:text-xs">
+                      <a href={siteConfig.social.linkedin} target="_blank" rel="noreferrer" className="hover:text-[#ead6b3]">
+                        LinkedIn ↗
+                      </a>
+                      <a href={siteConfig.social.instagram} target="_blank" rel="noreferrer" className="hover:text-[#ead6b3]">
+                        Instagram ↗
+                      </a>
+                      <Link href="/contact" className="hover:text-[#ead6b3]">
+                        Contact ↗
+                      </Link>
+                    </div>
                   </div>
                 </div>
-              </div>
 
-              <div className="mt-8 flex items-center justify-between border-t border-[#ad8d61]/18 pt-5 font-mono text-[10px] uppercase tracking-[.18em] text-[#92795a]/58 md:text-[11px]">
-                <span>{siteConfig.location}</span>
-                <span>End of field / continue through work ↑</span>
+                <div className="mt-10 flex items-center justify-between border-t border-[#c09b68]/22 pt-5 font-mono text-[10px] uppercase tracking-[.18em] text-[#ae8d62]/78 md:text-[11px]">
+                  <span>Toronto, Canada</span>
+                  <Link href="/work" className="pointer-events-auto hover:text-[#ead6b3]">
+                    End of field / continue through work ↑
+                  </Link>
+                </div>
               </div>
-            </div>
-          </motion.div>
-        </section>
+            </motion.section>
+          </div>
+        </div>
       </div>
     </main>
   );
