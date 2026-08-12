@@ -18,13 +18,18 @@ export default function Navbar() {
 
   return (
     <header
-      className={`fixed inset-x-0 top-0 z-50 transition-all duration-500 ${
+      className={`fixed inset-x-0 top-0 z-50 border-b backdrop-blur-2xl backdrop-saturate-150 transition-all duration-500 ${
         scrolled
-          ? "border-b border-[#a98758]/12 bg-[linear-gradient(180deg,rgba(7,7,6,.94),rgba(7,7,6,.68))] backdrop-blur-xl"
-          : "border-b border-transparent bg-gradient-to-b from-[#070706]/82 to-transparent"
+          ? "border-[#d0b382]/14 bg-[#090806]/58 shadow-[0_10px_34px_rgba(0,0,0,.16)]"
+          : "border-[#d0b382]/10 bg-[#090806]/34 shadow-[0_8px_28px_rgba(0,0,0,.08)]"
       }`}
     >
-      <div className={`mx-auto flex max-w-[1600px] items-center justify-between px-5 transition-all duration-500 md:px-10 lg:px-14 ${scrolled ? "h-[66px]" : "h-[82px]"}`}>
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,rgba(233,217,190,.035),rgba(9,8,6,.03)_42%,rgba(9,8,6,.16))]"
+      />
+
+      <div className={`relative mx-auto flex max-w-[1600px] items-center justify-between px-5 transition-all duration-500 md:px-10 lg:px-14 ${scrolled ? "h-[66px]" : "h-[82px]"}`}>
         <Link
           href="/"
           aria-label={`${siteConfig.brand} home`}
@@ -33,7 +38,7 @@ export default function Navbar() {
           {siteConfig.brand}
         </Link>
 
-        <div className="hidden font-mono text-[10px] uppercase tracking-[.2em] text-[#9f825e]/55 md:block">
+        <div className="hidden font-mono text-[10px] uppercase tracking-[.2em] text-[#b39a75]/62 md:block">
           Tsiaro Rakototiana / Toronto
         </div>
 
@@ -46,12 +51,12 @@ export default function Navbar() {
                 key={item.label}
                 href={item.href}
                 className={`group relative font-mono text-[10px] uppercase tracking-[.16em] transition-colors sm:text-[11px] ${
-                  active ? "text-[#d9c6a4]" : "text-[#aa9575]/65 hover:text-[#d9c6a4]"
+                  active ? "text-[#e3d0ae]" : "text-[#b8a182]/72 hover:text-[#e3d0ae]"
                 }`}
               >
-                <span className="mr-1.5 hidden text-[#a98758]/42 lg:inline">0{index + 1}</span>
+                <span className="mr-1.5 hidden text-[#b58e5c]/52 lg:inline">0{index + 1}</span>
                 {item.label}
-                <span className={`absolute -bottom-2 left-0 h-px bg-[#a98758] transition-all duration-300 ${active ? "w-full" : "w-0 group-hover:w-full"}`} />
+                <span className={`absolute -bottom-2 left-0 h-px bg-[#b99160] transition-all duration-300 ${active ? "w-full" : "w-0 group-hover:w-full"}`} />
               </Link>
             );
           })}
