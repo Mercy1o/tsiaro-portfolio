@@ -18,10 +18,10 @@ export default function Navbar() {
 
   return (
     <header
-      className={`fixed inset-x-0 top-0 z-50 border-b backdrop-blur-2xl backdrop-saturate-150 transition-all duration-500 ${
+      className={`mobile-safe-nav fixed inset-x-0 top-0 z-50 border-b backdrop-blur-2xl backdrop-saturate-150 transition-all duration-500 ${
         scrolled
-          ? "border-[#d0b382]/16 bg-[#090806]/62 shadow-[0_10px_34px_rgba(0,0,0,.18)]"
-          : "border-[#d0b382]/12 bg-[#090806]/38 shadow-[0_8px_28px_rgba(0,0,0,.1)]"
+          ? "border-[#d0b382]/16 bg-[#090806]/66 shadow-[0_10px_34px_rgba(0,0,0,.18)]"
+          : "border-[#d0b382]/12 bg-[#090806]/42 shadow-[0_8px_28px_rgba(0,0,0,.1)]"
       }`}
     >
       <div
@@ -30,43 +30,45 @@ export default function Navbar() {
       />
 
       <div
-        className={`relative mx-auto grid max-w-[1600px] grid-cols-[1fr_auto] items-center px-5 transition-all duration-500 md:grid-cols-[1fr_auto_1fr] md:px-10 lg:px-14 ${
-          scrolled ? "h-[72px]" : "h-[88px]"
+        className={`relative mx-auto grid max-w-[1600px] grid-cols-[auto_1fr] items-center gap-3 px-4 transition-all duration-500 sm:px-5 md:grid-cols-[1fr_auto_1fr] md:gap-0 md:px-10 lg:px-14 ${
+          scrolled ? "min-h-[62px] md:h-[72px]" : "min-h-[68px] md:h-[88px]"
         }`}
       >
         <Link
           href="/"
           aria-label={`${siteConfig.brand} home`}
-          className="justify-self-start text-[17px] font-medium tracking-[-.04em] text-[#ddc8a6] transition-colors hover:text-[#f0dec0] md:text-[18px]"
+          className="mobile-tap-target justify-self-start whitespace-nowrap text-[15px] font-medium tracking-[-.04em] text-[#ddc8a6] transition-colors hover:text-[#f0dec0] sm:text-[16px] md:text-[18px]"
         >
           {siteConfig.brand}
         </Link>
 
         <nav
           aria-label="Main navigation"
-          className="flex items-center justify-center gap-5 sm:gap-8 md:gap-10"
+          className="justify-self-end md:justify-self-center"
         >
-          {siteConfig.navigation.map((item, index) => {
-            const active = pathname === item.href || pathname.startsWith(`${item.href}/`);
+          <div className="flex items-center justify-center gap-1 sm:gap-2 md:gap-10">
+            {siteConfig.navigation.map((item, index) => {
+              const active = pathname === item.href || pathname.startsWith(`${item.href}/`);
 
-            return (
-              <Link
-                key={item.label}
-                href={item.href}
-                className={`group relative font-mono text-[11px] uppercase tracking-[.17em] transition-colors sm:text-[12px] md:text-[13px] ${
-                  active ? "text-[#ead6b4]" : "text-[#c6ae8b]/84 hover:text-[#ead6b4]"
-                }`}
-              >
-                <span className="mr-1.5 hidden text-[#c49a66]/68 lg:inline">0{index + 1}</span>
-                {item.label}
-                <span
-                  className={`absolute -bottom-2.5 left-0 h-px bg-[#c49a66] transition-all duration-300 ${
-                    active ? "w-full" : "w-0 group-hover:w-full"
+              return (
+                <Link
+                  key={item.label}
+                  href={item.href}
+                  className={`mobile-tap-target group relative flex min-h-11 items-center px-2 font-mono text-[9px] uppercase tracking-[.12em] transition-colors sm:px-3 sm:text-[10px] sm:tracking-[.15em] md:min-h-0 md:px-0 md:text-[13px] md:tracking-[.17em] ${
+                    active ? "text-[#ead6b4]" : "text-[#c6ae8b]/88 hover:text-[#ead6b4]"
                   }`}
-                />
-              </Link>
-            );
-          })}
+                >
+                  <span className="mr-1.5 hidden text-[#c49a66]/68 lg:inline">0{index + 1}</span>
+                  {item.label}
+                  <span
+                    className={`absolute bottom-1 left-2 right-2 h-px bg-[#c49a66] transition-all duration-300 md:-bottom-2.5 md:left-0 md:right-auto ${
+                      active ? "opacity-100 md:w-full" : "opacity-0 md:w-0 md:group-hover:w-full md:group-hover:opacity-100"
+                    }`}
+                  />
+                </Link>
+              );
+            })}
+          </div>
         </nav>
 
         <div className="hidden justify-self-end font-mono text-[11px] uppercase tracking-[.19em] text-[#c1a985]/80 md:block lg:text-[12px]">
