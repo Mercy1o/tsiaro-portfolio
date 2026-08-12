@@ -4,6 +4,8 @@ import "./globals.css";
 import MotionProvider from "@/components/MotionProvider";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import ImmersiveIntro from "@/components/ImmersiveIntro";
+import PageSignalTransition from "@/components/PageSignalTransition";
 import { siteConfig } from "@/data/site";
 
 const displaySans = Inter({
@@ -46,6 +48,8 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
       <body className={`${displaySans.variable} ${mono.variable}`}>
         <a href="#main-content" className="skip-link">Skip to content</a>
         <MotionProvider>
+          <ImmersiveIntro />
+          <PageSignalTransition />
           <Navbar />
           <div id="main-content">{children}</div>
           <Footer />
