@@ -28,9 +28,6 @@ export default function CinematicUniverseIntro() {
     offset: ["start start", "end end"],
   });
 
-  // We move the artwork itself instead of moving a cropped background.
-  // On desktop the full vertical image is wider than the viewport and therefore
-  // extends several screens in height. The translation reveals it from top to bottom.
   const sceneY = useTransform(
     scrollYProgress,
     [0, 0.08, 0.26, 0.52, 0.78, 1],
@@ -38,36 +35,35 @@ export default function CinematicUniverseIntro() {
   );
   const sceneScale = useTransform(scrollYProgress, [0, 0.55, 1], [1.015, 1.006, 1]);
 
-  // Keep the very first frame almost text-free, then reveal the main name quickly.
-  // It is fully visible by ~4% of the descent so it appears around the first
-  // meaningful wheel movement, matching the visual position of the planet reveal.
+  // Shift the complete narrative earlier in the descent. The first frame stays clean,
+  // but the main name is already visible almost immediately after the user starts scrolling.
   const introOpacity = useTransform(
     scrollYProgress,
-    [0, 0.015, 0.04, 0.22, 0.315],
+    [0, 0.004, 0.014, 0.16, 0.235],
     [0, 0, 1, 1, 0],
   );
   const introY = useTransform(
     scrollYProgress,
-    [0.015, 0.04, 0.315],
-    [28, 0, -30],
+    [0.004, 0.014, 0.235],
+    [24, 0, -26],
   );
 
   const fieldOpacity = useTransform(
     scrollYProgress,
-    [0.25, 0.36, 0.52, 0.64],
+    [0.14, 0.205, 0.34, 0.455],
     [0, 1, 1, 0],
   );
-  const fieldY = useTransform(scrollYProgress, [0.25, 0.64], [34, -34]);
+  const fieldY = useTransform(scrollYProgress, [0.14, 0.455], [30, -30]);
 
   const planetOpacity = useTransform(
     scrollYProgress,
-    [0.56, 0.68, 0.84, 0.93],
+    [0.37, 0.455, 0.66, 0.77],
     [0, 1, 1, 0],
   );
-  const planetY = useTransform(scrollYProgress, [0.56, 0.93], [34, -28]);
+  const planetY = useTransform(scrollYProgress, [0.37, 0.77], [30, -26]);
 
-  const groundOpacity = useTransform(scrollYProgress, [0.82, 0.93, 1], [0, 1, 1]);
-  const groundY = useTransform(scrollYProgress, [0.82, 1], [28, 0]);
+  const groundOpacity = useTransform(scrollYProgress, [0.64, 0.735, 1], [0, 1, 1]);
+  const groundY = useTransform(scrollYProgress, [0.64, 1], [24, 0]);
 
   const windOpacity = useTransform(scrollYProgress, [0, 0.22, 0.68, 1], [0.14, 0.24, 0.4, 0.28]);
   const vignetteOpacity = useTransform(scrollYProgress, [0, 0.36, 0.8, 1], [0.32, 0.12, 0.1, 0.2]);
