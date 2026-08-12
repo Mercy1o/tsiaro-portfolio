@@ -35,35 +35,39 @@ export default function CinematicUniverseIntro() {
   );
   const sceneScale = useTransform(scrollYProgress, [0, 0.55, 1], [1.015, 1.006, 1]);
 
-  // Shift the complete narrative earlier in the descent. The first frame stays clean,
-  // but the main name is already visible almost immediately after the user starts scrolling.
+  // Keep only the very first instant text-free. From that point onward the
+  // narrative stays much denser so there are no long empty stretches during descent.
   const introOpacity = useTransform(
     scrollYProgress,
-    [0, 0.004, 0.014, 0.16, 0.235],
+    [0, 0.002, 0.008, 0.21, 0.3],
     [0, 0, 1, 1, 0],
   );
   const introY = useTransform(
     scrollYProgress,
-    [0.004, 0.014, 0.235],
-    [24, 0, -26],
+    [0.002, 0.008, 0.3],
+    [18, 0, -22],
   );
 
   const fieldOpacity = useTransform(
     scrollYProgress,
-    [0.14, 0.205, 0.34, 0.455],
+    [0.075, 0.12, 0.31, 0.42],
     [0, 1, 1, 0],
   );
-  const fieldY = useTransform(scrollYProgress, [0.14, 0.455], [30, -30]);
+  const fieldY = useTransform(scrollYProgress, [0.075, 0.42], [22, -24]);
 
   const planetOpacity = useTransform(
     scrollYProgress,
-    [0.37, 0.455, 0.66, 0.77],
+    [0.24, 0.31, 0.5, 0.61],
     [0, 1, 1, 0],
   );
-  const planetY = useTransform(scrollYProgress, [0.37, 0.77], [30, -26]);
+  const planetY = useTransform(scrollYProgress, [0.24, 0.61], [22, -22]);
 
-  const groundOpacity = useTransform(scrollYProgress, [0.64, 0.735, 1], [0, 1, 1]);
-  const groundY = useTransform(scrollYProgress, [0.64, 1], [24, 0]);
+  const groundOpacity = useTransform(
+    scrollYProgress,
+    [0.43, 0.51, 0.78, 0.9],
+    [0, 1, 1, 0],
+  );
+  const groundY = useTransform(scrollYProgress, [0.43, 0.9], [18, -16]);
 
   const windOpacity = useTransform(scrollYProgress, [0, 0.22, 0.68, 1], [0.14, 0.24, 0.4, 0.28]);
   const vignetteOpacity = useTransform(scrollYProgress, [0, 0.36, 0.8, 1], [0.32, 0.12, 0.1, 0.2]);
@@ -172,7 +176,7 @@ export default function CinematicUniverseIntro() {
           <div className="mx-auto h-full w-full max-w-[1600px]">
             <motion.div
               style={{ opacity: introOpacity, y: introY }}
-              className="absolute left-5 top-[18vh] max-w-[920px] md:left-10 lg:left-14"
+              className="absolute left-5 top-[14vh] max-w-[920px] md:left-10 lg:left-14"
             >
               <p className="font-mono text-[10px] uppercase tracking-[.22em] text-[#d5c09a]/72 md:text-[11px]">
                 00 / Deep field / Toronto 2026
@@ -187,7 +191,7 @@ export default function CinematicUniverseIntro() {
 
             <motion.div
               style={{ opacity: fieldOpacity, y: fieldY }}
-              className="absolute right-5 top-[26vh] max-w-xl text-right md:right-10 lg:right-14"
+              className="absolute right-5 top-[18vh] max-w-xl text-right md:right-10 lg:right-14"
             >
               <p className="font-mono text-[10px] uppercase tracking-[.22em] text-[#d6bd91]/72 md:text-[11px]">
                 01 / Stellar field
@@ -202,7 +206,7 @@ export default function CinematicUniverseIntro() {
 
             <motion.div
               style={{ opacity: planetOpacity, y: planetY }}
-              className="absolute left-5 top-[52vh] max-w-2xl md:left-10 lg:left-14"
+              className="absolute left-5 top-[32vh] max-w-2xl md:left-10 lg:left-14"
             >
               <p className="font-mono text-[10px] uppercase tracking-[.22em] text-[#d6bd91]/72 md:text-[11px]">
                 02 / Approaching terrain
@@ -217,7 +221,7 @@ export default function CinematicUniverseIntro() {
 
             <motion.div
               style={{ opacity: groundOpacity, y: groundY }}
-              className="absolute bottom-[11vh] right-5 max-w-xl text-right md:right-10 lg:right-14"
+              className="absolute right-5 top-[50vh] max-w-xl text-right md:right-10 lg:right-14"
             >
               <p className="font-mono text-[10px] uppercase tracking-[.22em] text-[#d6bd91]/72 md:text-[11px]">
                 03 / Ground contact
