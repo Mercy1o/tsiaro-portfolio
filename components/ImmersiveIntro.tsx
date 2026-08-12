@@ -1,23 +1,15 @@
 "use client";
 
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
-import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import MathematicalWindField from "@/components/MathematicalWindField";
 import CelestialAtmosphere from "@/components/CelestialAtmosphere";
 
 export default function ImmersiveIntro() {
-  const pathname = usePathname();
   const reduceMotion = useReducedMotion();
-  const [visible, setVisible] = useState(pathname === "/");
+  const [visible, setVisible] = useState(true);
 
   useEffect(() => {
-    if (pathname !== "/") {
-      setVisible(false);
-      return;
-    }
-
-    setVisible(true);
     const root = document.documentElement;
     const previousOverflow = root.style.overflow;
     root.style.overflow = "hidden";
@@ -31,7 +23,7 @@ export default function ImmersiveIntro() {
       window.clearTimeout(timer);
       root.style.overflow = previousOverflow;
     };
-  }, [pathname, reduceMotion]);
+  }, [reduceMotion]);
 
   function closeIntro() {
     setVisible(false);
@@ -40,7 +32,7 @@ export default function ImmersiveIntro() {
 
   return (
     <AnimatePresence>
-      {visible && pathname === "/" ? (
+      {visible ? (
         <motion.div
           key="immersive-entry"
           className="fixed inset-0 z-[200] overflow-hidden bg-[#070706] text-[#d1ba94]"
