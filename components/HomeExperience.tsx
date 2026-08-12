@@ -10,7 +10,7 @@ import {
   useSpring,
   useTransform,
 } from "motion/react";
-import RealtimeWindThreads from "@/components/RealtimeWindThreads";
+import InteractiveFilamentField from "@/components/InteractiveFilamentField";
 import { profileFacts, siteConfig } from "@/data/site";
 
 type Stage = "hero" | "choice" | "profile" | "contact";
@@ -29,9 +29,6 @@ export default function HomeExperience() {
     restDelta: 0.5,
   });
 
-  // A separate, slower spring is used only by the narrative layers.
-  // The universe keeps its current scroll response while the typography glides
-  // in and out with more inertia and longer overlaps between scenes.
   const textY = useSpring(scrollY, {
     stiffness: 42,
     damping: 30,
@@ -55,14 +52,11 @@ export default function HomeExperience() {
     setActiveStage((current) => (current === nextStage ? current : nextStage));
   });
 
-  // One uninterrupted vertical artwork. It is translated rather than background-covered,
-  // so the browser actually travels from deep sky to the ground without restarting the image.
-  const sceneY = useTransform(y, [0, 5650], ["0%", "-66%"]);
-  const sceneScale = useTransform(y, [0, 5650], [1.01, reduceMotion ? 1.01 : 1.035]);
-  const windOpacity = useTransform(y, [0, 900, 2800, 5000, 6000], [0.12, 0.28, 0.38, 0.3, 0.2]);
-  const veilOpacity = useTransform(y, [0, 1000, 3200, 5600], [0.3, 0.16, 0.12, 0.22]);
+  const fieldOpacity = useTransform(y, [0, 900, 2700, 4700, 6200], [0.74, 0.98, 0.88, 1, 0.82]);
+  const veilOpacity = useTransform(y, [0, 1200, 3200, 5600], [0.36, 0.21, 0.14, 0.25]);
+  const warmthOpacity = useTransform(y, [0, 1800, 3900, 6200], [0.34, 0.18, 0.3, 0.2]);
 
-  // HERO — appears after the initial sky view, then exits gradually.
+  // HERO — appears after the initial field view, then exits gradually.
   const heroOpacity = useTransform(narrativeY, [0, 105, 260, 900, 1260], [0, 0, 1, 1, 0]);
   const heroY = useTransform(narrativeY, [105, 260, 900, 1260], [54, 0, 0, -64]);
   const heroScale = useTransform(narrativeY, [105, 260, 900, 1260], [0.99, 1, 1, 0.98]);
@@ -92,35 +86,33 @@ export default function HomeExperience() {
       className="relative h-[6200px] overflow-clip bg-[#080706] text-[#d5c5aa] md:h-[6500px]"
     >
       <div className="sticky top-0 h-[100svh] overflow-hidden bg-[#080706]">
+        <div
+          aria-hidden="true"
+          className="absolute inset-0 bg-[radial-gradient(circle_at_18%_24%,rgba(139,94,52,.18),transparent_27%),radial-gradient(circle_at_76%_67%,rgba(114,78,48,.12),transparent_31%),linear-gradient(145deg,#0b0907_0%,#080706_46%,#0d0a07_100%)]"
+        />
+
         <motion.div
           aria-hidden="true"
-          className="absolute left-1/2 top-0 w-[100vw] -translate-x-1/2 will-change-transform max-md:w-[145vw]"
-          style={{ y: sceneY, scale: sceneScale }}
+          className="absolute inset-0"
+          style={{ opacity: fieldOpacity }}
         >
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src="/images/site/universe-vertical.png"
-            alt=""
-            className="block h-auto w-full select-none"
-            draggable={false}
-          />
+          <InteractiveFilamentField />
         </motion.div>
 
         <motion.div
           aria-hidden="true"
-          className="absolute inset-0 mix-blend-screen"
-          style={{ opacity: windOpacity }}
-        >
-          <RealtimeWindThreads strength="normal" />
-        </motion.div>
+          className="absolute inset-0 bg-[radial-gradient(ellipse_at_48%_44%,rgba(166,112,62,.15),transparent_34%,transparent_62%)]"
+          style={{ opacity: warmthOpacity }}
+        />
 
         <motion.div
           aria-hidden="true"
-          className="absolute inset-0 bg-[radial-gradient(ellipse_at_50%_47%,transparent_0%,rgba(8,7,6,.02)_48%,rgba(8,7,6,.58)_100%)]"
+          className="absolute inset-0 bg-[radial-gradient(ellipse_at_50%_47%,transparent_0%,rgba(8,7,6,.03)_48%,rgba(8,7,6,.72)_100%)]"
           style={{ opacity: veilOpacity }}
         />
-        <div aria-hidden="true" className="absolute inset-x-0 top-0 h-48 bg-gradient-to-b from-[#070706]/76 via-[#070706]/26 to-transparent" />
-        <div aria-hidden="true" className="absolute inset-x-0 bottom-0 h-52 bg-gradient-to-t from-[#070706]/54 to-transparent" />
+
+        <div aria-hidden="true" className="absolute inset-x-0 top-0 h-48 bg-gradient-to-b from-[#070706]/68 via-[#070706]/20 to-transparent" />
+        <div aria-hidden="true" className="absolute inset-x-0 bottom-0 h-52 bg-gradient-to-t from-[#070706]/60 to-transparent" />
 
         <div className="absolute inset-0 z-10 px-5 pt-24 md:px-10 md:pt-28 lg:px-14">
           <div className="relative mx-auto h-full w-full max-w-[1600px]">
