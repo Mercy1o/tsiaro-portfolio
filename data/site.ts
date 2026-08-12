@@ -1,9 +1,10 @@
 export const siteConfig = {
+  brand: "trnskDesign",
   name: "Tsiaro Rakototiana",
   shortName: "TSIARO R.",
-  title: "Tsiaro Rakototiana — Architecture, Technology & Making",
+  title: "trnskDesign — Tsiaro Rakototiana",
   description:
-    "Portfolio of Tsiaro Rakototiana exploring architecture, technical precision, material, drawing and creative experimentation.",
+    "Portfolio of Tsiaro Rakototiana / trnskDesign exploring architecture, technical precision, material, drawing and creative experimentation.",
   descriptor: "Architecture · Technology · Making",
   location: "Toronto, Canada",
   email: "kototsiaro@gmail.com",
