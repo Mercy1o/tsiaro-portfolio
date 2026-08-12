@@ -22,20 +22,16 @@ type Center = {
   phase: number;
 };
 
+type DynamicCenter = Center & { cos: number; sin: number };
 type Vector = { x: number; y: number };
-
-type FieldSample = {
-  value: number;
-  gx: number;
-  gy: number;
-};
+type FieldSample = { value: number; gx: number; gy: number };
 
 const TAU = Math.PI * 2;
 
 const CENTERS: Center[] = [
   { x: 0.08, y: 0.18, sx: 0.28, sy: 0.085, angle: 0.35, strength: 1.05, phase: 0.2 },
   { x: 0.36, y: 0.12, sx: 0.2, sy: 0.1, angle: -0.55, strength: 1.12, phase: 1.1 },
-  { x: 0.73, y: 0.17, sx: 0.27, sy: 0.08, angle: 0.47, strength: 1.0, phase: 2.1 },
+  { x: 0.73, y: 0.17, sx: 0.27, sy: 0.08, angle: 0.47, strength: 1, phase: 2.1 },
   { x: 0.93, y: 0.38, sx: 0.2, sy: 0.12, angle: -0.68, strength: 0.94, phase: 2.9 },
   { x: 0.2, y: 0.55, sx: 0.25, sy: 0.11, angle: -0.2, strength: 1.16, phase: 3.8 },
   { x: 0.58, y: 0.5, sx: 0.22, sy: 0.1, angle: 0.7, strength: 1.14, phase: 4.7 },
@@ -44,9 +40,9 @@ const CENTERS: Center[] = [
 ];
 
 const POINTER_RADIUS = 0.24;
-const POINTER_VORTEX = 0.8;
-const POINTER_REPEL = 0.2;
-const WIND_STRENGTH = 0.17;
+const POINTER_VORTEX = 0.72;
+const POINTER_REPEL = 0.14;
+const WIND_STRENGTH = 0.16;
 
 function normalize(x: number, y: number): Vector {
   const length = Math.hypot(x, y) || 1;
@@ -57,13 +53,19 @@ function fract(value: number) {
   return value - Math.floor(value);
 }
 
-function dynamicCenters(time: number, scroll: number) {
+function buildCenters(time: number, scroll: number): DynamicCenter[] {
   return CENTERS.map((center, index) => {
     const angle = center.angle + Math.sin(time * 0.02 + scroll * 1.35 + index * 0.71) * 0.07;
     return {
       ...center,
-      x: center.x + Math.sin(time * 0.03 + center.phase + scroll * 2.0) * 0.018 + Math.sin(scroll * Math.PI + center.phase) * 0.03,
-      y: center.y + Math.cos(time * 0.026 + center.phase + scroll * 1.55) * 0.016 + Math.cos(scroll * Math.PI * 0.8 + center.phase) * 0.025,
+      x:
+        center.x +
+        Math.sin(time * 0.03 + center.phase + scroll * 2) * 0.018 +
+        Math.sin(scroll * Math.PI + center.phase) * 0.03,
+      y:
+        center.y +
+        Math.cos(time * 0.026 + center.phase + scroll * 1.55) * 0.016 +
+        Math.cos(scroll * Math.PI * 0.8 + center.phase) * 0.025,
       angle,
       cos: Math.cos(angle),
       sin: Math.sin(angle),
@@ -76,7 +78,7 @@ function sampleField(
   y: number,
   time: number,
   scroll: number,
-  centers: ReturnType<typeof dynamicCenters>,
+  centers: DynamicCenter[],
 ): FieldSample {
   let value = 0;
   let gx = 0;
@@ -100,7 +102,7 @@ function sampleField(
 
   const p1 = TAU * (x * 0.82 + y * 0.44) + time * 0.018 + scroll * 1.3;
   const p2 = TAU * (-x * 0.36 + y * 1.08) - time * 0.014 + scroll * 0.8;
-  const p3 = TAU * (x * 1.28 + y * 0.28) + time * 0.01 - scroll * 1.0;
+  const p3 = TAU * (x * 1.28 + y * 0.28) + time * 0.01 - scroll;
 
   value += Math.sin(p1) * 0.075 + Math.sin(p2) * 0.05 + Math.cos(p3) * 0.035;
   gx += Math.cos(p1) * TAU * 0.82 * 0.075;
@@ -118,15 +120,15 @@ function flowVector(
   y: number,
   time: number,
   scroll: number,
-  centers: ReturnType<typeof dynamicCenters>,
+  centers: DynamicCenter[],
   pointer: PointerState,
 ): Vector {
   const field = sampleField(x, y, time, scroll, centers);
-  let vector = normalize(-field.gy, field.gx);
-
+  const tangent = normalize(-field.gy, field.gx);
   const windAngle = -0.1 + scroll * 0.4 + Math.sin(time * 0.04) * 0.04;
-  let vx = vector.x + Math.cos(windAngle) * WIND_STRENGTH;
-  let vy = vector.y + Math.sin(windAngle) * WIND_STRENGTH * 0.55;
+
+  let vx = tangent.x + Math.cos(windAngle) * WIND_STRENGTH;
+  let vy = tangent.y + Math.sin(windAngle) * WIND_STRENGTH * 0.55;
 
   const dx = x - pointer.x;
   const dy = y - pointer.y;
@@ -134,14 +136,13 @@ function flowVector(
   const influence = Math.exp(-distance2 / (POINTER_RADIUS * POINTER_RADIUS)) * pointer.active;
 
   if (influence > 0.001) {
-    const tangent = normalize(-dy, dx);
+    const orbit = normalize(-dy, dx);
     const radial = normalize(dx, dy);
-    vx += tangent.x * POINTER_VORTEX * influence + radial.x * POINTER_REPEL * influence;
-    vy += tangent.y * POINTER_VORTEX * influence + radial.y * POINTER_REPEL * influence;
+    vx += orbit.x * POINTER_VORTEX * influence + radial.x * POINTER_REPEL * influence;
+    vy += orbit.y * POINTER_VORTEX * influence + radial.y * POINTER_REPEL * influence;
   }
 
-  vector = normalize(vx, vy);
-  return vector;
+  return normalize(vx, vy);
 }
 
 export default function InteractiveFilamentField() {
@@ -198,7 +199,7 @@ export default function InteractiveFilamentField() {
       stepSize: number,
       time: number,
       scroll: number,
-      centers: ReturnType<typeof dynamicCenters>,
+      centers: DynamicCenter[],
     ) {
       let x = seedX;
       let y = seedY;
@@ -218,7 +219,16 @@ export default function InteractiveFilamentField() {
       }
     }
 
-    function drawContours(time: number, scroll: number, centers: ReturnType<typeof dynamicCenters>) {
+    function drawBackdrop() {
+      const gradient = ctx.createLinearGradient(0, 0, width, height);
+      gradient.addColorStop(0, "#1b1510");
+      gradient.addColorStop(0.48, "#14100d");
+      gradient.addColorStop(1, "#20170f");
+      ctx.fillStyle = gradient;
+      ctx.fillRect(0, 0, width, height);
+    }
+
+    function drawContours(time: number, scroll: number, centers: DynamicCenter[]) {
       const mobile = width < 720;
 
       ctx.save();
@@ -254,11 +264,9 @@ export default function InteractiveFilamentField() {
 
           const major = ring === 0 || ring === rings - 2;
           ctx.strokeStyle = major
-            ? "rgba(223,198,160,0.42)"
-            : `rgba(232,220,199,${0.16 + ring * 0.025})`;
-          ctx.lineWidth = major
-            ? (mobile ? 7 : 10)
-            : (mobile ? 3.2 : 4.8);
+            ? "rgba(225,200,164,0.34)"
+            : `rgba(232,220,201,${0.12 + ring * 0.018})`;
+          ctx.lineWidth = major ? (mobile ? 1.8 : 2.5) : (mobile ? 0.85 : 1.2);
           ctx.stroke();
         }
       }
@@ -266,11 +274,11 @@ export default function InteractiveFilamentField() {
       ctx.restore();
     }
 
-    function drawFineFibers(time: number, scroll: number, centers: ReturnType<typeof dynamicCenters>) {
+    function drawFineFibers(time: number, scroll: number, centers: DynamicCenter[]) {
       const mobile = width < 720;
       const tablet = width < 1100;
-      const count = mobile ? 54 : tablet ? 78 : 104;
-      const steps = mobile ? 46 : 62;
+      const count = mobile ? 72 : tablet ? 112 : 148;
+      const steps = mobile ? 46 : 64;
       const stepSize = mobile ? 0.011 : 0.0082;
 
       ctx.save();
@@ -286,20 +294,20 @@ export default function InteractiveFilamentField() {
 
         ctx.beginPath();
         traceFiber(seedX, seedY, index % 2 === 0 ? 1 : -1, steps, stepSize, time, scroll, centers);
-        ctx.strokeStyle = index % 8 === 0
-          ? `rgba(203,164,113,${0.28 + density * 0.16})`
-          : `rgba(239,229,211,${0.22 + density * 0.16})`;
-        ctx.lineWidth = mobile ? 2.4 : 3.4;
+        ctx.strokeStyle = index % 9 === 0
+          ? `rgba(205,164,112,${0.18 + density * 0.11})`
+          : `rgba(240,230,212,${0.14 + density * 0.1})`;
+        ctx.lineWidth = mobile ? 0.78 : 1.05;
         ctx.stroke();
       }
 
       ctx.restore();
     }
 
-    function drawBundles(time: number, scroll: number, centers: ReturnType<typeof dynamicCenters>) {
+    function drawBundles(time: number, scroll: number, centers: DynamicCenter[]) {
       const mobile = width < 720;
       const bundleCount = mobile ? 3 : 5;
-      const linesPerBundle = mobile ? 10 : 18;
+      const linesPerBundle = mobile ? 8 : 14;
       const steps = mobile ? 54 : 72;
       const stepSize = mobile ? 0.009 : 0.0068;
 
@@ -318,15 +326,15 @@ export default function InteractiveFilamentField() {
 
         for (let line = 0; line < linesPerBundle; line += 1) {
           const centered = line - (linesPerBundle - 1) * 0.5;
-          const spacing = mobile ? 0.004 : 0.003;
+          const spacing = mobile ? 0.0046 : 0.0035;
           const seedX = baseX + normal.x * centered * spacing;
           const seedY = baseY + normal.y * centered * spacing;
           const edgeFade = 1 - Math.abs(centered) / Math.max(linesPerBundle * 0.5, 1);
 
           ctx.beginPath();
           traceFiber(seedX, seedY, bundle % 2 === 0 ? 1 : -1, steps, stepSize, time, scroll, centers);
-          ctx.strokeStyle = `rgba(225,203,171,${0.3 + edgeFade * 0.24})`;
-          ctx.lineWidth = mobile ? 8 : 12;
+          ctx.strokeStyle = `rgba(226,204,173,${0.2 + edgeFade * 0.16})`;
+          ctx.lineWidth = mobile ? 2.2 : 3.2;
           ctx.stroke();
         }
       }
@@ -350,9 +358,10 @@ export default function InteractiveFilamentField() {
 
       const time = timestamp * 0.001;
       const scroll = scrollProgress();
-      const centers = dynamicCenters(time, scroll);
+      const centers = buildCenters(time, scroll);
 
       ctx.clearRect(0, 0, width, height);
+      drawBackdrop();
       drawContours(time, scroll, centers);
       drawFineFibers(time, scroll, centers);
       drawBundles(time, scroll, centers);
@@ -407,7 +416,7 @@ export default function InteractiveFilamentField() {
     <canvas
       ref={canvasRef}
       aria-hidden="true"
-      className="pointer-events-none absolute inset-0 h-full w-full"
+      className="pointer-events-none absolute inset-0 h-full w-full bg-[#17120e]"
     />
   );
 }
