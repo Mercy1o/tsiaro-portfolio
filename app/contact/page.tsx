@@ -23,7 +23,7 @@ export default function ContactPage() {
           </div>
           <div className="md:col-span-3">
             <p className="text-2xl font-light leading-[1] tracking-[-.035em] text-[#b39d7b] md:text-3xl">Open channel for ideas, work and collaboration.</p>
-            <p className="mt-6 max-w-md text-[15px] leading-7 text-[#978872]/68 md:text-base">For opportunities, collaborations, project conversations or portfolio enquiries.</p>
+            <p className="mt-6 max-w-md text-[15px] leading-7 text-[#978872]/68 md:text-base">Send your message directly from the portfolio. No external email application is required.</p>
           </div>
         </header>
 
@@ -31,7 +31,7 @@ export default function ContactPage() {
           <div className="md:col-span-7">
             <div className="mb-10 flex justify-between border-b border-[#a98758]/14 pb-4 font-mono text-[10px] uppercase tracking-[.17em] text-[#8e7657]/58">
               <span>Message interface / 01</span>
-              <span>Local mail client</span>
+              <span>Direct server delivery</span>
             </div>
             <ContactForm />
           </div>
@@ -54,7 +54,7 @@ export default function ContactPage() {
 
             <div className="border-t border-[#a98758]/14 pt-5 font-mono text-[10px] uppercase leading-6 tracking-[.16em] text-[#8a7458]/54">
               <p>System status / available</p>
-              <p>Response channel / email</p>
+              <p>Response channel / direct email delivery</p>
             </div>
           </aside>
         </div>
