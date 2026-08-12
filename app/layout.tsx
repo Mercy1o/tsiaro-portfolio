@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Cormorant_Garamond, Geist_Mono, Inter } from "next/font/google";
+import { Geist_Mono, Inter } from "next/font/google";
 import "./globals.css";
 import MotionProvider from "@/components/MotionProvider";
 import Navbar from "@/components/Navbar";
@@ -9,14 +9,6 @@ import { siteConfig } from "@/data/site";
 const displaySans = Inter({
   variable: "--font-display-sans",
   subsets: ["latin"],
-  display: "swap",
-});
-
-const editorialSerif = Cormorant_Garamond({
-  variable: "--font-editorial-serif",
-  subsets: ["latin"],
-  weight: ["400", "500", "600"],
-  style: ["normal", "italic"],
   display: "swap",
 });
 
@@ -51,7 +43,7 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="en">
-      <body className={`${displaySans.variable} ${editorialSerif.variable} ${mono.variable}`}>
+      <body className={`${displaySans.variable} ${mono.variable}`}>
         <a href="#main-content" className="skip-link">Skip to content</a>
         <MotionProvider>
           <Navbar />
