@@ -3,16 +3,25 @@ type TopographicFieldProps = {
   warm?: boolean;
 };
 
-const rings = Array.from({ length: 18 }, (_, index) => ({
-  rx: 160 + index * 23,
-  ry: 52 + index * 11,
-  opacity: Math.max(0.06, 0.28 - index * 0.011),
+const rings = Array.from({ length: 24 }, (_, index) => ({
+  rx: 130 + index * 22,
+  ry: 48 + index * 10.8,
+  opacity: Math.max(0.055, 0.32 - index * 0.0105),
+}));
+
+const secondary = Array.from({ length: 10 }, (_, index) => ({
+  rx: 60 + index * 18,
+  ry: 30 + index * 10,
+  opacity: Math.max(0.05, 0.25 - index * 0.019),
 }));
 
 export default function TopographicField({
   className = "",
   warm = true,
 }: TopographicFieldProps) {
+  const primary = warm ? "rgba(218,190,147,.62)" : "rgba(238,232,218,.42)";
+  const secondaryLine = warm ? "rgba(178,139,88,.32)" : "rgba(238,232,218,.20)";
+
   return (
     <div className={`pointer-events-none absolute inset-0 overflow-hidden ${className}`} aria-hidden="true">
       <svg
@@ -22,25 +31,25 @@ export default function TopographicField({
         role="presentation"
       >
         <defs>
-          <filter id="topo-warp" x="-30%" y="-30%" width="160%" height="160%">
+          <filter id="topo-warp" x="-35%" y="-35%" width="170%" height="170%">
             <feTurbulence
               type="fractalNoise"
-              baseFrequency="0.006 0.012"
-              numOctaves="3"
+              baseFrequency="0.0045 0.009"
+              numOctaves="4"
               seed="17"
               result="noise"
             />
             <feDisplacementMap
               in="SourceGraphic"
               in2="noise"
-              scale="42"
+              scale="58"
               xChannelSelector="R"
               yChannelSelector="G"
             />
           </filter>
-          <radialGradient id="topo-fade" cx="50%" cy="52%" r="57%">
+          <radialGradient id="topo-fade" cx="50%" cy="52%" r="63%">
             <stop offset="0%" stopColor="white" stopOpacity="1" />
-            <stop offset="68%" stopColor="white" stopOpacity="0.72" />
+            <stop offset="66%" stopColor="white" stopOpacity="0.76" />
             <stop offset="100%" stopColor="white" stopOpacity="0" />
           </radialGradient>
           <mask id="topo-mask">
@@ -52,26 +61,54 @@ export default function TopographicField({
           filter="url(#topo-warp)"
           mask="url(#topo-mask)"
           fill="none"
-          stroke={warm ? "rgba(211,174,122,.72)" : "rgba(235,231,219,.45)"}
-          strokeWidth="1"
+          stroke={primary}
+          strokeWidth="0.78"
+          vectorEffect="non-scaling-stroke"
         >
           {rings.map((ring, index) => (
             <ellipse
               key={index}
-              cx={650 + Math.sin(index * 0.72) * 34}
-              cy={390 + Math.cos(index * 0.55) * 24}
+              cx={635 + Math.sin(index * 0.68) * 45}
+              cy={388 + Math.cos(index * 0.49) * 31}
               rx={ring.rx}
               ry={ring.ry}
               opacity={ring.opacity}
-              transform={`rotate(${-9 + index * 0.42} 650 390)`}
+              transform={`rotate(${-13 + index * 0.48} 635 388)`}
             />
           ))}
         </g>
 
-        <g fill="none" stroke={warm ? "rgba(211,174,122,.32)" : "rgba(235,231,219,.22)"} strokeWidth="0.7">
-          <path d="M90 568 C260 494 365 532 510 468 S820 372 1110 428" />
-          <path d="M120 603 C278 548 391 582 542 520 S846 422 1090 456" />
-          <path d="M150 637 C296 592 412 620 568 566 S856 482 1060 492" />
+        <g
+          filter="url(#topo-warp)"
+          fill="none"
+          stroke={secondaryLine}
+          strokeWidth="0.7"
+          vectorEffect="non-scaling-stroke"
+        >
+          {secondary.map((ring, index) => (
+            <ellipse
+              key={`secondary-${index}`}
+              cx={935 + Math.sin(index * 0.8) * 20}
+              cy={255 + Math.cos(index * 0.62) * 15}
+              rx={ring.rx}
+              ry={ring.ry}
+              opacity={ring.opacity}
+              transform={`rotate(${22 - index * 0.65} 935 255)`}
+            />
+          ))}
+        </g>
+
+        <g fill="none" stroke={secondaryLine} strokeWidth="0.7" vectorEffect="non-scaling-stroke">
+          <path d="M-30 563 C142 487 254 527 392 484 S676 382 830 434 S1012 528 1248 455" />
+          <path d="M-10 592 C158 526 280 565 420 520 S696 430 856 476 S1030 558 1230 500" />
+          <path d="M18 620 C180 562 310 598 451 555 S721 477 882 520 S1042 594 1215 544" />
+          <path d="M65 651 C220 602 338 632 480 596 S748 528 914 565 S1060 626 1190 585" />
+        </g>
+
+        <g opacity="0.5">
+          <circle cx="656" cy="396" r="145" fill="none" stroke={secondaryLine} strokeWidth="0.65" />
+          <path d="M656 232 V560 M492 396 H820" stroke={secondaryLine} strokeWidth="0.55" strokeDasharray="2 12" />
+          <circle cx="656" cy="396" r="3" fill={warm ? "rgba(218,190,147,.9)" : "rgba(238,232,218,.75)"} />
         </g>
       </svg>
 
