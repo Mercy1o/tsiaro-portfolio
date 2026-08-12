@@ -52,8 +52,18 @@ export default function HomeExperience() {
     setActiveStage((current) => (current === nextStage ? current : nextStage));
   });
 
-  const fieldOpacity = useTransform(y, [0, 900, 2700, 4700, 6200], [0.74, 0.98, 0.88, 1, 0.82]);
-  const veilOpacity = useTransform(y, [0, 1200, 3200, 5600], [0.36, 0.21, 0.14, 0.25]);
+  // The field is the main visual at the opening. As the hero text enters
+  // (roughly 105–260px), it recedes smoothly into the background.
+  const fieldOpacity = useTransform(
+    y,
+    [0, 90, 300, 900, 2700, 4700, 6200],
+    [1, 1, 0.62, 0.7, 0.68, 0.74, 0.64],
+  );
+  const veilOpacity = useTransform(
+    y,
+    [0, 90, 300, 1200, 3200, 5600],
+    [0.12, 0.12, 0.25, 0.21, 0.14, 0.25],
+  );
   const warmthOpacity = useTransform(y, [0, 1800, 3900, 6200], [0.34, 0.18, 0.3, 0.2]);
 
   // HERO — appears after the initial field view, then exits gradually.
