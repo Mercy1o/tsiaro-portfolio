@@ -1,0 +1,12 @@
+{
+  "name": "Tsiaro Portfolio",
+  "image": "mcr.microsoft.com/devcontainers/javascript-node:1-22-bookworm",
+  "forwardPorts": [3000],
+  "portsAttributes": {
+    "3000": {
+      "label": "Tsiaro Portfolio",
+      "onAutoForward": "openBrowser"
+    }
+  },
+  "postCreateCommand": "npm ci"
+}
