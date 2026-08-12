@@ -29,6 +29,9 @@ export default function RealtimeWindThreads({
     const context = canvas.getContext("2d", { alpha: true });
     if (!context) return;
 
+    const drawingCanvas: HTMLCanvasElement = canvas;
+    const ctx: CanvasRenderingContext2D = context;
+
     let frame = 0;
     let width = 0;
     let height = 0;
@@ -45,13 +48,13 @@ export default function RealtimeWindThreads({
     const strengthMultiplier = strength === "strong" ? 1.35 : strength === "subtle" ? 0.58 : 1;
 
     function resize() {
-      const rect = canvas.getBoundingClientRect();
+      const rect = drawingCanvas.getBoundingClientRect();
       width = Math.max(1, rect.width);
       height = Math.max(1, rect.height);
       dpr = Math.min(window.devicePixelRatio || 1, 1.65);
-      canvas.width = Math.round(width * dpr);
-      canvas.height = Math.round(height * dpr);
-      context.setTransform(dpr, 0, 0, dpr, 0, 0);
+      drawingCanvas.width = Math.round(width * dpr);
+      drawingCanvas.height = Math.round(height * dpr);
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     }
 
     function handlePointerMove(event: PointerEvent) {
@@ -70,10 +73,10 @@ export default function RealtimeWindThreads({
       pointer.x += (pointer.targetX - pointer.x) * 0.035;
       pointer.y += (pointer.targetY - pointer.y) * 0.035;
 
-      context.clearRect(0, 0, width, height);
-      context.globalCompositeOperation = "screen";
-      context.lineCap = "round";
-      context.lineJoin = "round";
+      ctx.clearRect(0, 0, width, height);
+      ctx.globalCompositeOperation = "screen";
+      ctx.lineCap = "round";
+      ctx.lineJoin = "round";
 
       const t = timestamp * 0.001;
       const mobile = width < 720;
@@ -91,7 +94,7 @@ export default function RealtimeWindThreads({
         const drift = ((t * (38 + (index % 5) * 4) * gust * strengthMultiplier) % (width + 320)) - 160;
         const verticalBias = Math.sin(t * 0.31 + phase) * 8 + pointerBend * (0.16 + ratio * 0.18);
 
-        context.beginPath();
+        ctx.beginPath();
 
         let first = true;
         for (let x = -180; x <= width + 220; x += step) {
@@ -102,10 +105,10 @@ export default function RealtimeWindThreads({
           const y = lane + waveA + waveB + gustLift + verticalBias;
 
           if (first) {
-            context.moveTo(worldX, y);
+            ctx.moveTo(worldX, y);
             first = false;
           } else {
-            context.lineTo(worldX, y);
+            ctx.lineTo(worldX, y);
           }
         }
 
@@ -113,14 +116,14 @@ export default function RealtimeWindThreads({
         const pulse = 0.78 + Math.sin(t * 0.9 + phase) * 0.22;
         const alpha = Math.min(0.22, alphaBase * pulse * strengthMultiplier);
         const warmMix = index % 4 === 0;
-        context.strokeStyle = warmMix
+        ctx.strokeStyle = warmMix
           ? `rgba(222, 205, 174, ${alpha})`
           : `rgba(244, 240, 230, ${alpha})`;
-        context.lineWidth = mobile ? 0.55 : 0.68;
-        context.stroke();
+        ctx.lineWidth = mobile ? 0.55 : 0.68;
+        ctx.stroke();
       }
 
-      context.globalCompositeOperation = "source-over";
+      ctx.globalCompositeOperation = "source-over";
       frame = window.requestAnimationFrame(draw);
     }
 
