@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import PortfolioSelector from "@/components/PortfolioSelector";
+import PortfolioSelector, { type PortfolioMode } from "@/components/PortfolioSelector";
 
 export const metadata: Metadata = {
   title: "Work",
@@ -7,7 +7,15 @@ export const metadata: Metadata = {
     "Explore Tsiaro Rakototiana's architectural portfolio and creative art portfolio as two distinct bodies of work.",
 };
 
-export default function WorkPage() {
+export default async function WorkPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ portfolio?: string }>;
+}) {
+  const { portfolio } = await searchParams;
+  const initialMode: PortfolioMode | null =
+    portfolio === "architecture" || portfolio === "creative" ? portfolio : null;
+
   return (
     <main className="paper-noise min-h-screen px-5 pb-28 pt-36 text-space md:px-10 md:pt-44 lg:px-14">
       <div className="mx-auto max-w-[1600px]">
@@ -22,14 +30,13 @@ export default function WorkPage() {
             <h1 className="max-w-5xl text-5xl font-medium tracking-[-.055em] md:text-7xl lg:text-8xl">
               Two practices. One evolving way of seeing.
             </h1>
-
             <p className="mt-8 max-w-2xl text-base leading-7 text-black/50 md:text-lg md:leading-8">
               Enter the architectural portfolio for spatial, technical and professional work, or enter the creative portfolio for drawing, painting, ceramics, collage and making.
             </p>
           </div>
         </div>
 
-        <PortfolioSelector />
+        <PortfolioSelector initialMode={initialMode} />
       </div>
     </main>
   );
