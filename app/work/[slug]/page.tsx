@@ -22,15 +22,20 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
   if (!project) notFound();
 
   const media = getProjectMedia(project.slug);
-  const currentIndex = projects.findIndex((item) => item.slug === project.slug);
-  const nextProject = projects[(currentIndex + 1) % projects.length];
+  const portfolioProjects = projects.filter((item) => item.portfolio === project.portfolio);
+  const currentIndex = portfolioProjects.findIndex((item) => item.slug === project.slug);
+  const nextProject = portfolioProjects[(currentIndex + 1) % portfolioProjects.length];
+  const portfolioQuery = project.portfolio === "Architectural Portfolio" ? "architecture" : "creative";
 
   return (
     <main className="bg-space text-bone">
       <section className="space-field cinematic-grid min-h-[82svh] px-5 pb-12 pt-36 md:px-10 md:pt-44 lg:px-14">
         <div className="mx-auto flex min-h-[64svh] max-w-[1600px] flex-col justify-between">
-          <div className="flex justify-between gap-6 font-mono text-[10px] uppercase tracking-[.18em] text-bone/40">
+          <div className="flex flex-wrap items-center justify-between gap-6 font-mono text-[10px] uppercase tracking-[.18em] text-bone/40">
             <span>{project.number} / {project.category}</span>
+            <Link href={`/work?portfolio=${portfolioQuery}`} className="transition-colors hover:text-bone">
+              ← Back to {portfolioQuery}
+            </Link>
             <span>{project.year}</span>
           </div>
 
@@ -41,7 +46,9 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
 
           <div className="grid gap-8 border-t border-white/10 pt-7 md:grid-cols-12">
             <p className="max-w-2xl text-base leading-7 text-bone/55 md:col-span-6">{project.description}</p>
-            <div className="md:col-span-3 md:col-start-10"><p className="font-mono text-[9px] uppercase tracking-[.18em] text-bone/30">Case study / scroll ↓</p></div>
+            <div className="md:col-span-3 md:col-start-10">
+              <p className="font-mono text-[9px] uppercase tracking-[.18em] text-bone/30">Case study / scroll ↓</p>
+            </div>
           </div>
         </div>
       </section>
@@ -84,10 +91,7 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
 
           <div className="grid gap-4 md:grid-cols-2">
             {media.gallery.map((src, index) => (
-              <figure
-                key={src}
-                className={`${index % 5 === 0 ? "md:col-span-2" : ""}`}
-              >
+              <figure key={src} className={index % 5 === 0 ? "md:col-span-2" : ""}>
                 <div className={`relative overflow-hidden bg-graphite ${index % 5 === 0 ? "aspect-[16/9]" : "aspect-[4/3]"}`}>
                   <Image
                     src={src}
@@ -108,7 +112,9 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
 
       <section className="paper-noise px-5 py-24 text-space md:px-10 md:py-32 lg:px-14">
         <Link href={`/work/${nextProject.slug}`} className="group mx-auto block max-w-[1600px]">
-          <p className="font-mono text-[10px] uppercase tracking-[.18em] text-black/40">NEXT PROJECT / {nextProject.number}</p>
+          <p className="font-mono text-[10px] uppercase tracking-[.18em] text-black/40">
+            NEXT {project.portfolio.toUpperCase()} PROJECT / {nextProject.number}
+          </p>
           <div className="mt-8 flex items-end justify-between gap-8 border-t border-black/15 pt-8">
             <h2 className="text-5xl font-medium tracking-[-.05em] md:text-7xl lg:text-8xl">{nextProject.title}</h2>
             <span className="text-3xl transition-transform duration-300 group-hover:translate-x-2" aria-hidden="true">→</span>
