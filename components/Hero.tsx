@@ -3,72 +3,80 @@
 import Link from "next/link";
 import { motion, useReducedMotion, useScroll, useTransform } from "motion/react";
 import { siteConfig } from "@/data/site";
+import TopographicField from "@/components/TopographicField";
 
 export default function Hero() {
   const reduceMotion = useReducedMotion();
   const { scrollY } = useScroll();
-  const contentY = useTransform(scrollY, [0, 850], [0, reduceMotion ? 0 : 90]);
-  const orbitY = useTransform(scrollY, [0, 900], [0, reduceMotion ? 0 : -70]);
+  const titleY = useTransform(scrollY, [0, 900], [0, reduceMotion ? 0 : 92]);
+  const topoY = useTransform(scrollY, [0, 900], [0, reduceMotion ? 0 : -62]);
 
   return (
-    <section className="space-field cinematic-grid relative min-h-[100svh] overflow-hidden">
-      <motion.div style={{ y: orbitY }} className="pointer-events-none absolute inset-0" aria-hidden="true">
-        <div className="absolute left-1/2 top-[47%] h-[58vw] min-h-[430px] w-[108vw] -translate-x-1/2 -translate-y-1/2">
-          <motion.div
-            className="orbit h-full w-full"
-            animate={reduceMotion ? undefined : { rotate: 360 }}
-            transition={{ duration: 110, repeat: Infinity, ease: "linear" }}
-          />
-        </div>
-        <div className="orbit absolute left-1/2 top-[47%] h-[34vw] min-h-[280px] w-[79vw] -translate-x-1/2 -translate-y-1/2 -rotate-12" />
-        <div className="absolute right-[12%] top-[28%] h-1.5 w-1.5 rounded-full bg-bone shadow-[0_0_30px_rgba(240,238,232,.75)]" />
-        <div className="absolute bottom-[21%] left-[16%] h-1 w-1 rounded-full bg-sand" />
+    <section className="chroma-field relative min-h-[100svh] overflow-hidden text-white">
+      <motion.div style={{ y: topoY }} className="absolute inset-0 opacity-35">
+        <TopographicField warm={false} />
       </motion.div>
 
-      <motion.div style={{ y: contentY }} className="relative z-10 mx-auto flex min-h-[100svh] max-w-[1600px] flex-col justify-between px-5 pb-8 pt-32 md:px-10 md:pb-10 md:pt-36 lg:px-14">
-        <div className="flex items-center justify-between">
-          <p className="font-mono text-[10px] uppercase tracking-[.22em] text-bone/45">{siteConfig.hero.eyebrow}</p>
-          <p className="hidden font-mono text-[10px] uppercase tracking-[.22em] text-bone/35 sm:block">{siteConfig.location}</p>
+      <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,rgba(5,5,8,.06),rgba(5,5,8,.18)_48%,rgba(5,5,8,.5))]" />
+
+      <motion.div
+        style={{ y: titleY }}
+        className="relative z-10 mx-auto flex min-h-[100svh] max-w-[1600px] flex-col justify-between px-5 pb-8 pt-28 md:px-10 md:pb-10 md:pt-32 lg:px-14"
+      >
+        <div className="flex items-center justify-between border-b border-white/20 pb-4 font-mono text-[9px] uppercase tracking-[.22em] text-white/65">
+          <span>{siteConfig.hero.eyebrow}</span>
+          <span className="hidden sm:block">{siteConfig.location}</span>
         </div>
 
-        <div className="my-auto py-20">
+        <div className="my-auto py-16 md:py-24">
           <motion.p
-            initial={reduceMotion ? false : { opacity: 0, y: 20 }}
+            initial={reduceMotion ? false : { opacity: 0, y: 18 }}
             animate={{ opacity: 1, y: 0 }}
-            className="mb-5 font-mono text-[10px] uppercase tracking-[.24em] text-sand"
+            transition={{ duration: .7 }}
+            className="mb-5 font-mono text-[9px] uppercase tracking-[.28em] text-white/70"
           >
             {siteConfig.descriptor}
           </motion.p>
+
           <motion.h1
-            initial={reduceMotion ? false : { opacity: 0, y: 36 }}
+            initial={reduceMotion ? false : { opacity: 0, y: 34 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: .12 }}
-            className="display-title max-w-[1450px] font-medium text-bone"
+            transition={{ delay: .08, duration: .9, ease: [0.22, 1, 0.36, 1] }}
+            className="resonance-title max-w-[1500px] text-white"
           >
             Tsiaro<br />Rakototiana
           </motion.h1>
 
-          <div className="mt-10 grid gap-8 md:mt-14 md:grid-cols-12">
-            <motion.h2
+          <div className="mt-10 grid gap-10 md:mt-14 md:grid-cols-12 md:items-end">
+            <motion.div
               initial={reduceMotion ? false : { opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: .24 }}
-              className="max-w-xl text-xl leading-snug text-bone md:col-span-5 md:text-2xl lg:text-3xl"
+              transition={{ delay: .18, duration: .8 }}
+              className="md:col-span-6"
             >
-              {siteConfig.hero.title}
-            </motion.h2>
-            <div className="md:col-span-4 md:col-start-8">
-              <p className="max-w-md text-sm leading-6 text-bone/55 md:text-base md:leading-7">{siteConfig.hero.description}</p>
-              <Link href="/work" className="mt-7 inline-flex items-center gap-4 text-xs uppercase tracking-[.16em] text-bone transition-opacity hover:opacity-55">
-                Explore work <span aria-hidden="true">↘</span>
+              <p className="font-editorial max-w-3xl text-[clamp(2.1rem,4vw,4.6rem)] leading-[.94] tracking-[-.035em] text-cream">
+                Designing between matter, memory and the unknown.
+              </p>
+            </motion.div>
+
+            <div className="md:col-span-4 md:col-start-9">
+              <p className="max-w-md text-sm leading-6 text-white/72 md:text-base md:leading-7">
+                {siteConfig.hero.description}
+              </p>
+              <Link
+                href="/work"
+                className="mt-7 inline-flex items-center gap-5 border-b border-white/30 pb-2 font-mono text-[10px] uppercase tracking-[.18em] text-white transition-colors hover:border-white"
+              >
+                Enter the archive <span aria-hidden="true">↘</span>
               </Link>
             </div>
           </div>
         </div>
 
-        <div className="flex items-end justify-between border-t border-white/10 pt-5 font-mono text-[9px] uppercase tracking-[.2em] text-bone/30">
-          <span>Selected work / 2019—2026</span>
-          <span>Scroll / ↓</span>
+        <div className="grid gap-3 border-t border-white/20 pt-4 font-mono text-[8px] uppercase tracking-[.22em] text-white/55 sm:grid-cols-3">
+          <span>01 / Architecture</span>
+          <span className="sm:text-center">02 / Art & making</span>
+          <span className="sm:text-right">Scroll to explore ↓</span>
         </div>
       </motion.div>
     </section>
