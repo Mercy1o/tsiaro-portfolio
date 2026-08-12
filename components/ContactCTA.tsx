@@ -1,24 +1,39 @@
+import Link from "next/link";
 import { siteConfig } from "@/data/site";
 
 export default function ContactCTA() {
   return (
-    <section className="relative overflow-hidden bg-deep px-5 pb-8 pt-28 text-bone md:px-10 md:pt-40 lg:px-14">
-      <div className="pointer-events-none absolute -right-[10%] top-0 h-[520px] w-[520px] rounded-full border border-white/[.06]" />
-      <div className="mx-auto max-w-[1600px]">
-        <p className="font-mono text-[10px] uppercase tracking-[.2em] text-sand">CONTACT / TRANSMISSION</p>
-        <div className="mt-12 border-b border-white/10 pb-24">
-          <h2 className="max-w-6xl text-[clamp(3.5rem,9vw,9rem)] font-medium uppercase leading-[.82] tracking-[-.065em]">
+    <section className="chroma-field relative px-5 py-24 text-white md:px-10 md:py-36 lg:px-14">
+      <div className="relative z-10 mx-auto max-w-[1600px]">
+        <div className="flex items-center justify-between border-b border-white/20 pb-4 font-mono text-[8px] uppercase tracking-[.22em] text-white/55">
+          <span>CONTACT / OPEN CHANNEL</span>
+          <span>TRGT / 43.6532° N</span>
+        </div>
+
+        <div className="py-20 md:py-28">
+          <p className="mb-6 font-editorial text-3xl italic tracking-[-.02em] text-cream/88 md:text-5xl">The next signal starts with a conversation.</p>
+          <h2 className="resonance-title max-w-[1450px] text-white">
             Let&apos;s create<br />what comes next.
           </h2>
-          <div className="mt-14 flex flex-col gap-4 sm:flex-row sm:items-center sm:gap-10">
-            <a href={`mailto:${siteConfig.email}`} className="text-sm underline decoration-white/25 underline-offset-8 transition-opacity hover:opacity-55">{siteConfig.email}</a>
-            <a href={siteConfig.social.linkedin} target="_blank" rel="noreferrer" className="text-sm text-bone/50 transition-colors hover:text-bone">LinkedIn ↗</a>
-            <a href={siteConfig.social.instagram} target="_blank" rel="noreferrer" className="text-sm text-bone/50 transition-colors hover:text-bone">Instagram ↗</a>
+
+          <div className="mt-14 grid gap-8 border-t border-white/20 pt-7 md:grid-cols-12">
+            <p className="max-w-md text-sm leading-6 text-white/62 md:col-span-4 md:text-base md:leading-7">
+              Opportunities, collaborations, project conversations and portfolio enquiries.
+            </p>
+            <div className="flex flex-col items-start gap-4 md:col-span-4 md:col-start-7">
+              <a href={`mailto:${siteConfig.email}`} className="border-b border-white/30 pb-1 text-sm text-white transition-colors hover:border-white">{siteConfig.email}</a>
+              <div className="flex gap-6 font-mono text-[9px] uppercase tracking-[.17em] text-white/55">
+                <a href={siteConfig.social.linkedin} target="_blank" rel="noreferrer" className="hover:text-white">LinkedIn ↗</a>
+                <a href={siteConfig.social.instagram} target="_blank" rel="noreferrer" className="hover:text-white">Instagram ↗</a>
+              </div>
+            </div>
+            <div className="md:col-span-2 md:col-start-11 md:text-right">
+              <Link href="/contact" className="inline-flex border border-white/30 px-5 py-3 font-mono text-[9px] uppercase tracking-[.18em] transition-colors hover:bg-white hover:text-indigo">
+                Contact page ↗
+              </Link>
+            </div>
           </div>
         </div>
-        <footer className="flex flex-col gap-4 py-7 font-mono text-[9px] uppercase tracking-[.18em] text-bone/30 sm:flex-row sm:justify-between">
-          <span>Tsiaro Rakototiana</span><span>Toronto / 2026</span><span>Architecture · Technology · Making</span>
-        </footer>
       </div>
     </section>
   );
