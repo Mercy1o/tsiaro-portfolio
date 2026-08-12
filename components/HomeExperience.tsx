@@ -273,47 +273,46 @@ export default function HomeExperience() {
               className={`absolute inset-0 flex items-center ${activeStage === "contact" ? "pointer-events-auto" : "pointer-events-none"}`}
             >
               <div className="w-full">
-                <p className="font-mono text-[10px] uppercase tracking-[.2em] text-[#b59669]/82 md:text-[11px]">
-                  03 / Open channel
-                </p>
+                <div className="flex items-start justify-between border-t border-[#c09b68]/22 pt-5 font-mono text-[10px] uppercase tracking-[.18em] text-[#ae8d62]/78 md:text-[11px]">
+                  <span>03 / Contact</span>
+                  <span>{siteConfig.location}</span>
+                </div>
 
-                <div className="mt-6 grid gap-10 md:grid-cols-12 md:items-end">
-                  <div className="md:col-span-7">
-                    <h2 className="text-[clamp(4rem,9vw,9.4rem)] font-medium uppercase leading-[.78] tracking-[-.068em] text-[#e1ceb0]">
-                      Let&apos;s create<br />what comes next.
-                    </h2>
-                  </div>
+                <div className="py-14 md:py-20">
+                  <p className="text-[clamp(2.6rem,6vw,6.8rem)] font-medium leading-[.88] tracking-[-.06em] text-[#d9c4a2]">
+                    {siteConfig.brand}
+                  </p>
+                  <a
+                    href={`mailto:${siteConfig.email}`}
+                    className="mt-7 block max-w-fit break-all text-[clamp(1.8rem,4.5vw,5rem)] font-light leading-[.96] tracking-[-.05em] text-[#ead7b8] transition-opacity duration-500 hover:opacity-60"
+                  >
+                    {siteConfig.email}
+                  </a>
+                </div>
 
-                  <div className="md:col-span-4 md:col-start-9">
-                    <p className="max-w-lg text-[16px] leading-8 text-[#c0b098]/86 md:text-lg">
-                      Opportunities, collaborations, project conversations and portfolio enquiries.
-                    </p>
-                    <a
-                      href={`mailto:${siteConfig.email}`}
-                      className="mt-7 block text-lg text-[#ddc7a5] transition-colors hover:text-[#f0dfc3] md:text-xl"
-                    >
-                      {siteConfig.email}
-                    </a>
-
-                    <div className="mt-7 flex flex-wrap gap-x-7 gap-y-3 font-mono text-[11px] uppercase tracking-[.17em] text-[#b89464]/90 md:text-xs">
-                      <a href={siteConfig.social.linkedin} target="_blank" rel="noreferrer" className="hover:text-[#ead6b3]">
-                        LinkedIn ↗
-                      </a>
-                      <a href={siteConfig.social.instagram} target="_blank" rel="noreferrer" className="hover:text-[#ead6b3]">
+                <div className="grid gap-8 border-t border-[#c09b68]/22 pt-5 md:grid-cols-12 md:items-end">
+                  <div className="md:col-span-4">
+                    <p className="font-mono text-[10px] uppercase tracking-[.18em] text-[#9c7f5b]/72 md:text-[11px]">Social</p>
+                    <div className="mt-4 flex gap-7 text-lg tracking-[-.025em] text-[#cdb795] md:text-xl">
+                      <a href={siteConfig.social.instagram} target="_blank" rel="noreferrer" className="transition-opacity hover:opacity-55">
                         Instagram ↗
                       </a>
-                      <Link href="/contact" className="hover:text-[#ead6b3]">
-                        Contact ↗
+                      <a href={siteConfig.social.linkedin} target="_blank" rel="noreferrer" className="transition-opacity hover:opacity-55">
+                        LinkedIn ↗
+                      </a>
+                    </div>
+                  </div>
+
+                  <div className="md:col-span-4 md:col-start-9 md:text-right">
+                    <Link href="/contact" className="font-mono text-[10px] uppercase tracking-[.17em] text-[#b89464]/84 hover:text-[#ead6b3] md:text-[11px]">
+                      Contact ↗
+                    </Link>
+                    <div className="mt-4">
+                      <Link href="/work" className="font-mono text-[10px] uppercase tracking-[.17em] text-[#9b8060]/68 hover:text-[#ead6b3] md:text-[11px]">
+                        End of field / continue through work ↑
                       </Link>
                     </div>
                   </div>
-                </div>
-
-                <div className="mt-10 flex items-center justify-between border-t border-[#c09b68]/22 pt-5 font-mono text-[10px] uppercase tracking-[.18em] text-[#ae8d62]/78 md:text-[11px]">
-                  <span>Toronto, Canada</span>
-                  <Link href="/work" className="pointer-events-auto hover:text-[#ead6b3]">
-                    End of field / continue through work ↑
-                  </Link>
                 </div>
               </div>
             </motion.section>
