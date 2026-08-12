@@ -12,6 +12,28 @@ import RealtimeWindThreads from "@/components/RealtimeWindThreads";
 const AUTO_SCROLL_DURATION = 6200;
 const AUTO_SCROLL_DELAY = 240;
 
+// Text timing is intentionally pixel-based instead of percentage-based.
+// On a desktop mouse, ~120-170px corresponds to roughly 1-2 ordinary wheel movements.
+const NAME_START_PX = 110;
+const NAME_FULL_PX = 170;
+const NAME_HOLD_PX = 900;
+const NAME_END_PX = 1120;
+
+const FIELD_START_PX = 820;
+const FIELD_FULL_PX = 1030;
+const FIELD_HOLD_PX = 1650;
+const FIELD_END_PX = 1880;
+
+const PLANET_START_PX = 1660;
+const PLANET_FULL_PX = 1870;
+const PLANET_HOLD_PX = 2520;
+const PLANET_END_PX = 2760;
+
+const GROUND_START_PX = 2440;
+const GROUND_FULL_PX = 2660;
+const GROUND_HOLD_PX = 3500;
+const GROUND_END_PX = 3900;
+
 function cinematicEase(progress: number) {
   const clamped = Math.min(1, Math.max(0, progress));
   return clamped < 0.5
@@ -23,7 +45,7 @@ export default function CinematicUniverseIntro() {
   const rootRef = useRef<HTMLElement>(null);
   const reduceMotion = useReducedMotion();
 
-  const { scrollYProgress } = useScroll({
+  const { scrollY, scrollYProgress } = useScroll({
     target: rootRef,
     offset: ["start start", "end end"],
   });
@@ -35,39 +57,39 @@ export default function CinematicUniverseIntro() {
   );
   const sceneScale = useTransform(scrollYProgress, [0, 0.55, 1], [1.015, 1.006, 1]);
 
-  // Keep only the very first instant text-free. From that point onward the
-  // narrative stays much denser so there are no long empty stretches during descent.
+  // Narrative timing follows actual page-scroll pixels. This makes the name
+  // appear predictably after about 1.5 wheel movements regardless of the 520svh scene height.
   const introOpacity = useTransform(
-    scrollYProgress,
-    [0, 0.002, 0.008, 0.21, 0.3],
+    scrollY,
+    [0, NAME_START_PX, NAME_FULL_PX, NAME_HOLD_PX, NAME_END_PX],
     [0, 0, 1, 1, 0],
   );
   const introY = useTransform(
-    scrollYProgress,
-    [0.002, 0.008, 0.3],
-    [18, 0, -22],
+    scrollY,
+    [NAME_START_PX, NAME_FULL_PX, NAME_END_PX],
+    [20, 0, -24],
   );
 
   const fieldOpacity = useTransform(
-    scrollYProgress,
-    [0.075, 0.12, 0.31, 0.42],
+    scrollY,
+    [FIELD_START_PX, FIELD_FULL_PX, FIELD_HOLD_PX, FIELD_END_PX],
     [0, 1, 1, 0],
   );
-  const fieldY = useTransform(scrollYProgress, [0.075, 0.42], [22, -24]);
+  const fieldY = useTransform(scrollY, [FIELD_START_PX, FIELD_END_PX], [22, -24]);
 
   const planetOpacity = useTransform(
-    scrollYProgress,
-    [0.24, 0.31, 0.5, 0.61],
+    scrollY,
+    [PLANET_START_PX, PLANET_FULL_PX, PLANET_HOLD_PX, PLANET_END_PX],
     [0, 1, 1, 0],
   );
-  const planetY = useTransform(scrollYProgress, [0.24, 0.61], [22, -22]);
+  const planetY = useTransform(scrollY, [PLANET_START_PX, PLANET_END_PX], [22, -22]);
 
   const groundOpacity = useTransform(
-    scrollYProgress,
-    [0.43, 0.51, 0.78, 0.9],
+    scrollY,
+    [GROUND_START_PX, GROUND_FULL_PX, GROUND_HOLD_PX, GROUND_END_PX],
     [0, 1, 1, 0],
   );
-  const groundY = useTransform(scrollYProgress, [0.43, 0.9], [18, -16]);
+  const groundY = useTransform(scrollY, [GROUND_START_PX, GROUND_END_PX], [18, -16]);
 
   const windOpacity = useTransform(scrollYProgress, [0, 0.22, 0.68, 1], [0.14, 0.24, 0.4, 0.28]);
   const vignetteOpacity = useTransform(scrollYProgress, [0, 0.36, 0.8, 1], [0.32, 0.12, 0.1, 0.2]);
