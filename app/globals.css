@@ -1,25 +1,27 @@
 @import "tailwindcss";
 
 :root {
-  --space: #070706;
-  --deep: #020202;
-  --graphite: #171410;
-  --bone: #f2eee4;
-  --paper: #e8e1d5;
-  --sand: #c8aa80;
-  --ochre: #b96f32;
-  --rust: #b94f36;
-  --signal: #d35f3e;
-  --violet: #302862;
-  --indigo: #211c49;
-  --plum: #301b2a;
-  --forest: #24362c;
-  --moss: #536c55;
-  --sage: #7b957f;
-  --cream: #efe5b2;
+  --space: #17130f;
+  --deep: #100d0a;
+  --graphite: #211b15;
+  --bone: #e7ddca;
+  --paper: #d8cbb6;
+  --sand: #c8a878;
+  --ochre: #a9743d;
+  --rust: #8b4a32;
+  --signal: #b96b43;
+  --violet: #6c5b49;
+  --indigo: #2c2821;
+  --plum: #634a3b;
+  --forest: #3f4539;
+  --moss: #666a56;
+  --sage: #8a8a71;
+  --cream: #d9c9aa;
 }
 
 @theme inline {
+  --color-white: var(--bone);
+  --color-black: var(--graphite);
   --color-space: var(--space);
   --color-deep: var(--deep);
   --color-graphite: var(--graphite);
@@ -54,9 +56,9 @@ body {
 }
 a { color: inherit; text-decoration: none; }
 button, input, textarea { font: inherit; }
-::selection { background: var(--signal); color: var(--bone); }
+::selection { background: var(--ochre); color: var(--bone); }
 a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visible {
-  outline: 2px solid var(--signal);
+  outline: 2px solid var(--sand);
   outline-offset: 5px;
 }
 
@@ -67,7 +69,7 @@ a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visib
   z-index: 100;
   transform: translateY(-120%);
   background: var(--bone);
-  color: var(--space);
+  color: var(--graphite);
   padding: .65rem 1rem;
   font-size: .75rem;
   transition: transform .2s ease;
@@ -79,15 +81,15 @@ a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visib
 
 .cinematic-grid {
   background-image:
-    linear-gradient(rgba(255,255,255,.025) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255,255,255,.025) 1px, transparent 1px);
+    linear-gradient(rgba(231,221,202,.025) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(231,221,202,.025) 1px, transparent 1px);
   background-size: 72px 72px;
 }
 
 .micro-grid {
   background-image:
-    linear-gradient(rgba(30,24,18,.055) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(30,24,18,.055) 1px, transparent 1px);
+    linear-gradient(rgba(45,37,29,.06) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(45,37,29,.06) 1px, transparent 1px);
   background-size: 34px 34px;
 }
 
@@ -101,9 +103,9 @@ a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visib
   inset: 0;
   z-index: -2;
   background:
-    radial-gradient(circle at 72% 32%, rgba(200,170,128,.13), transparent 27%),
-    radial-gradient(circle at 19% 74%, rgba(185,79,54,.08), transparent 23%),
-    linear-gradient(180deg, #0b0a08 0%, #050505 60%, #090806 100%);
+    radial-gradient(circle at 72% 32%, rgba(200,168,120,.14), transparent 27%),
+    radial-gradient(circle at 19% 74%, rgba(139,74,50,.08), transparent 23%),
+    linear-gradient(180deg, #211b15 0%, #17130f 60%, #100d0a 100%);
 }
 .space-field::after {
   content: "";
@@ -111,7 +113,7 @@ a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visib
   inset: 0;
   z-index: -1;
   pointer-events: none;
-  background: radial-gradient(circle at center, transparent 18%, rgba(0,0,0,.7) 100%);
+  background: radial-gradient(circle at center, transparent 18%, rgba(16,13,10,.72) 100%);
 }
 
 .chroma-field {
@@ -119,19 +121,19 @@ a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visib
   isolation: isolate;
   overflow: hidden;
   background:
-    radial-gradient(circle at 18% 28%, rgba(221,92,61,.97) 0 18%, transparent 46%),
-    radial-gradient(circle at 72% 22%, rgba(64,51,135,.95) 0 17%, transparent 42%),
-    radial-gradient(circle at 56% 76%, rgba(190,64,55,.85) 0 13%, transparent 42%),
-    radial-gradient(circle at 85% 70%, rgba(35,27,85,.98) 0 18%, transparent 45%),
-    linear-gradient(120deg, #b74e3d 0%, #312862 54%, #1c173c 100%);
+    radial-gradient(circle at 18% 28%, rgba(169,116,61,.62) 0 15%, transparent 44%),
+    radial-gradient(circle at 72% 22%, rgba(108,91,73,.58) 0 18%, transparent 44%),
+    radial-gradient(circle at 56% 76%, rgba(139,74,50,.42) 0 13%, transparent 42%),
+    radial-gradient(circle at 85% 70%, rgba(63,69,57,.5) 0 18%, transparent 45%),
+    linear-gradient(120deg, #6d4b30 0%, #3d342a 52%, #17130f 100%);
 }
 .chroma-field::before {
   content: "";
   position: absolute;
   inset: -18%;
   background:
-    radial-gradient(ellipse at 32% 50%, rgba(255,179,124,.42), transparent 30%),
-    radial-gradient(ellipse at 67% 47%, rgba(121,96,214,.38), transparent 34%);
+    radial-gradient(ellipse at 32% 50%, rgba(200,168,120,.28), transparent 30%),
+    radial-gradient(ellipse at 67% 47%, rgba(138,138,113,.18), transparent 34%);
   filter: blur(48px);
   transform: rotate(-8deg) scale(1.15);
   animation: chroma-breathe 15s ease-in-out infinite alternate;
@@ -141,10 +143,10 @@ a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visib
   position: absolute;
   inset: 0;
   pointer-events: none;
-  opacity: .2;
+  opacity: .16;
   background-image:
-    radial-gradient(circle at 20% 30%, rgba(255,255,255,.8) 0 .5px, transparent .7px),
-    radial-gradient(circle at 70% 60%, rgba(0,0,0,.9) 0 .55px, transparent .8px);
+    radial-gradient(circle at 20% 30%, rgba(231,221,202,.72) 0 .5px, transparent .7px),
+    radial-gradient(circle at 70% 60%, rgba(33,27,21,.9) 0 .55px, transparent .8px);
   background-size: 4px 4px, 5px 5px;
   mix-blend-mode: soft-light;
 }
@@ -152,33 +154,33 @@ a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visib
 .paper-noise {
   background-color: var(--bone);
   background-image:
-    radial-gradient(rgba(0,0,0,.11) .38px, transparent .48px),
-    linear-gradient(120deg, rgba(200,170,128,.05), transparent 38%);
+    radial-gradient(rgba(45,37,29,.11) .38px, transparent .48px),
+    linear-gradient(120deg, rgba(200,168,120,.05), transparent 38%);
   background-size: 5px 5px, 100% 100%;
 }
 
 .archive-paper {
   background:
-    radial-gradient(circle at 18% 12%, rgba(255,255,255,.48), transparent 28%),
-    linear-gradient(180deg, #efe9dd 0%, #e7dfd2 100%);
-  color: #16130f;
+    radial-gradient(circle at 18% 12%, rgba(231,221,202,.5), transparent 28%),
+    linear-gradient(180deg, #e5dccb 0%, #d8cbb6 100%);
+  color: #2a241e;
 }
 
 .architecture-atmosphere {
   position: relative;
   isolation: isolate;
   background:
-    radial-gradient(circle at 72% 18%, rgba(173,119,66,.12), transparent 23%),
-    linear-gradient(180deg, #0b0907 0%, #080705 48%, #0f0b07 100%);
+    radial-gradient(circle at 72% 18%, rgba(169,116,61,.15), transparent 23%),
+    linear-gradient(180deg, #211b15 0%, #17130f 48%, #100d0a 100%);
 }
 
 .creative-atmosphere {
   position: relative;
   isolation: isolate;
   background:
-    radial-gradient(circle at 55% 35%, rgba(104,124,84,.2), transparent 22%),
-    radial-gradient(circle at 28% 68%, rgba(143,55,46,.17), transparent 20%),
-    linear-gradient(135deg, #161d18 0%, #20151c 45%, #10130f 100%);
+    radial-gradient(circle at 55% 35%, rgba(138,138,113,.18), transparent 22%),
+    radial-gradient(circle at 28% 68%, rgba(139,74,50,.14), transparent 20%),
+    linear-gradient(135deg, #3f4539 0%, #4e4035 48%, #211b15 100%);
 }
 
 .display-title {
@@ -214,17 +216,17 @@ a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visib
 .paint-stroke {
   border-radius: 999px 78% 999px 70%;
   box-shadow:
-    inset 0 1px 1px rgba(255,255,255,.22),
-    inset 0 -2px 3px rgba(0,0,0,.2),
-    0 3px 10px rgba(0,0,0,.15);
-  filter: saturate(.9);
+    inset 0 1px 1px rgba(231,221,202,.2),
+    inset 0 -2px 3px rgba(33,27,21,.2),
+    0 3px 10px rgba(33,27,21,.15);
+  filter: saturate(.8);
 }
 .paint-stroke::after {
   content: "";
   position: absolute;
   inset: 18% 4%;
   border-radius: inherit;
-  background: linear-gradient(90deg, transparent, rgba(255,255,255,.14), transparent);
+  background: linear-gradient(90deg, transparent, rgba(231,221,202,.12), transparent);
   opacity: .5;
 }
 
@@ -241,8 +243,8 @@ a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visib
 }
 .image-reveal:hover img { transform: scale(1.025); }
 
-.hairline { border-color: rgba(255,255,255,.11); }
-.hairline-dark { border-color: rgba(18,15,11,.15); }
+.hairline { border-color: rgba(231,221,202,.11); }
+.hairline-dark { border-color: rgba(45,37,29,.16); }
 
 .route-stage { min-height: 100%; }
 
