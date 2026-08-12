@@ -2,6 +2,8 @@
 
 import { useMemo, useState } from "react";
 import WorkGrid from "@/components/WorkGrid";
+import TopographicField from "@/components/TopographicField";
+import BrushField from "@/components/BrushField";
 import {
   architecturalProjects,
   creativeProjects,
@@ -14,28 +16,22 @@ type PortfolioSelectorProps = {
   initialMode?: PortfolioMode | null;
 };
 
-const portfolioOptions: Array<{
-  id: PortfolioMode;
-  index: string;
-  title: string;
-  subtitle: string;
-  description: string;
-}> = [
+const portfolioOptions = [
   {
-    id: "architecture",
+    id: "architecture" as const,
     index: "01",
     title: "Architecture",
     subtitle: "Space · Systems · Technical Practice",
     description:
-      "Architectural design, construction drawings, immersive spatial work and professional project experience.",
+      "Measured observation, construction logic, spatial sequences and technical precision.",
   },
   {
-    id: "creative",
+    id: "creative" as const,
     index: "02",
     title: "Art & Creative Work",
     subtitle: "Drawing · Painting · Ceramics · Making",
     description:
-      "Personal and experimental work across drawing, collage, ceramics, painting, wood and spatial making.",
+      "A more tactile archive of gesture, memory, material, colour and hand-made experimentation.",
   },
 ];
 
@@ -48,14 +44,14 @@ export default function PortfolioSelector({ initialMode = null }: PortfolioSelec
     return [];
   }, [mode]);
 
-  const activeLabel =
-    mode === "architecture" ? "Architectural Portfolio" : "Creative Portfolio";
+  const creativeMode = mode === "creative";
 
   return (
     <div>
-      <section className="grid border-b border-black/15 md:grid-cols-2">
+      <section className="grid overflow-hidden border-x border-b border-black/15 lg:grid-cols-2">
         {portfolioOptions.map((option) => {
           const active = mode === option.id;
+          const creative = option.id === "creative";
 
           return (
             <button
@@ -63,26 +59,46 @@ export default function PortfolioSelector({ initialMode = null }: PortfolioSelec
               type="button"
               onClick={() => setMode(option.id)}
               aria-pressed={active}
-              className={`group min-h-[320px] border-b border-black/15 p-7 text-left transition-colors duration-500 md:min-h-[410px] md:border-b-0 md:p-10 ${
-                option.id === "architecture" ? "md:border-r md:border-black/15" : ""
-              } ${active ? "bg-space text-bone" : "bg-transparent text-space hover:bg-black/[0.035]"}`}
+              className={`group relative min-h-[390px] overflow-hidden p-7 text-left transition-all duration-500 md:min-h-[480px] md:p-10 lg:min-h-[560px] ${
+                option.id === "architecture" ? "border-b border-black/15 lg:border-b-0 lg:border-r" : ""
+              } ${
+                creative
+                  ? "bg-[#1c241e] text-cream"
+                  : "bg-[#0c0a07] text-bone"
+              } ${active ? "ring-1 ring-inset ring-sand/60" : ""}`}
             >
-              <div className="flex h-full flex-col justify-between">
+              {creative ? <BrushField className="opacity-80" dense={false} /> : <TopographicField className="opacity-85" />}
+              <div className={`absolute inset-0 ${creative ? "bg-black/20" : "bg-[linear-gradient(180deg,rgba(0,0,0,.03),rgba(0,0,0,.55))]"}`} />
+
+              <div className="relative z-10 flex h-full min-h-[330px] flex-col justify-between md:min-h-[400px] lg:min-h-[480px]">
                 <div className="flex items-start justify-between gap-6">
-                  <span className={`font-mono text-[10px] tracking-[.18em] ${active ? "text-bone/45" : "text-black/40"}`}>
+                  <span className="font-mono text-[9px] uppercase tracking-[.22em] text-current opacity-48">
                     {option.index} / PORTFOLIO
                   </span>
-                  <span aria-hidden="true" className={`text-xl transition-transform duration-300 group-hover:translate-x-1 ${active ? "text-bone" : "text-black/55"}`}>↘</span>
+                  <span className="font-mono text-[8px] uppercase tracking-[.2em] opacity-40">
+                    {active ? "ACTIVE" : "ENTER"}
+                  </span>
                 </div>
 
-                <div className="mt-20">
-                  <p className={`mb-4 font-mono text-[10px] uppercase tracking-[.16em] ${active ? "text-sand" : "text-black/40"}`}>
+                <div className={creative ? "mx-auto max-w-xl text-center" : "max-w-2xl"}>
+                  <p className={`mb-5 font-mono text-[9px] uppercase tracking-[.21em] ${creative ? "text-rust" : "text-sand"}`}>
                     {option.subtitle}
                   </p>
-                  <h2 className="max-w-xl text-5xl font-medium tracking-[-.055em] md:text-6xl lg:text-7xl">{option.title}</h2>
-                  <p className={`mt-7 max-w-lg text-sm leading-6 md:text-base md:leading-7 ${active ? "text-bone/55" : "text-black/50"}`}>
+                  <h2 className={
+                    creative
+                      ? "font-editorial text-[clamp(4rem,8vw,8rem)] font-normal leading-[.75] tracking-[-.05em]"
+                      : "text-[clamp(3.8rem,7vw,7.5rem)] font-medium uppercase leading-[.82] tracking-[-.065em]"
+                  }>
+                    {option.title}
+                  </h2>
+                  <p className="mt-7 max-w-lg text-sm leading-6 text-current opacity-55 md:text-base md:leading-7">
                     {option.description}
                   </p>
+                </div>
+
+                <div className="flex items-end justify-between border-t border-current/15 pt-5 font-mono text-[8px] uppercase tracking-[.19em] opacity-50">
+                  <span>{creative ? "Gesture / material / memory" : "Terrain / system / sequence"}</span>
+                  <span className="text-lg transition-transform duration-300 group-hover:translate-x-1 group-hover:-translate-y-1">↘</span>
                 </div>
               </div>
             </button>
@@ -91,29 +107,35 @@ export default function PortfolioSelector({ initialMode = null }: PortfolioSelec
       </section>
 
       {mode ? (
-        <section className="pt-16 md:pt-24" aria-live="polite">
-          <div className="mb-10 flex flex-col gap-5 border-b border-black/15 pb-8 sm:flex-row sm:items-end sm:justify-between">
-            <div>
-              <p className="font-mono text-[10px] uppercase tracking-[.2em] text-black/40">
-                {mode === "architecture" ? "ARCH / 01—04" : "CREATIVE / 01—14 + HE"}
-              </p>
-              <h2 className="mt-3 text-3xl font-medium tracking-[-.04em] md:text-5xl">{activeLabel}</h2>
+        <section className={`-mx-5 px-5 py-20 md:-mx-10 md:px-10 md:py-28 lg:-mx-14 lg:px-14 ${creativeMode ? "bg-[#d8d1c4]" : "bg-[#e9e2d6]"}`} aria-live="polite">
+          <div className="mx-auto max-w-[1600px]">
+            <div className="mb-12 grid gap-8 border-b border-black/15 pb-8 md:grid-cols-12 md:items-end">
+              <div className="md:col-span-3">
+                <p className="font-mono text-[9px] uppercase tracking-[.22em] text-black/42">
+                  {mode === "architecture" ? "ARCH / 01—04" : "CREATIVE / 01—14 + HE"}
+                </p>
+              </div>
+              <div className="md:col-span-7">
+                <h2 className={creativeMode ? "font-editorial text-5xl font-normal tracking-[-.04em] text-black md:text-7xl" : "text-5xl font-medium uppercase tracking-[-.06em] text-black md:text-7xl"}>
+                  {creativeMode ? "Creative Portfolio" : "Architectural Portfolio"}
+                </h2>
+              </div>
+              <button
+                type="button"
+                onClick={() => setMode(null)}
+                className="justify-self-start font-mono text-[9px] uppercase tracking-[.17em] text-black/45 transition-colors hover:text-black md:justify-self-end"
+              >
+                Change field ↗
+              </button>
             </div>
-            <button
-              type="button"
-              onClick={() => setMode(null)}
-              className="self-start font-mono text-[10px] uppercase tracking-[.16em] text-black/45 transition-colors hover:text-black sm:self-auto"
-            >
-              Change portfolio ↗
-            </button>
-          </div>
 
-          <WorkGrid projects={activeProjects} />
+            <WorkGrid projects={activeProjects} />
+          </div>
         </section>
       ) : (
-        <div className="flex min-h-[180px] items-center justify-center border-b border-black/15 px-6 py-14 text-center">
-          <p className="max-w-lg font-mono text-[10px] uppercase leading-6 tracking-[.18em] text-black/35">
-            Choose a portfolio above to enter the work.
+        <div className="border-x border-b border-black/15 px-6 py-12 text-center">
+          <p className="font-mono text-[9px] uppercase tracking-[.2em] text-black/38">
+            Select a field above. Each one opens with its own visual language.
           </p>
         </div>
       )}
