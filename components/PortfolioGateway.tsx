@@ -2,8 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { architecturalProjects, creativeProjects } from "@/data/projects";
 import { getProjectMedia } from "@/data/projectMedia";
-import TopographicField from "@/components/TopographicField";
-import BrushField from "@/components/BrushField";
+import AtmosphericTerrain from "@/components/AtmosphericTerrain";
 
 export default function PortfolioGateway() {
   const architectureCover = getProjectMedia("hikari").cover;
@@ -18,10 +17,10 @@ export default function PortfolioGateway() {
           </div>
           <div className="md:col-span-8 md:col-start-5">
             <h2 className="max-w-5xl text-4xl font-medium tracking-[-.055em] md:text-6xl lg:text-7xl">
-              The visual language changes with the work.
+              Two fields. Two atmospheres. One archive.
             </h2>
             <p className="mt-6 max-w-2xl text-sm leading-6 text-black/52 md:text-base md:leading-7">
-              Architecture is treated as terrain, systems and measured observation. Creative work becomes more tactile, painterly and emotional.
+              Architecture is read through terrain, systems and site evidence. Creative work shifts into fluid surfaces, memory and material gesture.
             </p>
           </div>
         </div>
@@ -36,10 +35,10 @@ export default function PortfolioGateway() {
               alt="Architectural portfolio"
               fill
               sizes="(max-width: 1024px) 100vw, 50vw"
-              className="object-cover opacity-18 grayscale transition-all duration-1000 group-hover:scale-[1.03] group-hover:opacity-26"
+              className="object-cover opacity-[.12] grayscale transition-all duration-1000 group-hover:scale-[1.03] group-hover:opacity-[.2]"
             />
-            <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(5,4,3,.2),rgba(5,4,3,.88))]" />
-            <TopographicField className="opacity-80" />
+            <AtmosphericTerrain variant="planetary" tone="dark" showAnalysis />
+            <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(5,4,3,.04),rgba(5,4,3,.62)_72%,rgba(5,4,3,.88))]" />
 
             <div className="relative z-10 flex min-h-[560px] flex-col justify-between p-7 lg:min-h-[720px] lg:p-10">
               <div className="flex justify-between font-mono text-[9px] uppercase tracking-[.22em] text-bone/45">
@@ -51,12 +50,12 @@ export default function PortfolioGateway() {
                 <p className="mb-4 font-mono text-[9px] uppercase tracking-[.22em] text-sand">Space · systems · technical practice</p>
                 <h3 className="text-[clamp(3.8rem,7vw,7.8rem)] font-medium uppercase leading-[.82] tracking-[-.065em]">Architecture</h3>
                 <p className="mt-7 max-w-lg text-sm leading-6 text-bone/55 md:text-base md:leading-7">
-                  Spatial design, construction logic, drawings, details and professional project experience.
+                  Spatial design, construction logic, site analysis, drawings, details and professional project experience.
                 </p>
               </div>
 
               <div className="flex items-end justify-between border-t border-white/12 pt-5 font-mono text-[9px] uppercase tracking-[.2em] text-bone/42">
-                <span>Topography / archive / sequence</span>
+                <span>Topography / analysis / sequence</span>
                 <span className="text-lg text-bone transition-transform duration-300 group-hover:translate-x-1 group-hover:-translate-y-1">↗</span>
               </div>
             </div>
@@ -64,37 +63,37 @@ export default function PortfolioGateway() {
 
           <Link
             href="/work?portfolio=creative"
-            className="group relative min-h-[560px] overflow-hidden bg-forest text-cream lg:min-h-[720px]"
+            className="group relative min-h-[560px] overflow-hidden bg-[#e8e1d5] text-[#171410] lg:min-h-[720px]"
           >
             <Image
               src={creativeCover}
               alt="Creative portfolio"
               fill
               sizes="(max-width: 1024px) 100vw, 50vw"
-              className="object-cover opacity-28 saturate-[.7] transition-all duration-1000 group-hover:scale-[1.035] group-hover:opacity-36"
+              className="object-cover opacity-[.06] grayscale transition-all duration-1000 group-hover:scale-[1.025] group-hover:opacity-[.1]"
             />
-            <BrushField className="opacity-85" dense />
-            <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(15,17,12,.08),rgba(13,14,11,.72)_78%)]" />
+            <AtmosphericTerrain variant="liquid" tone="light" showAnalysis={false} />
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_62%_38%,rgba(255,255,255,.12),rgba(232,225,213,.1)_52%,rgba(232,225,213,.42)_100%)]" />
 
             <div className="relative z-10 flex min-h-[560px] flex-col justify-between p-7 lg:min-h-[720px] lg:p-10">
-              <div className="flex justify-between font-mono text-[9px] uppercase tracking-[.22em] text-cream/55">
+              <div className="flex justify-between font-mono text-[9px] uppercase tracking-[.22em] text-black/42">
                 <span>02 / FIELD</span>
                 <span>{creativeProjects.length} WORKS</span>
               </div>
 
               <div className="mx-auto max-w-xl text-center">
-                <p className="mb-5 font-mono text-[9px] uppercase tracking-[.22em] text-rust">Drawing · painting · ceramics · making</p>
-                <h3 className="font-editorial text-[clamp(4rem,8vw,8.8rem)] font-normal leading-[.72] tracking-[-.055em] text-cream">
+                <p className="mb-5 font-mono text-[9px] uppercase tracking-[.22em] text-[#8e6a44]">Drawing · painting · ceramics · making</p>
+                <h3 className="font-editorial text-[clamp(4rem,8vw,8.8rem)] font-normal leading-[.72] tracking-[-.055em] text-black/85">
                   Art &<br />Creative Work
                 </h3>
-                <p className="mx-auto mt-8 max-w-md text-sm leading-6 text-cream/62 md:text-base md:leading-7">
+                <p className="mx-auto mt-8 max-w-md text-sm leading-6 text-black/52 md:text-base md:leading-7">
                   Personal work driven by memory, material, drawing, hand-making and visual experimentation.
                 </p>
               </div>
 
-              <div className="flex items-end justify-between border-t border-cream/15 pt-5 font-mono text-[9px] uppercase tracking-[.2em] text-cream/48">
-                <span>Gesture / object / memory</span>
-                <span className="text-lg text-cream transition-transform duration-300 group-hover:translate-x-1 group-hover:-translate-y-1">↗</span>
+              <div className="flex items-end justify-between border-t border-black/12 pt-5 font-mono text-[9px] uppercase tracking-[.2em] text-black/42">
+                <span>Flow / gesture / memory</span>
+                <span className="text-lg text-black/75 transition-transform duration-300 group-hover:translate-x-1 group-hover:-translate-y-1">↗</span>
               </div>
             </div>
           </Link>
