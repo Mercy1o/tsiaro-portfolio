@@ -1,6 +1,7 @@
 "use client";
 
 import { useReducedMotion } from "motion/react";
+import RealtimeWindThreads from "@/components/RealtimeWindThreads";
 
 type MathematicalWindFieldProps = {
   className?: string;
@@ -106,6 +107,8 @@ export default function MathematicalWindField({
 
         <circle cx="845" cy="486" r="190" fill="url(#signal-core)" opacity="0.06" />
       </svg>
+
+      <RealtimeWindThreads strength={intensity} className="opacity-95" />
 
       <div className={`absolute inset-0 ${reduceMotion ? "" : "math-code-drift"}`}>
         {formulas.map((formula, index) => (
