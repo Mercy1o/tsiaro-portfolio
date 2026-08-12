@@ -1,0 +1,44 @@
+.worldBackground {
+  position: absolute;
+  inset: -2.5%;
+  background-image:
+    radial-gradient(ellipse at 52% 48%, rgba(7, 7, 6, 0.02) 0%, rgba(7, 7, 6, 0.08) 42%, rgba(7, 7, 6, 0.48) 86%),
+    linear-gradient(90deg, rgba(7, 7, 6, 0.88) 0%, rgba(7, 7, 6, 0.52) 13%, rgba(7, 7, 6, 0.08) 30%, rgba(7, 7, 6, 0.05) 70%, rgba(7, 7, 6, 0.58) 88%, rgba(7, 7, 6, 0.92) 100%),
+    linear-gradient(180deg, rgba(7, 7, 6, 0.68) 0%, rgba(7, 7, 6, 0.08) 20%, rgba(7, 7, 6, 0.03) 68%, rgba(7, 7, 6, 0.7) 100%),
+    url("/images/site/site-evaluation-world.png");
+  background-position: center 48%;
+  background-repeat: no-repeat;
+  background-size: cover;
+  filter: saturate(0.72) sepia(0.14) contrast(1.08) brightness(0.72);
+  opacity: 0.92;
+  transform: scale(1.025);
+  transform-origin: 50% 48%;
+}
+
+.worldVeil {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse at 52% 48%, transparent 0%, rgba(7, 7, 6, 0.04) 38%, rgba(7, 7, 6, 0.3) 82%),
+    linear-gradient(180deg, rgba(7, 7, 6, 0.2), transparent 24%, transparent 72%, rgba(7, 7, 6, 0.35));
+  mix-blend-mode: normal;
+}
+
+@media (max-width: 900px) {
+  .worldBackground {
+    inset: -1%;
+    background-position: 56% center;
+    background-size: auto 100%;
+    filter: saturate(0.68) sepia(0.12) contrast(1.08) brightness(0.66);
+    opacity: 0.88;
+    transform: scale(1.05);
+  }
+}
+
+@media (max-width: 640px) {
+  .worldBackground {
+    background-position: 54% center;
+    background-size: auto 100%;
+    opacity: 0.82;
+  }
+}
