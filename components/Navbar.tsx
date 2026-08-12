@@ -18,17 +18,22 @@ export default function Navbar() {
 
   return (
     <header
-      className={`fixed inset-x-0 top-0 z-50 bg-[linear-gradient(180deg,rgba(7,7,6,.94)_0%,rgba(7,7,6,.72)_46%,rgba(7,7,6,.28)_74%,transparent_100%)] transition-all duration-500 ${scrolled ? "backdrop-blur-[10px]" : ""}`}
+      className={`fixed inset-x-0 top-0 z-50 transition-all duration-500 ${
+        scrolled
+          ? "border-b border-[#a98758]/12 bg-[linear-gradient(180deg,rgba(7,7,6,.94),rgba(7,7,6,.68))] backdrop-blur-xl"
+          : "border-b border-transparent bg-gradient-to-b from-[#070706]/82 to-transparent"
+      }`}
     >
-      <div className={`mx-auto flex max-w-[1600px] items-center justify-between px-5 transition-all duration-500 md:px-10 lg:px-14 ${scrolled ? "h-16" : "h-20"}`}>
-        <Link href="/" className="flex items-center gap-4" aria-label="Tsiaro Rakototiana home">
-          <span className="flex h-7 w-7 items-center justify-center rounded-full border border-[#a98758]/32 text-sm font-medium text-[#c8b18e]">T</span>
-          <span className="font-mono text-[9px] uppercase tracking-[.22em] text-[#b8a386]/72 sm:text-[10px]">
-            {siteConfig.shortName}
-          </span>
+      <div className={`mx-auto flex max-w-[1600px] items-center justify-between px-5 transition-all duration-500 md:px-10 lg:px-14 ${scrolled ? "h-[66px]" : "h-[82px]"}`}>
+        <Link
+          href="/"
+          aria-label="Tsiaro Rakototiana home"
+          className="font-mono text-[11px] uppercase tracking-[.19em] text-[#c8b28e] transition-colors hover:text-[#ddc7a4]"
+        >
+          Tsiaro Rakototiana
         </Link>
 
-        <div className="hidden font-mono text-[8px] uppercase tracking-[.26em] text-[#8e7859]/38 md:block">
+        <div className="hidden font-mono text-[10px] uppercase tracking-[.2em] text-[#9f825e]/55 md:block">
           Archive / 2026 / Toronto
         </div>
 
@@ -40,9 +45,11 @@ export default function Navbar() {
               <Link
                 key={item.label}
                 href={item.href}
-                className={`group relative font-mono text-[9px] uppercase tracking-[.17em] transition-colors sm:text-[10px] ${active ? "text-[#d1bb96]" : "text-[#9a8669]/58 hover:text-[#c8b18e]"}`}
+                className={`group relative font-mono text-[10px] uppercase tracking-[.16em] transition-colors sm:text-[11px] ${
+                  active ? "text-[#d9c6a4]" : "text-[#aa9575]/65 hover:text-[#d9c6a4]"
+                }`}
               >
-                <span className="mr-1 hidden text-[#8b7355]/32 lg:inline">0{index + 1}</span>
+                <span className="mr-1.5 hidden text-[#a98758]/42 lg:inline">0{index + 1}</span>
                 {item.label}
                 <span className={`absolute -bottom-2 left-0 h-px bg-[#a98758] transition-all duration-300 ${active ? "w-full" : "w-0 group-hover:w-full"}`} />
               </Link>
