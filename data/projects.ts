@@ -19,7 +19,7 @@ export type Project = {
 };
 
 export const projects: Project[] = [
-  // ARCHITECTURAL PORTFOLIO — exact source order 01 → 04
+  // ARCHITECTURAL PORTFOLIO - exact source order 01 → 04
   {
     slug: "hikari",
     number: "01",
@@ -73,7 +73,7 @@ export const projects: Project[] = [
     number: "04",
     title: "Professional Experience in Construction",
     subtitle: "Project Coordination & Estimation",
-    year: "2025—Present",
+    year: "2025-Present",
     category: "Professional",
     portfolio: "Architectural Portfolio",
     featured: true,
@@ -85,7 +85,7 @@ export const projects: Project[] = [
     coverLabel: "PROFESSIONAL EXPERIENCE / CASE STUDY",
   },
 
-  // TMU CREATIVE PORTFOLIO — exact source order 01 → 14, then Home Exercise
+  // TMU CREATIVE PORTFOLIO - exact source order 01 → 14, then Home Exercise
   {
     slug: "the-smiling-wound",
     number: "01",
@@ -143,7 +143,7 @@ export const projects: Project[] = [
     category: "Creative",
     portfolio: "TMU Creative Portfolio",
     featured: false,
-    description: "A trio of wheel-thrown ceramic pieces — Alive, Blood and Heart — forming a simple self-portrait in clay.",
+    description: "A trio of wheel-thrown ceramic pieces - Alive, Blood and Heart - forming a simple self-portrait in clay.",
     context: "Each vessel uses form, proportion and glaze to carry a different emotional or autobiographical meaning.",
     concept: "Three individual objects operate as one portrait.",
     process: "The pieces were wheel-thrown, double-glazed and kiln-fired with distinct glaze combinations and proportions.",

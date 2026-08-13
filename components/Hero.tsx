@@ -74,8 +74,8 @@ export default function Hero() {
         </div>
 
         <div className="grid gap-3 border-t border-bone/15 pt-4 font-mono text-[8px] uppercase tracking-[.22em] text-bone/38 sm:grid-cols-3">
-          <span>01 / Architecture — measured terrain</span>
-          <span className="sm:text-center">02 / Art — fluid memory</span>
+          <span>01 / Architecture - measured terrain</span>
+          <span className="sm:text-center">02 / Art - fluid memory</span>
           <span className="sm:text-right">Scroll to descend ↓</span>
         </div>
       </motion.div>

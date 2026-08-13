@@ -77,7 +77,7 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
                 <span>{project.title}</span>
               </div>
               <div className="image-reveal relative aspect-[16/9] overflow-hidden bg-[#15120f]">
-                <Image src={media.cover} alt={`${project.title} — ${project.subtitle}`} fill priority sizes="100vw" className={creative ? "object-contain p-3 md:p-8" : "object-cover"} />
+                <Image src={media.cover} alt={`${project.title} - ${project.subtitle}`} fill priority sizes="100vw" className={creative ? "object-contain p-3 md:p-8" : "object-cover"} />
                 <div className="absolute inset-x-0 top-0 h-24 bg-gradient-to-b from-[#090806]/55 to-transparent" />
                 <div className="absolute inset-x-0 bottom-0 h-28 bg-gradient-to-t from-[#090806]/62 to-transparent" />
               </div>
@@ -101,36 +101,6 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
             ))}
           </div>
         </section>
-
-        {media.gallery.length > 0 ? (
-          <section className="px-5 py-20 md:px-10 md:py-28 lg:px-14">
-            <div className="mx-auto max-w-[1600px]">
-              <div className="mb-10 flex items-end justify-between border-b border-[#a98758]/14 pb-5">
-                <div>
-                  <p className="font-mono text-[8px] uppercase tracking-[.22em] text-[#846f55]/46">Visual archive</p>
-                  <h2 className="mt-3 text-4xl font-medium uppercase tracking-[-.055em] text-[#bfa989] md:text-6xl">{creative ? "Fragments & process" : "Drawings & evidence"}</h2>
-                </div>
-                <p className="font-mono text-[8px] uppercase tracking-[.2em] text-[#806b52]/38">{String(media.gallery.length).padStart(2, "0")} images</p>
-              </div>
-
-              <div className="grid gap-6 md:grid-cols-2">
-                {media.gallery.map((src, index) => {
-                  const wide = index % 5 === 0 || (!creative && index % 4 === 2);
-                  return (
-                    <figure key={src} className={wide ? "md:col-span-2" : ""}>
-                      <div className={`image-reveal relative overflow-hidden bg-[#15120f] ${wide ? "aspect-[16/9]" : "aspect-[4/3]"}`}>
-                        <Image src={src} alt={`${project.title} visual ${index + 1}`} fill sizes={wide ? "100vw" : "(max-width: 768px) 100vw, 50vw"} className="object-contain" />
-                        <div className="absolute inset-x-0 top-0 h-16 bg-gradient-to-b from-[#090806]/30 to-transparent" />
-                        <div className="absolute inset-x-0 bottom-0 h-20 bg-gradient-to-t from-[#090806]/38 to-transparent" />
-                      </div>
-                      <figcaption className="mt-2 flex justify-between font-mono text-[8px] uppercase tracking-[.17em] text-[#7f6b53]/38"><span>{String(index + 1).padStart(2, "0")}</span><span>{project.title}</span></figcaption>
-                    </figure>
-                  );
-                })}
-              </div>
-            </div>
-          </section>
-        ) : null}
 
         <section className="bg-[linear-gradient(180deg,rgba(9,8,6,0)_0%,rgba(7,7,6,.66)_28%,#070706_100%)] px-5 py-24 md:px-10 md:py-32 lg:px-14">
           <Link href={`/work/${nextProject.slug}`} className="group mx-auto block max-w-[1600px]">

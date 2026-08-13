@@ -63,7 +63,7 @@ export default function PortfolioSelector({ initialMode = null }: PortfolioSelec
         <section className="-mx-5 bg-[linear-gradient(180deg,rgba(9,8,6,0)_0%,rgba(9,8,6,.72)_8%,#090806_22%,#090806_100%)] px-5 pb-12 pt-24 md:-mx-10 md:px-10 md:pt-32 lg:-mx-14 lg:px-14" aria-live="polite">
           <div className="mx-auto max-w-[1600px]">
             <div className="mb-14 grid gap-8 border-b border-[#a98758]/14 pb-8 md:grid-cols-12 md:items-end">
-              <p className="font-mono text-[9px] uppercase tracking-[.22em] text-[#92795a]/54 md:col-span-3">{mode === "architecture" ? "ARCH / 01—04" : "CREATIVE / 01—14 + HE"}</p>
+              <p className="font-mono text-[9px] uppercase tracking-[.22em] text-[#92795a]/54 md:col-span-3">{mode === "architecture" ? "ARCH / 01-04" : "CREATIVE / 01-14 + HE"}</p>
               <h2 className="text-5xl font-medium uppercase tracking-[-.06em] text-[#c3ae8d] md:col-span-7 md:text-7xl">{mode === "creative" ? "Creative Portfolio" : "Architectural Portfolio"}</h2>
               <button type="button" onClick={() => setMode(null)} className="justify-self-start font-mono text-[9px] uppercase tracking-[.17em] text-[#8f7758]/56 transition-colors hover:text-[#c0a984] md:justify-self-end">Change field ↗</button>
             </div>

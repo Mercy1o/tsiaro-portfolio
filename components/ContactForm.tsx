@@ -47,7 +47,7 @@ export default function ContactForm() {
 
       formElement.reset();
       setStatus("success");
-      setStatusMessage(result.message || "Message sent. Thank you — I’ll get back to you soon.");
+      setStatusMessage(result.message || "Message sent. Thank you - I’ll get back to you soon.");
     } catch (error) {
       setStatus("error");
       setStatusMessage(error instanceof Error ? error.message : "Your message could not be sent. Please try again.");

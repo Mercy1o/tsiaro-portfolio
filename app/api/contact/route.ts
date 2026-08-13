@@ -110,7 +110,7 @@ export async function POST(request: Request) {
         from: fromEmail,
         to: [toEmail],
         reply_to: email,
-        subject: `Portfolio — ${subject}`,
+        subject: `Portfolio - ${subject}`,
         text,
       }),
       cache: "no-store",
@@ -125,7 +125,7 @@ export async function POST(request: Request) {
       );
     }
 
-    return Response.json({ ok: true, message: "Message sent. Thank you — I’ll get back to you soon." });
+    return Response.json({ ok: true, message: "Message sent. Thank you - I’ll get back to you soon." });
   } catch (error) {
     console.error("Contact route error:", error);
     return Response.json(

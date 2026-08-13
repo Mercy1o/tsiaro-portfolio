@@ -1,5 +1,8 @@
+"use client";
+
 import Image from "next/image";
 import Link from "next/link";
+import { useState } from "react";
 import { projects as allProjects, type Project } from "@/data/projects";
 import { getProjectMedia } from "@/data/projectMedia";
 
@@ -12,42 +15,85 @@ export default function WorkGrid({ limit, projects }: WorkGridProps) {
   const source = projects ?? allProjects;
   const items = typeof limit === "number" ? source.slice(0, limit) : source;
 
+  const [activeSlug, setActiveSlug] = useState(items[0]?.slug ?? "");
+
+  const activeProject =
+    items.find((project) => project.slug === activeSlug) ?? items[0];
+
+  if (!activeProject) return null;
+
+  const activeMedia = getProjectMedia(activeProject.slug);
+
   return (
-    <div className="grid gap-x-8 gap-y-20 md:grid-cols-2 md:gap-y-28 xl:gap-x-12">
-      {items.map((project, index) => {
-        const media = getProjectMedia(project.slug);
-        const creative = project.portfolio === "TMU Creative Portfolio";
-        const wide = index % 5 === 0;
+    <div className="grid gap-8 md:grid-cols-12 md:gap-12">
+      <div className="order-2 md:order-1 md:col-span-8 lg:col-span-9">
+        <div className="flex flex-col">
+          {items.map((project) => {
+            const active = project.slug === activeProject.slug;
 
-        return (
-          <Link key={project.slug} href={`/work/${project.slug}`} className={`project-link group block ${wide ? "md:col-span-2" : ""}`}>
-            <div className={`image-reveal relative overflow-hidden bg-[#15120f] ${wide ? "aspect-[16/8]" : "aspect-[4/3]"}`}>
-              {media.cover ? (
-                <Image
-                  src={media.cover}
-                  alt={`${project.title} — ${project.subtitle}`}
-                  fill
-                  sizes={wide ? "100vw" : "(max-width: 768px) 100vw, 50vw"}
-                  className={`object-cover transition-all duration-1000 ${creative ? "saturate-[.58] contrast-[1.08]" : "saturate-[.5] contrast-[1.12]"}`}
-                />
-              ) : null}
-              <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_34%,rgba(9,8,6,.32)_82%)]" />
-              <div className="absolute inset-x-0 top-0 h-24 bg-gradient-to-b from-[#090806]/58 to-transparent" />
-              <div className="absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-[#090806]/72 to-transparent" />
-              <div className="absolute left-4 top-4 font-mono text-[8px] uppercase tracking-[.22em] text-[#b69a70]/62">{project.number} / {creative ? "CREATIVE" : "ARCH"}</div>
-            </div>
+            return (
+              <Link
+                key={project.slug}
+                href={`/work/${project.slug}`}
+                onMouseEnter={() => setActiveSlug(project.slug)}
+                onFocus={() => setActiveSlug(project.slug)}
+                onTouchStart={() => setActiveSlug(project.slug)}
+                className="group border-b border-[#a98758]/12 py-2 first:border-t"
+              >
+                <div className="grid grid-cols-[2.6rem_1fr] items-baseline gap-2 md:grid-cols-[3.5rem_1fr_auto] md:gap-5">
+                  <span className="font-mono text-[8px] uppercase tracking-[.18em] text-[#8f7758]/56 md:text-[9px]">
+                    {project.number}
+                  </span>
 
-            <div className="mt-5 grid gap-5 border-t border-[#a98758]/12 pt-5 sm:grid-cols-[1fr_auto] sm:items-end">
-              <div>
-                <p className="mb-3 font-mono text-[8px] uppercase tracking-[.19em] text-[#937a59]/54">{project.category} · {project.year}</p>
-                <h3 className="text-3xl font-medium uppercase leading-[.9] tracking-[-.055em] text-[#bca786] md:text-4xl">{project.title}</h3>
-                <p className="mt-3 text-sm text-[#92836e]/54">{project.subtitle}</p>
-              </div>
-              <span className="text-xl text-[#a98758] transition-transform duration-300 group-hover:translate-x-1 group-hover:-translate-y-1" aria-hidden="true">↗</span>
-            </div>
-          </Link>
-        );
-      })}
+                  <h3
+                    className={`text-[clamp(2.6rem,6.4vw,7rem)] font-medium leading-[.86] tracking-[-.065em] transition-all duration-300 ${
+                      active
+                        ? "translate-x-2 text-[#d8c5a5]"
+                        : "text-[#b6a181]/68 group-hover:translate-x-2 group-hover:text-[#d0bb99]"
+                    }`}
+                  >
+                    {project.title}
+                  </h3>
+
+                  <span className="hidden font-mono text-[8px] uppercase tracking-[.16em] text-[#89745a]/50 md:block">
+                    {project.year}
+                  </span>
+                </div>
+              </Link>
+            );
+          })}
+        </div>
+      </div>
+
+      <aside className="order-1 md:order-2 md:col-span-4 lg:col-span-3">
+        <div className="md:sticky md:top-32">
+          <div className="relative aspect-[4/5] overflow-hidden bg-[#15120f]">
+            {activeMedia.cover ? (
+              <Image
+                key={activeMedia.cover}
+                src={activeMedia.cover}
+                alt={`${activeProject.title} · ${activeProject.subtitle}`}
+                fill
+                sizes="(max-width: 767px) 100vw, 30vw"
+                className="object-cover transition-opacity duration-500"
+                priority
+              />
+            ) : null}
+
+            <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(9,8,6,.02),rgba(9,8,6,.15))]" />
+          </div>
+
+          <div className="mt-4 border-t border-[#a98758]/12 pt-3">
+            <p className="font-mono text-[8px] uppercase tracking-[.18em] text-[#8d7658]/52">
+              {activeProject.category} · {activeProject.year}
+            </p>
+
+            <p className="mt-2 text-sm leading-6 text-[#a99a82]/62">
+              {activeProject.subtitle}
+            </p>
+          </div>
+        </div>
+      </aside>
     </div>
   );
 }

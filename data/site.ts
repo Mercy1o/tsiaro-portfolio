@@ -2,7 +2,7 @@ export const siteConfig = {
   brand: "trnskDesign",
   name: "Tsiaro Rakototiana",
   shortName: "TSIARO R.",
-  title: "trnskDesign — Tsiaro Rakototiana",
+  title: "trnskDesign - Tsiaro Rakototiana",
   description:
     "Portfolio of Tsiaro Rakototiana / trnskDesign exploring architecture, technical precision, material, drawing and creative experimentation.",
   descriptor: "Architecture · Technology · Making",
@@ -17,7 +17,7 @@ export const siteConfig = {
     eyebrow: "TR / PORTFOLIO / 2026",
     title: "Designing between matter, memory and the unknown.",
     description:
-      "I work across architecture, technical development, drawing and making — connecting precision with experimentation and human experience.",
+      "I work across architecture, technical development, drawing and making - connecting precision with experimentation and human experience.",
   },
   about: {
     title: "Architecture is only one part of how I create.",
@@ -35,17 +35,17 @@ export const profileFacts = [
   {
     label: "Current study",
     value: "Bachelor of Architectural Science",
-    detail: "Toronto Metropolitan University · 2026—2030",
+    detail: "Toronto Metropolitan University · 2026-2030",
   },
   {
     label: "Previous study",
     value: "Architectural Technology",
-    detail: "Ottawa · 2022—2025",
+    detail: "Ottawa · 2022-2025",
   },
   {
     label: "Professional practice",
     value: "Project Coordination & Estimation",
-    detail: "2025—Present",
+    detail: "2025-Present",
   },
 ] as const;
 
@@ -82,7 +82,7 @@ export const awards = [
   { title: "1st Prize Winner", detail: "Capstone Integrating Objectives" },
   {
     title: "Special Mention",
-    detail: "Well-designed, adaptable structure — Municipality of Cantley",
+    detail: "Well-designed, adaptable structure - Municipality of Cantley",
   },
   { title: "CCN Challenge 2024", detail: "Urban Planning Competition" },
 ] as const;

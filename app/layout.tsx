@@ -32,7 +32,7 @@ export const metadata: Metadata = {
   metadataBase: new URL("https://tsiaro-portfolio.vercel.app"),
   title: {
     default: siteConfig.title,
-    template: "%s — Tsiaro Rakototiana",
+    template: "%s - Tsiaro Rakototiana",
   },
   description: siteConfig.description,
   applicationName: "Tsiaro Rakototiana Portfolio",

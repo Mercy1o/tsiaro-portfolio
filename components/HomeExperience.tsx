@@ -95,7 +95,7 @@ export default function HomeExperience() {
                   <h2 className="mt-6 max-w-2xl text-[clamp(2.9rem,5vw,5.8rem)] font-medium leading-[.91] tracking-[-.052em] text-[#d9c3a0]">Architecture is one layer of how I create.</h2>
                 </div>
                 <div className="md:col-span-5 md:col-start-8">
-                  <p className="text-base leading-8 text-[#c0b098]/84 md:text-lg">The detailed profile — education, practice, tools and recognition — lives in one place.</p>
+                  <p className="text-base leading-8 text-[#c0b098]/84 md:text-lg">The detailed profile - education, practice, tools and recognition - lives in one place.</p>
                   <Link href="/about" className="mt-8 inline-flex min-h-11 items-center border-t border-[#c09b68]/22 pt-5 font-mono text-[11px] uppercase tracking-[.17em] text-[#c09a67]/88 hover:text-[#ead6b3]">Open full profile ↗</Link>
                 </div>
               </div>
