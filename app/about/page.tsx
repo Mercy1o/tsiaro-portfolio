@@ -22,7 +22,7 @@ export default function AboutPage() {
             <div className="grid gap-12 py-16 md:grid-cols-12 md:items-end">
               <div className="md:col-span-8">
                 <p className="mb-5 text-2xl font-light tracking-[-.035em] text-[#a88f69] md:text-4xl">A practice between systems and intuition.</p>
-                <h1 className="max-w-6xl text-[clamp(4rem,9vw,9.5rem)] font-medium uppercase leading-[.78] tracking-[-.07em] text-[#cdb896]">Tsiaro<br />Rakototiana</h1>
+                <h1 className="max-w-6xl text-[clamp(4rem,9vw,9.5rem)] font-medium uppercase leading-[.78] tracking-[-.07em] text-[#cdb896]">Profile</h1>
               </div>
               <p className="max-w-md text-base leading-7 text-[#a99a82]/60 md:col-span-3 md:col-start-10">{siteConfig.about.description}</p>
             </div>
