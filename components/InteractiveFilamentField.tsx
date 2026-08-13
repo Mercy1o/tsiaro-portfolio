@@ -28,6 +28,11 @@ type Organism = {
 type Point = { x: number; y: number };
 
 const TAU = Math.PI * 2;
+const POINTER_RADIUS = 0.15;
+const POINTER_PUSH = 0.03;
+const POINTER_SWIRL = 0.014;
+const HERO_FADE_START_PX = 90;
+const HERO_FADE_END_PX = 390;
 
 const ORGANISMS: Organism[] = [
   { x: 0.1, y: 0.14, radiusX: 0.055, radiusY: 0.038, rotation: 0.08, tentacles: 6, tentacleLength: 0.34, spread: 1.45, phase: 0.2, bend: 0.28 },
@@ -40,31 +45,18 @@ const ORGANISMS: Organism[] = [
   { x: 0.29, y: 0.9, radiusX: 0.046, radiusY: 0.034, rotation: -0.9, tentacles: 5, tentacleLength: 0.3, spread: 1.28, phase: 8.4, bend: -0.2 },
 ];
 
-const POINTER_RADIUS = 0.15;
-const POINTER_PUSH = 0.03;
-const POINTER_SWIRL = 0.014;
-
-// The field is the hero before typography enters. Once the first text arrives,
-// it smoothly recedes into a quieter background instead of disappearing.
-const HERO_FADE_START_PX = 90;
-const HERO_FADE_END_PX = 390;
-
 function clamp(value: number, min: number, max: number) {
   return Math.min(max, Math.max(min, value));
-}
-
-function normalize(x: number, y: number): Point {
-  const length = Math.hypot(x, y) || 1;
-  return { x: x / length, y: y / length };
-}
-
-function fract(value: number) {
-  return value - Math.floor(value);
 }
 
 function smoothstep(edge0: number, edge1: number, value: number) {
   const t = clamp((value - edge0) / Math.max(edge1 - edge0, 0.00001), 0, 1);
   return t * t * (3 - 2 * t);
+}
+
+function normalize(x: number, y: number): Point {
+  const length = Math.hypot(x, y) || 1;
+  return { x: x / length, y: y / length };
 }
 
 export default function InteractiveFilamentField() {
@@ -75,7 +67,8 @@ export default function InteractiveFilamentField() {
     const canvas = canvasRef.current;
     if (!canvas) return;
 
-    const context = canvas.getContext("2d", { alpha: true });
+    const canvasEl: HTMLCanvasElement = canvas;
+    const context = canvasEl.getContext("2d", { alpha: true });
     if (!context) return;
 
     const ctx = context;
@@ -99,12 +92,12 @@ export default function InteractiveFilamentField() {
     };
 
     function resize() {
-      const rect = canvas.getBoundingClientRect();
+      const rect = canvasEl.getBoundingClientRect();
       width = Math.max(1, rect.width);
       height = Math.max(1, rect.height);
       dpr = Math.min(window.devicePixelRatio || 1, width < 720 ? 1.15 : 1.4);
-      canvas.width = Math.round(width * dpr);
-      canvas.height = Math.round(height * dpr);
+      canvasEl.width = Math.round(width * dpr);
+      canvasEl.height = Math.round(height * dpr);
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     }
 
@@ -117,35 +110,12 @@ export default function InteractiveFilamentField() {
       return 1 - smoothstep(HERO_FADE_START_PX, HERO_FADE_END_PX, smoothScroll);
     }
 
-    function alphaFor(base: number, prominence: number, heroBoost = 2.35) {
-      return Math.min(0.72, base * (0.78 + prominence * heroBoost));
+    function alphaFor(base: number, prominence: number, boost = 2.15) {
+      return Math.min(0.72, base * (0.78 + prominence * boost));
     }
 
     function widthFor(base: number, prominence: number) {
       return base * (0.94 + prominence * 0.38);
-    }
-
-    function drawBackdrop(scroll: number, prominence: number) {
-      const gradient = ctx.createLinearGradient(0, 0, width, height);
-      gradient.addColorStop(0, prominence > 0.45 ? "#30241b" : "#251d17");
-      gradient.addColorStop(0.46, prominence > 0.45 ? "#211914" : "#1a1511");
-      gradient.addColorStop(1, prominence > 0.45 ? "#342419" : "#2a1d14");
-      ctx.fillStyle = gradient;
-      ctx.fillRect(0, 0, width, height);
-
-      const glow = ctx.createRadialGradient(
-        width * (0.28 + scroll * 0.1),
-        height * 0.38,
-        0,
-        width * (0.28 + scroll * 0.1),
-        height * 0.38,
-        Math.max(width, height) * 0.75,
-      );
-      glow.addColorStop(0, `rgba(166,116,70,${0.1 + prominence * 0.08})`);
-      glow.addColorStop(0.55, `rgba(104,72,46,${0.04 + prominence * 0.035})`);
-      glow.addColorStop(1, "rgba(0,0,0,0)");
-      ctx.fillStyle = glow;
-      ctx.fillRect(0, 0, width, height);
     }
 
     function applyPointer(point: Point): Point {
@@ -154,7 +124,6 @@ export default function InteractiveFilamentField() {
       const d2 = dx * dx + dy * dy;
       const influence = Math.exp(-d2 / (POINTER_RADIUS * POINTER_RADIUS)) * pointer.active;
       if (influence < 0.001) return point;
-
       const radial = normalize(dx, dy);
       const tangent = { x: -radial.y, y: radial.x };
       return {
@@ -171,93 +140,76 @@ export default function InteractiveFilamentField() {
       };
     }
 
-    function drawHead(org: Organism, orgIndex: number, time: number, scroll: number, prominence: number) {
-      const mobile = width < 720;
+    function majorPoint(org: Organism, orgIndex: number, tentacleIndex: number, p: number, strandOffset: number, time: number, scroll: number): Point {
       const head = dynamicHead(org, orgIndex, time, scroll);
-      const rings = mobile ? 6 : 10;
-      const points = mobile ? 54 : 78;
+      const t = org.tentacles <= 1 ? 0.5 : tentacleIndex / (org.tentacles - 1);
+      const centered = t - 0.5;
+      const baseAngle = head.rotation + centered * org.spread + (scroll - 0.5) * 0.32 + Math.sin(time * 0.06 + org.phase + tentacleIndex * 0.7) * 0.045;
+      const rootX = head.x + Math.cos(baseAngle) * org.radiusX * 0.72;
+      const rootY = head.y + Math.sin(baseAngle) * org.radiusY * 0.72;
+      const currentStrength = 0.008 + Math.pow(p, 1.5) * 0.046;
+      const currentPhase = time * 0.24 + org.phase + tentacleIndex * 0.8 + p * 5.8 + scroll * 2.3;
+      const gravity = Math.pow(p, 1.85) * (0.045 + scroll * 0.018);
+      const bend = Math.sin(p * Math.PI) * org.bend * 0.25;
+      const angle = baseAngle + bend;
+      const normal = { x: -Math.sin(angle), y: Math.cos(angle) };
+      const spread = strandOffset * (0.002 + Math.pow(p, 1.45) * 0.0085);
+      return applyPointer({
+        x: rootX + Math.cos(angle) * org.tentacleLength * p + normal.x * spread + Math.sin(currentPhase) * currentStrength,
+        y: rootY + Math.sin(angle) * org.tentacleLength * p + normal.y * spread + Math.cos(currentPhase * 0.7 + org.phase) * currentStrength * 0.5 + gravity,
+      });
+    }
 
+    function drawBackdrop(scroll: number, prominence: number) {
+      const gradient = ctx.createLinearGradient(0, 0, width, height);
+      gradient.addColorStop(0, prominence > 0.45 ? "#30241b" : "#251d17");
+      gradient.addColorStop(0.46, prominence > 0.45 ? "#211914" : "#1a1511");
+      gradient.addColorStop(1, prominence > 0.45 ? "#342419" : "#2a1d14");
+      ctx.fillStyle = gradient;
+      ctx.fillRect(0, 0, width, height);
+      const glow = ctx.createRadialGradient(width * (0.28 + scroll * 0.1), height * 0.38, 0, width * (0.28 + scroll * 0.1), height * 0.38, Math.max(width, height) * 0.75);
+      glow.addColorStop(0, `rgba(166,116,70,${0.1 + prominence * 0.08})`);
+      glow.addColorStop(0.55, `rgba(104,72,46,${0.04 + prominence * 0.035})`);
+      glow.addColorStop(1, "rgba(0,0,0,0)");
+      ctx.fillStyle = glow;
+      ctx.fillRect(0, 0, width, height);
+    }
+
+    function drawHead(org: Organism, orgIndex: number, time: number, scroll: number, prominence: number) {
+      const head = dynamicHead(org, orgIndex, time, scroll);
+      const mobile = width < 720;
+      const rings = mobile ? 6 : 10;
+      const points = mobile ? 48 : 72;
       ctx.save();
       ctx.globalCompositeOperation = "screen";
       ctx.lineCap = "round";
       ctx.lineJoin = "round";
-
       for (let ring = 0; ring < rings; ring += 1) {
-        const ringT = ring / Math.max(rings - 1, 1);
-        const scale = 0.46 + ringT * 0.82;
+        const rt = ring / Math.max(rings - 1, 1);
+        const scale = 0.46 + rt * 0.82;
         ctx.beginPath();
-
-        for (let pointIndex = 0; pointIndex <= points; pointIndex += 1) {
-          const theta = (pointIndex / points) * TAU;
-          const wobble =
-            1 +
-            Math.sin(theta * 3 + org.phase + time * 0.045) * 0.09 +
-            Math.sin(theta * 5 - org.phase * 0.8 + scroll * 1.3) * 0.045;
-          const localX = Math.cos(theta) * org.radiusX * scale * wobble;
-          const localY = Math.sin(theta) * org.radiusY * scale * wobble;
+        for (let i = 0; i <= points; i += 1) {
+          const theta = (i / points) * TAU;
+          const wobble = 1 + Math.sin(theta * 3 + org.phase + time * 0.045) * 0.09 + Math.sin(theta * 5 - org.phase * 0.8 + scroll * 1.3) * 0.045;
+          const lx = Math.cos(theta) * org.radiusX * scale * wobble;
+          const ly = Math.sin(theta) * org.radiusY * scale * wobble;
           const ca = Math.cos(head.rotation);
           const sa = Math.sin(head.rotation);
-          const point = applyPointer({
-            x: head.x + localX * ca - localY * sa,
-            y: head.y + localX * sa + localY * ca,
-          });
-
-          if (pointIndex === 0) ctx.moveTo(point.x * width, point.y * height);
-          else ctx.lineTo(point.x * width, point.y * height);
+          const p = applyPointer({ x: head.x + lx * ca - ly * sa, y: head.y + lx * sa + ly * ca });
+          if (i === 0) ctx.moveTo(p.x * width, p.y * height);
+          else ctx.lineTo(p.x * width, p.y * height);
         }
-
-        const baseAlpha = 0.08 + (1 - ringT) * 0.09;
-        ctx.strokeStyle = `rgba(235,220,197,${alphaFor(baseAlpha, prominence, 2.05)})`;
+        ctx.strokeStyle = `rgba(235,220,197,${alphaFor(0.08 + (1 - rt) * 0.09, prominence, 2.05)})`;
         ctx.lineWidth = widthFor(mobile ? 0.56 : 0.78, prominence);
         ctx.stroke();
       }
-
       ctx.restore();
     }
 
-    function majorTentaclePoint(
-      org: Organism,
-      orgIndex: number,
-      tentacleIndex: number,
-      p: number,
-      strandOffset: number,
-      time: number,
-      scroll: number,
-    ): Point {
-      const head = dynamicHead(org, orgIndex, time, scroll);
-      const tentacleT = org.tentacles <= 1 ? 0.5 : tentacleIndex / (org.tentacles - 1);
-      const centered = tentacleT - 0.5;
-      const baseAngle =
-        head.rotation +
-        centered * org.spread +
-        (scroll - 0.5) * 0.32 +
-        Math.sin(time * 0.06 + org.phase + tentacleIndex * 0.7) * 0.045;
-
-      const rootRadius = org.radiusX * 0.72;
-      const rootX = head.x + Math.cos(baseAngle) * rootRadius;
-      const rootY = head.y + Math.sin(baseAngle) * org.radiusY * 0.72;
-      const currentStrength = 0.008 + Math.pow(p, 1.5) * 0.046;
-      const currentPhase = time * 0.24 + org.phase + tentacleIndex * 0.8 + p * 5.8 + scroll * 2.3;
-      const currentX = Math.sin(currentPhase) * currentStrength;
-      const currentY = Math.cos(currentPhase * 0.7 + org.phase) * currentStrength * 0.5;
-      const gravity = Math.pow(p, 1.85) * (0.045 + scroll * 0.018);
-      const bend = Math.sin(p * Math.PI) * org.bend * 0.25;
-      const angle = baseAngle + bend;
-      const distance = org.tentacleLength * p;
-      const normal = { x: -Math.sin(angle), y: Math.cos(angle) };
-      const bundleSpread = strandOffset * (0.002 + Math.pow(p, 1.45) * 0.0085);
-
-      return applyPointer({
-        x: rootX + Math.cos(angle) * distance + normal.x * bundleSpread + currentX,
-        y: rootY + Math.sin(angle) * distance + normal.y * bundleSpread + currentY + gravity,
-      });
-    }
-
-    function drawMajorTentacles(org: Organism, orgIndex: number, time: number, scroll: number, prominence: number) {
+    function drawTentacles(org: Organism, orgIndex: number, time: number, scroll: number, prominence: number) {
       const mobile = width < 720;
       const bundleLines = mobile ? 4 : 7;
-      const points = mobile ? 42 : 62;
-
+      const steps = mobile ? 38 : 56;
       ctx.save();
       ctx.globalCompositeOperation = "screen";
       ctx.lineCap = "round";
@@ -267,148 +219,69 @@ export default function InteractiveFilamentField() {
         for (let strand = 0; strand < bundleLines; strand += 1) {
           const offset = strand - (bundleLines - 1) * 0.5;
           ctx.beginPath();
-
-          for (let pointIndex = 0; pointIndex <= points; pointIndex += 1) {
-            const p = pointIndex / points;
-            const point = majorTentaclePoint(org, orgIndex, tentacle, p, offset, time, scroll);
-            if (pointIndex === 0) ctx.moveTo(point.x * width, point.y * height);
-            else ctx.lineTo(point.x * width, point.y * height);
+          for (let i = 0; i <= steps; i += 1) {
+            const p = majorPoint(org, orgIndex, tentacle, i / steps, offset, time, scroll);
+            if (i === 0) ctx.moveTo(p.x * width, p.y * height);
+            else ctx.lineTo(p.x * width, p.y * height);
           }
-
-          const centerWeight = 1 - Math.abs(offset) / Math.max(bundleLines * 0.5, 1);
-          const centerLine = strand === Math.floor(bundleLines / 2);
-          const baseAlpha = centerLine
-            ? 0.18 + centerWeight * 0.06
-            : 0.095 + centerWeight * 0.055;
-          ctx.strokeStyle = centerLine
-            ? `rgba(238,221,195,${alphaFor(baseAlpha, prominence, 2.1)})`
-            : `rgba(230,214,191,${alphaFor(baseAlpha, prominence, 2.05)})`;
+          const center = strand === Math.floor(bundleLines / 2);
+          ctx.strokeStyle = center
+            ? `rgba(238,221,195,${alphaFor(0.2, prominence, 2.1)})`
+            : `rgba(230,214,191,${alphaFor(0.11, prominence, 2.05)})`;
           ctx.lineWidth = widthFor(mobile ? 0.58 : 0.82, prominence);
           ctx.stroke();
         }
-      }
 
-      ctx.restore();
-    }
-
-    function drawMicroTentacles(org: Organism, orgIndex: number, time: number, scroll: number, prominence: number) {
-      const mobile = width < 720;
-      const branchesPerTentacle = mobile ? 4 : 7;
-      const branchPoints = mobile ? 20 : 30;
-
-      ctx.save();
-      ctx.globalCompositeOperation = "screen";
-      ctx.lineCap = "round";
-      ctx.lineJoin = "round";
-
-      for (let tentacle = 0; tentacle < org.tentacles; tentacle += 1) {
-        for (let branch = 0; branch < branchesPerTentacle; branch += 1) {
-          const branchT = branch / Math.max(branchesPerTentacle - 1, 1);
-          const startP = 0.22 + branchT * 0.62;
-          const base = majorTentaclePoint(org, orgIndex, tentacle, startP, 0, time, scroll);
-          const ahead = majorTentaclePoint(org, orgIndex, tentacle, Math.min(1, startP + 0.02), 0, time, scroll);
+        const branches = mobile ? 4 : 7;
+        for (let branch = 0; branch < branches; branch += 1) {
+          const startP = 0.22 + (branch / Math.max(branches - 1, 1)) * 0.62;
+          const base = majorPoint(org, orgIndex, tentacle, startP, 0, time, scroll);
+          const ahead = majorPoint(org, orgIndex, tentacle, Math.min(1, startP + 0.02), 0, time, scroll);
           const tangent = normalize(ahead.x - base.x, ahead.y - base.y);
           const normal = { x: -tangent.y, y: tangent.x };
           const side = (branch + tentacle + orgIndex) % 2 === 0 ? 1 : -1;
-          const branchLength = 0.032 + (1 - startP) * 0.055 + fract(branch * 0.381 + tentacle * 0.17) * 0.025;
-
+          const length = 0.04 + (1 - startP) * 0.05;
           ctx.beginPath();
-          for (let pointIndex = 0; pointIndex <= branchPoints; pointIndex += 1) {
-            const p = pointIndex / branchPoints;
-            const waterWave = Math.sin(
-              time * 0.28 + org.phase + tentacle * 0.7 + branch * 0.9 + p * 4.2,
-            ) * (0.002 + p * 0.009);
-            const drift = Math.pow(p, 1.7) * 0.014;
-            const branchDir = normalize(
-              normal.x * side + tangent.x * 0.32,
-              normal.y * side + tangent.y * 0.32,
-            );
+          const branchSteps = mobile ? 16 : 24;
+          for (let i = 0; i <= branchSteps; i += 1) {
+            const p = i / branchSteps;
+            const wave = Math.sin(time * 0.28 + org.phase + branch * 0.9 + p * 4.2) * (0.002 + p * 0.009);
+            const dir = normalize(normal.x * side + tangent.x * 0.32, normal.y * side + tangent.y * 0.32);
             const point = applyPointer({
-              x: base.x + branchDir.x * branchLength * p + tangent.x * waterWave,
-              y: base.y + branchDir.y * branchLength * p + tangent.y * waterWave + drift,
+              x: base.x + dir.x * length * p + tangent.x * wave,
+              y: base.y + dir.y * length * p + tangent.y * wave + Math.pow(p, 1.7) * 0.014,
             });
-
-            if (pointIndex === 0) ctx.moveTo(point.x * width, point.y * height);
+            if (i === 0) ctx.moveTo(point.x * width, point.y * height);
             else ctx.lineTo(point.x * width, point.y * height);
           }
-
-          const copper = branch % 3 === 0;
-          const baseAlpha = copper ? 0.085 : 0.075;
-          ctx.strokeStyle = copper
-            ? `rgba(204,160,108,${alphaFor(baseAlpha, prominence, 2.25)})`
-            : `rgba(234,220,198,${alphaFor(baseAlpha, prominence, 2.25)})`;
+          ctx.strokeStyle = `rgba(232,218,196,${alphaFor(0.075, prominence, 2.25)})`;
           ctx.lineWidth = widthFor(mobile ? 0.34 : 0.48, prominence);
           ctx.stroke();
         }
       }
-
-      ctx.restore();
-    }
-
-    function drawLooseWaterFibers(time: number, scroll: number, prominence: number) {
-      const mobile = width < 720;
-      const count = mobile ? 12 : 22;
-      const points = mobile ? 26 : 38;
-
-      ctx.save();
-      ctx.globalCompositeOperation = "screen";
-      ctx.lineCap = "round";
-      ctx.lineJoin = "round";
-
-      for (let index = 0; index < count; index += 1) {
-        const startX = fract(index * 0.6180339 + 0.13);
-        const startY = fract(index * 0.4142135 + 0.27);
-        const direction = -0.12 + Math.sin(index * 1.37) * 0.22 + scroll * 0.2;
-        const length = 0.12 + fract(index * 0.271) * 0.16;
-
-        ctx.beginPath();
-        for (let pointIndex = 0; pointIndex <= points; pointIndex += 1) {
-          const p = pointIndex / points;
-          const wave = Math.sin(time * 0.15 + index * 0.7 + p * 5.2) * (0.004 + p * 0.01);
-          const point = applyPointer({
-            x: startX + Math.cos(direction) * length * p + wave,
-            y: startY + Math.sin(direction) * length * p + p * p * 0.012,
-          });
-          if (pointIndex === 0) ctx.moveTo(point.x * width, point.y * height);
-          else ctx.lineTo(point.x * width, point.y * height);
-        }
-
-        ctx.strokeStyle = `rgba(232,218,196,${alphaFor(0.04, prominence, 2.15)})`;
-        ctx.lineWidth = widthFor(mobile ? 0.3 : 0.42, prominence);
-        ctx.stroke();
-      }
-
       ctx.restore();
     }
 
     function draw(timestamp: number) {
       if (!running || !visible) return;
-
       if (!reduceMotion && timestamp - lastFrame < 32) {
         frame = window.requestAnimationFrame(draw);
         return;
       }
       lastFrame = timestamp;
-
       pointer.x += (pointer.targetX - pointer.x) * 0.032;
       pointer.y += (pointer.targetY - pointer.y) * 0.032;
       pointer.active += (pointer.targetActive - pointer.active) * 0.045;
       smoothScroll += (targetScroll - smoothScroll) * 0.052;
-
       const time = timestamp * 0.001;
       const scroll = scrollProgress();
       const prominence = heroProminence();
-
       ctx.clearRect(0, 0, width, height);
       drawBackdrop(scroll, prominence);
-      drawLooseWaterFibers(time, scroll, prominence);
-
-      ORGANISMS.forEach((org, orgIndex) => {
-        drawHead(org, orgIndex, time, scroll, prominence);
-        drawMajorTentacles(org, orgIndex, time, scroll, prominence);
-        drawMicroTentacles(org, orgIndex, time, scroll, prominence);
+      ORGANISMS.forEach((org, index) => {
+        drawHead(org, index, time, scroll, prominence);
+        drawTentacles(org, index, time, scroll, prominence);
       });
-
       if (!reduceMotion) frame = window.requestAnimationFrame(draw);
     }
 
@@ -455,11 +328,5 @@ export default function InteractiveFilamentField() {
     };
   }, [reduceMotion]);
 
-  return (
-    <canvas
-      ref={canvasRef}
-      aria-hidden="true"
-      className="pointer-events-none absolute inset-0 h-full w-full"
-    />
-  );
+  return <canvas ref={canvasRef} aria-hidden="true" className="pointer-events-none absolute inset-0 h-full w-full" />;
 }
