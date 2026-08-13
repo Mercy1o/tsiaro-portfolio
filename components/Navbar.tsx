@@ -24,10 +24,7 @@ export default function Navbar() {
           : "border-[#d0b382]/12 bg-[#090806]/42 shadow-[0_8px_28px_rgba(0,0,0,.1)]"
       }`}
     >
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,rgba(233,217,190,.045),rgba(9,8,6,.035)_42%,rgba(9,8,6,.18))]"
-      />
+      <div aria-hidden="true" className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,rgba(233,217,190,.045),rgba(9,8,6,.035)_42%,rgba(9,8,6,.18))]" />
 
       <div
         className={`relative mx-auto grid max-w-[1600px] grid-cols-[auto_1fr] items-center gap-3 px-4 transition-all duration-500 sm:px-5 md:grid-cols-[1fr_auto_1fr] md:gap-0 md:px-10 lg:px-14 ${
@@ -42,10 +39,7 @@ export default function Navbar() {
           {siteConfig.brand}
         </Link>
 
-        <nav
-          aria-label="Main navigation"
-          className="justify-self-end md:justify-self-center"
-        >
+        <nav aria-label="Main navigation" className="justify-self-end md:justify-self-center">
           <div className="flex items-center justify-center gap-1 sm:gap-2 md:gap-10">
             {siteConfig.navigation.map((item, index) => {
               const active = pathname === item.href || pathname.startsWith(`${item.href}/`);
@@ -71,9 +65,7 @@ export default function Navbar() {
           </div>
         </nav>
 
-        <div className="hidden justify-self-end font-mono text-[11px] uppercase tracking-[.19em] text-[#c1a985]/80 md:block lg:text-[12px]">
-          Tsiaro Rakototiana / Toronto
-        </div>
+        <div aria-hidden="true" className="hidden md:block" />
       </div>
     </header>
   );
