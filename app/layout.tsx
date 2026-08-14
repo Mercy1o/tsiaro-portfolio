@@ -44,9 +44,6 @@ export const metadata: Metadata = {
   applicationName: "Tsiaro Rakototiana Portfolio",
   creator: siteConfig.name,
   authors: [{ name: siteConfig.name }],
-  alternates: {
-    canonical: "/",
-  },
   robots: {
     index: true,
     follow: true,
