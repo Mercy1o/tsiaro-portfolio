@@ -1,15 +1,13 @@
 :root {
-  --water-base: #f1f0eb;
-  --water-light: #f7f5ef;
-  --water-mid: #e5e2da;
-  --water-shadow: #c9c6bd;
-  --water-deep: #aaa79f;
-  --water-ink: #252522;
-  --water-ink-soft: #77766f;
-  --water-line: rgba(37, 37, 34, .22);
-  --water-line-soft: rgba(37, 37, 34, .11);
-  --accent-red: #a83a2d;
-  --accent-yellow: #e8c91a;
+  --water-base: #e2e0da;
+  --water-light: #eceae4;
+  --water-mid: #d2d3ce;
+  --water-shadow: #bfc2be;
+  --water-deep: #aeb3af;
+  --water-ink: #343633;
+  --water-ink-soft: #666963;
+  --water-line: rgba(77, 82, 78, .22);
+  --water-line-soft: rgba(77, 82, 78, .12);
 }
 
 html,
@@ -51,7 +49,7 @@ body :where([class*="border-[#"], [class*="hairline"]) {
 }
 
 body :where([class*="shadow-"]) {
-  --tw-shadow-color: rgba(37, 37, 34, .10) !important;
+  --tw-shadow-color: rgba(69, 74, 71, .12) !important;
 }
 
 .mobile-safe-nav {
@@ -91,8 +89,8 @@ footer.site-footer {
 
 .footer-readable {
   color: var(--water-ink) !important;
-  opacity: .78;
-  text-shadow: 0 1px 12px rgba(241,240,235,.82);
+  opacity: .82;
+  text-shadow: 0 1px 12px rgba(236,234,228,.8), 0 0 22px rgba(236,234,228,.42);
   transition: opacity .25s ease;
 }
 
@@ -101,12 +99,12 @@ footer.site-footer {
 }
 
 .skip-link {
-  background: rgba(247,245,239,.96) !important;
+  background: rgba(236,234,228,.94) !important;
   color: var(--water-ink) !important;
   border-color: var(--water-line) !important;
 }
 
 ::selection {
-  background: var(--accent-yellow) !important;
-  color: #111110 !important;
+  background: #bec3bf !important;
+  color: #2d302d !important;
 }
