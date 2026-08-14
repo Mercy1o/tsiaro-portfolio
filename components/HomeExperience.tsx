@@ -10,7 +10,7 @@ import {
   useSpring,
   useTransform,
 } from "motion/react";
-import InteractiveFilamentField from "@/components/InteractiveFilamentField";
+import WaterMarbleBackground from "@/components/WaterMarbleBackground";
 import { siteConfig } from "@/data/site";
 
 type Stage = "hero" | "choice" | "profile" | "contact";
@@ -21,19 +21,13 @@ export default function HomeExperience() {
   const [field, setField] = useState<"architecture" | "creative" | null>(null);
   const { scrollY } = useScroll();
 
-  const smoothY = useSpring(scrollY, { stiffness: 76, damping: 26, mass: 0.3, restDelta: 0.5 });
   const textY = useSpring(scrollY, { stiffness: 42, damping: 30, mass: 0.62, restDelta: 0.5 });
-  const y = reduceMotion ? scrollY : smoothY;
   const narrativeY = reduceMotion ? scrollY : textY;
 
   useMotionValueEvent(scrollY, "change", (latest) => {
     const nextStage: Stage = latest < 1080 ? "hero" : latest < 2550 ? "choice" : latest < 4140 ? "profile" : "contact";
     setActiveStage((current) => (current === nextStage ? current : nextStage));
   });
-
-  const fieldOpacity = useTransform(y, [0, 90, 300, 900, 2700, 4700, 6200], [1, 1, 0.62, 0.7, 0.68, 0.74, 0.64]);
-  const veilOpacity = useTransform(y, [0, 90, 300, 1200, 3200, 5600], [0.12, 0.12, 0.25, 0.21, 0.14, 0.25]);
-  const warmthOpacity = useTransform(y, [0, 1800, 3900, 6200], [0.34, 0.18, 0.3, 0.2]);
 
   const heroOpacity = useTransform(narrativeY, [0, 105, 260, 900, 1260], [0, 0, 1, 1, 0]);
   const heroY = useTransform(narrativeY, [105, 260, 900, 1260], [54, 0, 0, -64]);
@@ -52,12 +46,9 @@ export default function HomeExperience() {
   const contactBlur = useTransform(narrativeY, [3700, 4140], ["blur(10px)", "blur(0px)"]);
 
   return (
-    <main className="relative h-[6200px] overflow-clip bg-[#080706] text-[#d5c5aa] md:h-[6500px]">
-      <div className="sticky top-0 h-[100svh] overflow-hidden bg-[#080706]">
-        <div aria-hidden="true" className="absolute inset-0 bg-[radial-gradient(circle_at_18%_24%,rgba(139,94,52,.18),transparent_27%),radial-gradient(circle_at_76%_67%,rgba(114,78,48,.12),transparent_31%),linear-gradient(145deg,#0b0907_0%,#080706_46%,#0d0a07_100%)]" />
-        <motion.div aria-hidden="true" className="absolute inset-0" style={{ opacity: fieldOpacity }}><InteractiveFilamentField /></motion.div>
-        <motion.div aria-hidden="true" className="absolute inset-0 bg-[radial-gradient(ellipse_at_48%_44%,rgba(166,112,62,.15),transparent_34%,transparent_62%)]" style={{ opacity: warmthOpacity }} />
-        <motion.div aria-hidden="true" className="absolute inset-0 bg-[radial-gradient(ellipse_at_50%_47%,transparent_0%,rgba(8,7,6,.03)_48%,rgba(8,7,6,.72)_100%)]" style={{ opacity: veilOpacity }} />
+    <main className="relative h-[6200px] overflow-clip text-[#343633] md:h-[6500px]">
+      <div className="sticky top-0 h-[100svh] overflow-hidden">
+        <WaterMarbleBackground />
 
         <div className="absolute inset-0 z-10 px-5 pt-24 md:px-10 md:pt-28 lg:px-14">
           <div className="relative mx-auto h-full w-full max-w-[1600px]">
