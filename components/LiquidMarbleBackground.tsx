@@ -37,26 +37,57 @@ float fbm(vec2 p) {
   float amplitude = 0.5;
   for (int i = 0; i < 6; i++) {
     value += noise(p) * amplitude;
-    p = p * 2.02 + vec2(13.7, 8.3);
+    p = p * 2.01 + vec2(13.7, 8.3);
     amplitude *= 0.5;
   }
   return value;
 }
 
+vec2 flowField(vec2 p, float t) {
+  float e = 0.035;
+  float n1 = fbm(p * 0.72 + vec2(0.0, t * 0.055));
+  float nx = fbm((p + vec2(e, 0.0)) * 0.72 + vec2(0.0, t * 0.055));
+  float ny = fbm((p + vec2(0.0, e)) * 0.72 + vec2(0.0, t * 0.055));
+  vec2 grad = vec2(nx - n1, ny - n1) / e;
+  return vec2(grad.y, -grad.x);
+}
+
+vec2 advect(vec2 p, float t) {
+  vec2 q = p;
+  vec2 v1 = flowField(q, t);
+  q += v1 * 0.34;
+
+  vec2 v2 = flowField(q * 1.18 + vec2(3.2, -1.7), t + 11.0);
+  q += v2 * 0.20;
+
+  q += vec2(
+    sin(q.y * 1.35 + t * 0.09),
+    cos(q.x * 1.15 - t * 0.075)
+  ) * 0.055;
+
+  return q;
+}
+
 float surfaceHeight(vec2 uv, float t) {
-  vec2 flowA = vec2(sin(t * 0.23), cos(t * 0.19)) * 0.24;
-  vec2 flowB = vec2(cos(t * 0.17), sin(t * 0.21)) * 0.18;
+  vec2 p = advect(uv, t);
+
+  vec2 driftA = vec2(t * 0.022, -t * 0.014);
+  vec2 driftB = vec2(-t * 0.011, t * 0.018);
 
   vec2 warp = vec2(
-    fbm(uv * 1.65 + flowB),
-    fbm(uv * 1.65 - flowB + 4.7)
+    fbm(p * 1.48 + driftA),
+    fbm(p * 1.48 + driftB + 5.2)
   ) - 0.5;
 
-  float broad = fbm(uv * 1.22 + flowA);
-  float medium = fbm(uv * 2.25 + warp * 1.35 + flowA * 0.35);
-  float fine = fbm(uv * 4.65 - warp * 0.55 - flowB * 0.7);
+  vec2 p2 = p + warp * 0.95;
 
-  float h = broad * 0.52 + medium * 0.36 + fine * 0.12;
+  float broad = fbm(p2 * 1.02 + driftA * 0.45);
+  float medium = fbm(p2 * 2.05 - warp * 0.72 + driftB * 0.55);
+  float fine = fbm(p2 * 4.10 + warp * 0.36 - driftA * 0.32);
+
+  float h = broad * 0.56 + medium * 0.33 + fine * 0.11;
+  h += sin((p2.x + p2.y) * 1.15 + t * 0.045) * 0.018;
+
   return smoothstep(0.22, 0.82, h);
 }
 
@@ -64,33 +95,38 @@ void main() {
   vec2 uv = gl_FragCoord.xy / u_resolution.xy;
   uv -= 0.5;
   uv.x *= u_resolution.x / u_resolution.y;
-  uv *= 1.45;
+  uv *= 1.42;
 
-  float t = u_time * 0.12;
+  float t = u_time;
   float h = surfaceHeight(uv, t);
 
-  float px = 1.7 / u_resolution.y;
+  float px = 1.55 / u_resolution.y;
   float hx = surfaceHeight(uv + vec2(px, 0.0), t) - surfaceHeight(uv - vec2(px, 0.0), t);
   float hy = surfaceHeight(uv + vec2(0.0, px), t) - surfaceHeight(uv - vec2(0.0, px), t);
 
-  vec3 normal = normalize(vec3(-hx * 10.5, -hy * 10.5, 0.23));
-  vec3 lightDir = normalize(vec3(-0.58, 0.68, 0.72));
-  vec3 viewDir = vec3(0.0, 0.0, 1.0);
+  vec3 normal = normalize(vec3(-hx * 11.0, -hy * 11.0, 0.25));
 
+  vec3 lightDir = normalize(vec3(
+    -0.52 + sin(t * 0.035) * 0.06,
+     0.66 + cos(t * 0.028) * 0.04,
+     0.74
+  ));
+
+  vec3 viewDir = vec3(0.0, 0.0, 1.0);
   float diffuse = max(dot(normal, lightDir), 0.0);
   vec3 reflected = reflect(-lightDir, normal);
-  float specular = pow(max(dot(reflected, viewDir), 0.0), 54.0);
+  float specular = pow(max(dot(reflected, viewDir), 0.0), 46.0);
 
-  vec3 deep = vec3(0.64, 0.645, 0.625);
+  vec3 deep = vec3(0.63, 0.635, 0.615);
   vec3 mid = vec3(0.82, 0.815, 0.79);
-  vec3 high = vec3(0.955, 0.95, 0.925);
+  vec3 high = vec3(0.958, 0.95, 0.925);
 
-  vec3 color = mix(deep, mid, smoothstep(0.12, 0.56, h));
-  color = mix(color, high, smoothstep(0.52, 0.92, h));
+  vec3 color = mix(deep, mid, smoothstep(0.10, 0.56, h));
+  color = mix(color, high, smoothstep(0.50, 0.92, h));
 
-  color *= 0.78 + diffuse * 0.34;
-  color += vec3(1.0, 0.995, 0.975) * specular * 0.82;
-  color -= (1.0 - h) * vec3(0.055);
+  color *= 0.77 + diffuse * 0.35;
+  color += vec3(1.0, 0.995, 0.98) * specular * 0.78;
+  color -= (1.0 - h) * vec3(0.052);
 
   gl_FragColor = vec4(color, 1.0);
 }
