@@ -3,6 +3,38 @@
 import { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
 
+const contours = [
+  "M-120 260 C120 120 260 160 390 270 C500 360 650 340 760 205 C880 58 1110 68 1265 185 C1420 302 1540 292 1730 135",
+  "M-135 300 C95 160 250 200 380 304 C500 400 650 382 782 244 C910 110 1102 105 1260 220 C1425 342 1560 335 1745 178",
+  "M-150 342 C80 205 235 242 370 345 C500 445 672 432 810 292 C930 170 1110 158 1274 272 C1434 384 1570 382 1760 224",
+  "M-170 388 C55 255 220 282 360 388 C510 502 690 490 838 348 C960 232 1120 218 1288 328 C1450 434 1595 428 1780 276",
+  "M-190 438 C30 312 202 330 350 434 C512 548 706 550 866 402 C990 288 1138 280 1306 386 C1470 490 1610 482 1800 330",
+  "M-205 490 C18 370 194 380 344 482 C515 598 722 610 892 458 C1018 345 1154 342 1324 446 C1490 548 1630 540 1818 390",
+  "M-220 546 C8 430 182 430 338 532 C520 650 742 670 918 516 C1048 403 1170 402 1342 508 C1510 612 1650 602 1835 454",
+  "M-235 606 C0 492 170 484 332 586 C524 706 760 728 944 576 C1078 466 1188 466 1360 572 C1534 680 1670 666 1850 520",
+  "M-250 670 C-5 550 162 540 325 642 C525 766 780 786 972 638 C1110 532 1204 532 1378 638 C1552 746 1692 732 1870 590",
+  "M-265 738 C-10 612 150 602 318 706 C530 838 800 850 1000 704 C1144 600 1222 598 1394 704 C1572 814 1710 798 1888 660",
+];
+
+const ridgeContours = [
+  "M160 110 C250 48 370 54 438 134 C500 208 490 302 420 365 C352 426 240 418 172 346 C98 266 86 162 160 110 Z",
+  "M194 134 C266 84 350 86 408 150 C458 208 454 282 398 332 C340 384 262 382 204 326 C146 270 138 174 194 134 Z",
+  "M226 158 C282 120 340 120 384 168 C422 212 418 266 374 306 C328 348 276 346 232 306 C188 266 184 188 226 158 Z",
+  "M1110 144 C1198 70 1334 72 1426 156 C1512 236 1526 356 1456 446 C1384 538 1248 562 1148 496 C1042 424 1020 234 1110 144 Z",
+  "M1148 180 C1220 120 1318 122 1390 188 C1452 248 1462 338 1408 410 C1350 486 1256 500 1180 448 C1100 394 1082 248 1148 180 Z",
+  "M1184 214 C1240 166 1308 170 1360 218 C1406 260 1410 326 1368 378 C1326 430 1262 438 1208 400 C1152 360 1134 260 1184 214 Z",
+  "M560 650 C646 570 780 568 870 638 C954 704 966 822 892 906 C820 990 678 1002 582 928 C490 856 474 730 560 650 Z",
+  "M598 684 C666 620 766 618 838 674 C904 726 910 812 854 878 C796 944 696 950 624 894 C552 838 538 742 598 684 Z",
+  "M632 716 C686 668 756 668 810 710 C860 750 864 808 822 854 C778 904 710 906 660 866 C610 826 590 754 632 716 Z",
+];
+
+const trees = [
+  [130, 180], [166, 198], [204, 176], [246, 194], [282, 168], [326, 190],
+  [1080, 208], [1116, 180], [1150, 202], [1190, 174], [1230, 196], [1274, 166], [1320, 198], [1360, 176],
+  [510, 760], [548, 732], [586, 754], [624, 722], [664, 748], [704, 718], [744, 744], [786, 716],
+  [1460, 590], [1498, 562], [1534, 590], [1570, 552], [1606, 580],
+];
+
 export default function WaterMarbleBackground() {
   const pathname = usePathname();
   const [softened, setSoftened] = useState(pathname !== "/");
@@ -13,21 +45,47 @@ export default function WaterMarbleBackground() {
       return;
     }
 
-    const onScroll = () => {
-      setSoftened(window.scrollY > 56);
-    };
-
+    const onScroll = () => setSoftened(window.scrollY > 56);
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
   }, [pathname]);
 
   return (
-    <div
-      className={`water-marble ${softened ? "water-marble--soft" : "water-marble--sharp"}`}
-      aria-hidden="true"
-    >
-      <div className="water-marble__surface" />
+    <div className={`water-marble ${softened ? "water-marble--soft" : "water-marble--sharp"}`} aria-hidden="true">
+      <svg className="terrain-plan" viewBox="0 0 1600 1000" preserveAspectRatio="xMidYMid slice">
+        <rect width="1600" height="1000" className="terrain-plan__base" />
+
+        <g className="terrain-plan__relief">
+          <path d="M-60 30 C240 -70 510 70 610 230 C730 420 592 552 334 542 C90 534 -128 340 -60 30 Z" />
+          <path d="M1020 -70 C1294 -94 1580 46 1680 244 L1680 560 C1460 620 1228 538 1114 382 C1010 242 936 54 1020 -70 Z" />
+          <path d="M430 600 C638 500 894 536 1038 708 C1150 842 1104 1008 960 1080 L390 1080 C300 940 300 736 430 600 Z" />
+        </g>
+
+        <g className="terrain-plan__contours">
+          {contours.map((d, index) => <path key={`c-${index}`} d={d} />)}
+          {ridgeContours.map((d, index) => <path key={`r-${index}`} d={d} />)}
+        </g>
+
+        <g className="terrain-plan__paths terrain-plan__paths--outer">
+          <path d="M-90 850 C180 760 274 642 330 474 C388 300 494 240 690 278 C874 314 938 258 1020 130" />
+          <path d="M930 1040 C934 850 1028 754 1180 704 C1338 652 1442 548 1690 340" />
+        </g>
+        <g className="terrain-plan__paths terrain-plan__paths--inner">
+          <path d="M-90 850 C180 760 274 642 330 474 C388 300 494 240 690 278 C874 314 938 258 1020 130" />
+          <path d="M930 1040 C934 850 1028 754 1180 704 C1338 652 1442 548 1690 340" />
+        </g>
+
+        <g className="terrain-plan__trees">
+          {trees.map(([cx, cy], index) => (
+            <g key={`t-${index}`} transform={`translate(${cx} ${cy})`}>
+              <circle r="14" />
+              <circle cx="8" cy="-5" r="10" />
+              <circle cx="-7" cy="7" r="9" />
+            </g>
+          ))}
+        </g>
+      </svg>
       <div className="water-marble__wash" />
     </div>
   );
