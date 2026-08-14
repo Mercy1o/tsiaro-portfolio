@@ -1,5 +1,5 @@
 html {
-  background: #e4e2dc !important;
+  background: #e7e4dd !important;
 }
 
 body {
@@ -18,41 +18,52 @@ body::after {
   z-index: -1;
   overflow: hidden;
   pointer-events: none;
-  background: #e7e5df;
+  background: #e9e6df;
 }
 
 .terrain-plan {
   position: absolute;
-  inset: -6%;
-  width: 112%;
-  height: 112%;
+  inset: -5%;
+  width: 110%;
+  height: 110%;
   display: block;
-  transform: translate3d(0, 0, 0) scale(1.035);
+  transform: translate3d(0, 0, 0) scale(1.025);
   transform-origin: center;
-  will-change: transform, filter, opacity;
-  animation: terrain-plan-drift 44s ease-in-out infinite alternate;
+  will-change: transform;
+  animation: terrain-plan-drift 78s ease-in-out infinite alternate;
   transition:
-    filter 1.35s cubic-bezier(.22,1,.36,1),
-    opacity 1.2s cubic-bezier(.22,1,.36,1),
-    transform 1.5s cubic-bezier(.22,1,.36,1);
+    filter 1.45s cubic-bezier(.22,1,.36,1),
+    opacity 1.25s cubic-bezier(.22,1,.36,1),
+    transform 1.55s cubic-bezier(.22,1,.36,1);
 }
 
 .terrain-plan__base {
-  fill: #e8e6e0;
+  fill: #ece9e2;
 }
 
-.terrain-plan__relief {
-  fill: rgba(128, 130, 124, .09);
-  stroke: rgba(255, 255, 255, .32);
-  stroke-width: 2;
+.terrain-plan__paper-relief {
+  fill: #cbc7be;
+  opacity: .34;
+  mix-blend-mode: multiply;
+}
+
+.terrain-plan__masses ellipse {
+  fill: url(#terrain-hill-fill);
+  opacity: .48;
+  mix-blend-mode: multiply;
 }
 
 .terrain-plan__contours {
   fill: none;
-  stroke: rgba(80, 86, 81, .19);
-  stroke-width: 1.15;
+  stroke: rgba(91, 92, 88, .20);
+  stroke-width: .82;
   vector-effect: non-scaling-stroke;
-  transition: opacity 1.2s cubic-bezier(.22,1,.36,1);
+  transition: opacity 1.25s cubic-bezier(.22,1,.36,1);
+}
+
+.terrain-plan__terraces {
+  stroke: rgba(102, 102, 97, .12);
+  stroke-width: .58;
 }
 
 .terrain-plan__paths {
@@ -61,43 +72,49 @@ body::after {
   stroke-linejoin: round;
 }
 
-.terrain-plan__paths--outer {
-  stroke: rgba(255, 255, 255, .76);
+.terrain-plan__paths--shadow {
+  stroke: rgba(91, 91, 86, .14);
+  stroke-width: 29;
+  transform: translate(3px, 4px);
+}
+
+.terrain-plan__paths--surface {
+  stroke: rgba(249, 247, 241, .96);
   stroke-width: 24;
 }
 
-.terrain-plan__paths--inner {
-  stroke: rgba(102, 106, 101, .17);
-  stroke-width: 2.2;
+.terrain-plan__paths--edge {
+  stroke: rgba(166, 163, 155, .28);
+  stroke-width: 1.15;
 }
 
 .terrain-plan__trees {
-  fill: rgba(92, 98, 92, .11);
-  stroke: rgba(76, 82, 77, .11);
-  stroke-width: .7;
+  fill: #e3dfd6;
+  stroke: rgba(142, 141, 134, .38);
+  stroke-width: .62;
   vector-effect: non-scaling-stroke;
-  transition: opacity 1.2s cubic-bezier(.22,1,.36,1);
+  opacity: .92;
+  transition: opacity 1.25s cubic-bezier(.22,1,.36,1);
 }
 
 .water-marble__wash {
   position: absolute;
   inset: 0;
   background:
-    radial-gradient(ellipse at 48% 38%, rgba(255,255,252,.23), transparent 36%),
-    radial-gradient(ellipse at 14% 80%, rgba(223,221,214,.16), transparent 38%),
-    linear-gradient(135deg, rgba(255,255,255,.12), rgba(202,201,194,.08));
+    radial-gradient(ellipse at 50% 42%, rgba(255,255,252,.18), transparent 34%),
+    linear-gradient(145deg, rgba(255,255,255,.15), rgba(199,196,188,.07));
   mix-blend-mode: soft-light;
   transition:
-    opacity 1.2s cubic-bezier(.22,1,.36,1),
-    backdrop-filter 1.2s cubic-bezier(.22,1,.36,1),
-    -webkit-backdrop-filter 1.2s cubic-bezier(.22,1,.36,1);
+    opacity 1.25s cubic-bezier(.22,1,.36,1),
+    backdrop-filter 1.25s cubic-bezier(.22,1,.36,1),
+    -webkit-backdrop-filter 1.25s cubic-bezier(.22,1,.36,1);
 }
 
-/* Entrance: clear implantation drawing with visible terrain relief. */
+/* Entrance: crisp miniature-site-model relief, dense contours and planting. */
 .water-marble--sharp .terrain-plan {
-  filter: none;
+  filter: contrast(1.08) brightness(1.015);
   opacity: 1;
-  transform: translate3d(0, 0, 0) scale(1.025);
+  transform: translate3d(0, 0, 0) scale(1.018);
 }
 
 .water-marble--sharp .terrain-plan__contours {
@@ -105,45 +122,45 @@ body::after {
 }
 
 .water-marble--sharp .terrain-plan__trees {
-  opacity: .95;
+  opacity: .96;
 }
 
 .water-marble--sharp .water-marble__wash {
-  opacity: .18;
+  opacity: .12;
   backdrop-filter: none;
   -webkit-backdrop-filter: none;
 }
 
-/* Reading state: same site-plan pattern, softer behind content. */
+/* Reading state: the same terrain remains present, but recedes behind content. */
 .water-marble--soft .terrain-plan {
-  filter: blur(3.2px) contrast(.97);
-  opacity: .62;
-  transform: translate3d(0, 0, 0) scale(1.075);
+  filter: blur(2.35px) contrast(.96) brightness(1.025);
+  opacity: .66;
+  transform: translate3d(0, 0, 0) scale(1.055);
 }
 
 .water-marble--soft .terrain-plan__contours {
-  opacity: .52;
+  opacity: .58;
 }
 
 .water-marble--soft .terrain-plan__trees {
-  opacity: .46;
+  opacity: .54;
 }
 
 .water-marble--soft .water-marble__wash {
-  opacity: .48;
-  backdrop-filter: blur(1.5px);
-  -webkit-backdrop-filter: blur(1.5px);
+  opacity: .42;
+  backdrop-filter: blur(1px);
+  -webkit-backdrop-filter: blur(1px);
 }
 
 @keyframes terrain-plan-drift {
   0% {
-    transform: translate3d(-1.1%, -.7%, 0) scale(1.035);
+    transform: translate3d(-.45%, -.3%, 0) scale(1.025);
   }
   50% {
-    transform: translate3d(.65%, .45%, 0) scale(1.05);
+    transform: translate3d(.35%, .22%, 0) scale(1.032);
   }
   100% {
-    transform: translate3d(-.25%, .9%, 0) scale(1.04);
+    transform: translate3d(-.16%, .38%, 0) scale(1.028);
   }
 }
 
