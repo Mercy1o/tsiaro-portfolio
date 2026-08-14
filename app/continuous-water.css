@@ -6,7 +6,6 @@ body {
   background: transparent !important;
 }
 
-/* Disable the older body-generated texture so there is only one visual layer. */
 body::before,
 body::after {
   content: none !important;
@@ -24,51 +23,62 @@ body::after {
 
 .water-marble__svg {
   position: absolute;
-  inset: -7%;
-  width: 114%;
-  height: 114%;
+  inset: -6%;
+  width: 112%;
+  height: 112%;
   display: block;
-  transform: scale(1.045);
+  transform: scale(1.02);
   transform-origin: center;
   transition:
-    filter 1.15s cubic-bezier(.22,1,.36,1),
-    opacity 1.15s cubic-bezier(.22,1,.36,1),
-    transform 1.4s cubic-bezier(.22,1,.36,1);
-  animation: marble-drift 26s ease-in-out infinite alternate;
+    filter 1.35s cubic-bezier(.22,1,.36,1),
+    opacity 1.2s cubic-bezier(.22,1,.36,1),
+    transform 1.5s cubic-bezier(.22,1,.36,1);
+  animation: marble-drift 30s ease-in-out infinite alternate;
+}
+
+.water-marble__veins {
+  mix-blend-mode: multiply;
+  transition: opacity 1.25s cubic-bezier(.22,1,.36,1);
 }
 
 .water-marble__wash {
   position: absolute;
   inset: 0;
   background:
-    radial-gradient(ellipse at 18% 22%, rgba(246, 246, 242, .42), transparent 36%),
-    radial-gradient(ellipse at 76% 34%, rgba(230, 226, 220, .24), transparent 40%),
-    radial-gradient(ellipse at 56% 78%, rgba(220, 230, 227, .18), transparent 44%);
+    radial-gradient(ellipse at 18% 22%, rgba(246,246,242,.30), transparent 34%),
+    radial-gradient(ellipse at 76% 34%, rgba(230,226,220,.16), transparent 38%),
+    radial-gradient(ellipse at 56% 78%, rgba(220,230,227,.12), transparent 42%);
   mix-blend-mode: soft-light;
   transition:
-    opacity 1.15s cubic-bezier(.22,1,.36,1),
-    backdrop-filter 1.15s cubic-bezier(.22,1,.36,1),
-    -webkit-backdrop-filter 1.15s cubic-bezier(.22,1,.36,1);
+    opacity 1.2s cubic-bezier(.22,1,.36,1),
+    backdrop-filter 1.2s cubic-bezier(.22,1,.36,1),
+    -webkit-backdrop-filter 1.2s cubic-bezier(.22,1,.36,1);
 }
 
-/* Entrance: clearer contour definition, closer to water-marble stone veining. */
 .water-marble--sharp .water-marble__svg {
-  filter: blur(.35px) contrast(1.28) saturate(.32);
+  filter: none;
   opacity: 1;
-  transform: scale(1.025);
+  transform: scale(1.012);
+}
+
+.water-marble--sharp .water-marble__veins {
+  opacity: .78;
 }
 
 .water-marble--sharp .water-marble__wash {
-  opacity: .38;
-  backdrop-filter: blur(0px);
-  -webkit-backdrop-filter: blur(0px);
+  opacity: .12;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
 }
 
-/* Reading state: retain the same texture, but soften it behind content. */
 .water-marble--soft .water-marble__svg {
   filter: blur(6.5px) contrast(1.04) saturate(.48);
   opacity: .93;
   transform: scale(1.085);
+}
+
+.water-marble--soft .water-marble__veins {
+  opacity: .24;
 }
 
 .water-marble--soft .water-marble__wash {
@@ -79,20 +89,19 @@ body::after {
 
 @keyframes marble-drift {
   0% {
-    translate: -1.1% -.8%;
-    rotate: -.25deg;
+    translate: -1% -.7%;
+    rotate: -.2deg;
   }
   50% {
-    translate: .8% .6%;
-    rotate: .2deg;
+    translate: .7% .5%;
+    rotate: .15deg;
   }
   100% {
-    translate: -.35% 1%;
-    rotate: .35deg;
+    translate: -.3% .9%;
+    rotate: .28deg;
   }
 }
 
-/* Header and footer are typography only, never separate surfaces. */
 .mobile-safe-nav,
 .site-footer,
 footer.site-footer {
@@ -118,7 +127,8 @@ footer.site-footer {
     transition: none !important;
   }
 
-  .water-marble__wash {
+  .water-marble__wash,
+  .water-marble__veins {
     transition: none !important;
   }
 }
