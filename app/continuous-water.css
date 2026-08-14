@@ -1,0 +1,67 @@
+html {
+  background: #e2e0da !important;
+}
+
+body {
+  background: transparent !important;
+}
+
+/* Disable the older body-generated texture so there is only one visual layer. */
+body::before,
+body::after {
+  content: none !important;
+  display: none !important;
+}
+
+.water-marble {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  overflow: hidden;
+  pointer-events: none;
+  background: #e2e0da;
+}
+
+.water-marble__svg {
+  position: absolute;
+  inset: -5%;
+  width: 110%;
+  height: 110%;
+  display: block;
+  transform: scale(1.04);
+}
+
+.water-marble__wash {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse at 18% 22%, rgba(236, 238, 236, .52), transparent 38%),
+    radial-gradient(ellipse at 76% 34%, rgba(226, 221, 215, .34), transparent 42%),
+    radial-gradient(ellipse at 56% 78%, rgba(216, 232, 228, .28), transparent 44%);
+  mix-blend-mode: soft-light;
+}
+
+/* Header and footer are typography only, never separate surfaces. */
+.mobile-safe-nav,
+.site-footer,
+footer.site-footer {
+  background: transparent !important;
+  background-color: transparent !important;
+  background-image: none !important;
+  border: 0 !important;
+  box-shadow: none !important;
+}
+
+.mobile-safe-nav > [aria-hidden="true"],
+.site-footer::before,
+.site-footer::after {
+  background: transparent !important;
+  background-image: none !important;
+  box-shadow: none !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .water-marble__svg * {
+    animation: none !important;
+  }
+}
