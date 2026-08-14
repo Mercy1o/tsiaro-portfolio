@@ -36,7 +36,9 @@ export default function Navbar() {
           href="/"
           aria-label={`${siteConfig.brand} home`}
           data-brand-target
-          className="mobile-tap-target justify-self-start whitespace-nowrap text-[15px] font-medium tracking-[-.04em] text-[#343633] transition-opacity hover:opacity-55 sm:text-[16px] md:text-[18px]"
+          className={`mobile-tap-target justify-self-start whitespace-nowrap text-[15px] font-medium tracking-[-.04em] text-[#343633] transition-opacity sm:text-[16px] md:text-[18px] ${
+            pathname === "/" ? "pointer-events-none opacity-0" : "hover:opacity-55"
+          }`}
         >
           {siteConfig.brand}
         </Link>
