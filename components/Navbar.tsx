@@ -16,6 +16,8 @@ export default function Navbar() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
+  const isHome = pathname === "/";
+
   return (
     <header
       className={`mobile-safe-nav fixed inset-x-0 top-0 z-50 overflow-visible bg-transparent transition-all duration-500 ${
@@ -32,16 +34,21 @@ export default function Navbar() {
           scrolled ? "min-h-[62px] md:h-[72px]" : "min-h-[68px] md:h-[88px]"
         }`}
       >
-        <Link
-          href="/"
-          aria-label={`${siteConfig.brand} home`}
-          data-brand-target
-          className={`mobile-tap-target justify-self-start whitespace-nowrap text-[15px] font-medium tracking-[-.04em] text-[#343633] transition-opacity sm:text-[16px] md:text-[18px] ${
-            pathname === "/" ? "pointer-events-none opacity-0" : "hover:opacity-55"
-          }`}
-        >
-          {siteConfig.brand}
-        </Link>
+        {isHome ? (
+          <span
+            data-brand-target
+            aria-hidden="true"
+            className="invisible block h-[22px] w-[112px] justify-self-start text-[15px] font-medium tracking-[-.04em] sm:w-[120px] sm:text-[16px] md:h-[24px] md:w-[132px] md:text-[18px]"
+          />
+        ) : (
+          <Link
+            href="/"
+            aria-label={`${siteConfig.brand} home`}
+            className="mobile-tap-target justify-self-start whitespace-nowrap text-[15px] font-medium tracking-[-.04em] text-[#343633] transition-opacity hover:opacity-55 sm:text-[16px] md:text-[18px]"
+          >
+            {siteConfig.brand}
+          </Link>
+        )}
 
         <nav aria-label="Main navigation" className="justify-self-end md:justify-self-center">
           <div className="flex items-center justify-center gap-1 sm:gap-2 md:gap-10">
