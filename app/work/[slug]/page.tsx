@@ -1,9 +1,7 @@
 import type { Metadata } from "next";
-import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getProjectBySlug, projects } from "@/data/projects";
-import { getProjectMedia } from "@/data/projectMedia";
 
 export function generateStaticParams() {
   return projects.map((project) => ({ slug: project.slug }));
@@ -21,7 +19,6 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
   const project = getProjectBySlug(slug);
   if (!project) notFound();
 
-  const media = getProjectMedia(project.slug);
   const portfolioProjects = projects.filter((item) => item.portfolio === project.portfolio);
   const currentIndex = portfolioProjects.findIndex((item) => item.slug === project.slug);
   const previousProject = portfolioProjects[(currentIndex - 1 + portfolioProjects.length) % portfolioProjects.length];
@@ -61,19 +58,19 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
           </div>
         </section>
 
-        {media.cover ? (
-          <section className="px-5 py-10 md:px-10 md:py-16 lg:px-14">
-            <div className="mx-auto max-w-[1600px]">
-              <div className="mb-4 flex justify-between font-mono text-[8px] uppercase tracking-[.2em] text-[#666963]/55">
-                <span>Primary visual / 00</span>
-                <span>{project.title}</span>
-              </div>
-              <div className="image-reveal relative aspect-[16/9] overflow-hidden bg-[#dedbd3]/45">
-                <Image src={media.cover} alt={`${project.title} - ${project.subtitle}`} fill priority sizes="100vw" className={creative ? "object-contain p-3 md:p-8" : "object-cover"} />
-              </div>
+        <section className="px-5 py-10 md:px-10 md:py-16 lg:px-14">
+          <div className="mx-auto max-w-[1600px]">
+            <div className="mb-4 flex justify-between font-mono text-[8px] uppercase tracking-[.2em] text-[#666963]/55">
+              <span>Primary visual / 00</span>
+              <span>{project.title}</span>
             </div>
-          </section>
-        ) : null}
+            <div className="image-reveal flex aspect-[16/9] items-center justify-center overflow-hidden border border-[#666963]/18 bg-transparent px-6 text-center md:px-12">
+              <p className="max-w-5xl text-[clamp(2.8rem,7vw,8rem)] font-medium uppercase leading-[.82] tracking-[-.065em] text-[#343633]/78">
+                {project.title}
+              </p>
+            </div>
+          </div>
+        </section>
 
         <section className="px-5 py-20 md:px-10 md:py-32 lg:px-14">
           <div className="mx-auto max-w-[1600px]">
