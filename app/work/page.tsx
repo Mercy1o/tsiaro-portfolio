@@ -17,7 +17,7 @@ export default async function WorkPage({
     portfolio === "architecture" || portfolio === "creative" ? portfolio : null;
 
   return (
-    <main className="relative min-h-screen overflow-hidden bg-transparent px-5 pb-28 pt-32 text-[#343633] md:px-10 md:pt-40 lg:px-14">
+    <main className="page-work relative min-h-screen overflow-hidden bg-transparent px-5 pb-28 pt-32 text-[#343633] md:px-10 md:pt-40 lg:px-14">
       <div className="relative z-10 mx-auto max-w-[1600px]">
         <header className="grid min-h-[62vh] gap-10 pb-14 md:grid-cols-12 md:items-end md:pb-16">
           <div className="self-start md:col-span-3">
