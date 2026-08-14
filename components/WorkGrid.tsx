@@ -16,6 +16,7 @@ export default function WorkGrid({ limit, projects }: WorkGridProps) {
   const items = typeof limit === "number" ? source.slice(0, limit) : source;
 
   const [activeSlug, setActiveSlug] = useState(items[0]?.slug ?? "");
+  const [previewTop, setPreviewTop] = useState(0);
 
   const activeProject =
     items.find((project) => project.slug === activeSlug) ?? items[0];
@@ -24,9 +25,17 @@ export default function WorkGrid({ limit, projects }: WorkGridProps) {
 
   const activeMedia = getProjectMedia(activeProject.slug);
 
+  function activateProject(
+    project: Project,
+    element: HTMLElement
+  ) {
+    setActiveSlug(project.slug);
+    setPreviewTop(element.offsetTop);
+  }
+
   return (
-    <div className="grid gap-8 md:grid-cols-12 md:gap-12">
-      <div className="order-2 md:order-1 md:col-span-8 lg:col-span-9">
+    <div className="relative">
+      <div className="md:w-[72%] lg:w-[74%]">
         <div className="flex flex-col">
           {items.map((project) => {
             const active = project.slug === activeProject.slug;
@@ -35,9 +44,15 @@ export default function WorkGrid({ limit, projects }: WorkGridProps) {
               <Link
                 key={project.slug}
                 href={`/work/${project.slug}`}
-                onMouseEnter={() => setActiveSlug(project.slug)}
-                onFocus={() => setActiveSlug(project.slug)}
-                onTouchStart={() => setActiveSlug(project.slug)}
+                onMouseEnter={(event) =>
+                  activateProject(project, event.currentTarget)
+                }
+                onFocus={(event) =>
+                  activateProject(project, event.currentTarget)
+                }
+                onTouchStart={(event) =>
+                  activateProject(project, event.currentTarget)
+                }
                 className="group border-b border-[#a98758]/12 py-2 first:border-t"
               >
                 <div className="grid grid-cols-[2.6rem_1fr] items-baseline gap-2 md:grid-cols-[3.5rem_1fr_auto] md:gap-5">
@@ -65,35 +80,58 @@ export default function WorkGrid({ limit, projects }: WorkGridProps) {
         </div>
       </div>
 
-      <aside className="order-1 md:order-2 md:col-span-4 lg:col-span-3">
-        <div className="md:sticky md:top-32">
-          <div className="relative aspect-[4/5] overflow-hidden bg-[#15120f]">
-            {activeMedia.cover ? (
-              <Image
-                key={activeMedia.cover}
-                src={activeMedia.cover}
-                alt={`${activeProject.title} · ${activeProject.subtitle}`}
-                fill
-                sizes="(max-width: 767px) 100vw, 30vw"
-                className="object-cover transition-opacity duration-500"
-                priority
-              />
-            ) : null}
+      <aside
+        className="
+          absolute
+          right-0
+          hidden
+          w-[24%]
+          transition-[top]
+          duration-500
+          ease-[cubic-bezier(.22,1,.36,1)]
+          md:block
+        "
+        style={{ top: previewTop }}
+      >
+        <div className="relative aspect-[4/5] overflow-hidden bg-[#15120f]">
+          {activeMedia.cover ? (
+            <Image
+              key={activeMedia.cover}
+              src={activeMedia.cover}
+              alt={`${activeProject.title} · ${activeProject.subtitle}`}
+              fill
+              sizes="24vw"
+              className="object-cover transition-opacity duration-500"
+              priority
+            />
+          ) : null}
+        </div>
 
-            <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(9,8,6,.02),rgba(9,8,6,.15))]" />
-          </div>
+        <div className="mt-4 border-t border-[#a98758]/12 pt-3">
+          <p className="font-mono text-[8px] uppercase tracking-[.18em] text-[#8d7658]/52">
+            {activeProject.category} · {activeProject.year}
+          </p>
 
-          <div className="mt-4 border-t border-[#a98758]/12 pt-3">
-            <p className="font-mono text-[8px] uppercase tracking-[.18em] text-[#8d7658]/52">
-              {activeProject.category} · {activeProject.year}
-            </p>
-
-            <p className="mt-2 text-sm leading-6 text-[#a99a82]/62">
-              {activeProject.subtitle}
-            </p>
-          </div>
+          <p className="mt-2 text-sm leading-6 text-[#a99a82]/62">
+            {activeProject.subtitle}
+          </p>
         </div>
       </aside>
+
+      <div className="mb-8 md:hidden">
+        <div className="relative aspect-[4/5] overflow-hidden bg-[#15120f]">
+          {activeMedia.cover ? (
+            <Image
+              key={activeMedia.cover}
+              src={activeMedia.cover}
+              alt={`${activeProject.title} · ${activeProject.subtitle}`}
+              fill
+              sizes="100vw"
+              className="object-cover"
+            />
+          ) : null}
+        </div>
+      </div>
     </div>
   );
 }
