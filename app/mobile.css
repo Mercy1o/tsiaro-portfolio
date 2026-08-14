@@ -1,3 +1,5 @@
+@import "./water-theme.css";
+
 /* Mobile / iPhone adaptation layer.
    Desktop keeps the Tailwind composition; this file only takes over on
    narrow screens and coarse-pointer phones (including iPhone landscape). */
@@ -7,7 +9,7 @@
 }
 
 .mobile-tap-target {
-  -webkit-tap-highlight-color: rgba(184, 148, 100, 0.14);
+  -webkit-tap-highlight-color: rgba(126, 132, 128, 0.14);
 }
 
 @media (max-width: 767px), (max-width: 932px) and (pointer: coarse) {
@@ -52,8 +54,6 @@
     display: none !important;
   }
 
-  /* Home: the mathematical organism remains the opening visual, then the
-     text becomes dominant as the visitor scrolls. */
   [aria-label="Introduction"] {
     align-items: flex-end !important;
     padding-bottom: max(2.8rem, env(safe-area-inset-bottom, 0px));
@@ -199,7 +199,6 @@
     min-height: 44px;
   }
 
-  /* Keep tap interactions calm and readable on touch hardware. */
   @media (hover: none) {
     .project-link:hover,
     .image-reveal:hover img {
