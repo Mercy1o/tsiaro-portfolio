@@ -31,7 +31,7 @@ export default function WorkGrid({ limit, projects }: WorkGridProps) {
   }
 
   return (
-    <div className="relative">
+    <div className="work-grid relative">
       <div className="md:w-[72%] lg:w-[74%]">
         <div className="flex flex-col">
           {items.map((project) => {
@@ -43,9 +43,13 @@ export default function WorkGrid({ limit, projects }: WorkGridProps) {
                 href={`/work/${project.slug}`}
                 onMouseEnter={(event) => activateProject(project, event.currentTarget)}
                 onFocus={(event) => activateProject(project, event.currentTarget)}
-                className="group border-b border-[#666963]/16 py-2 first:border-t focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#343633]/55"
+                className="project-row group border-b border-[#666963]/16 py-2 first:border-t focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#343633]/55"
               >
-                <div className="grid grid-cols-[2.6rem_1fr] items-baseline gap-2 md:grid-cols-[3.5rem_1fr_auto] md:gap-5">
+                <div className="mobile-project-surface hidden aspect-[4/3] items-center justify-center border border-[#666963]/18 bg-transparent px-5 text-center">
+                  <p className="text-3xl font-medium uppercase leading-[.86] tracking-[-.055em] text-[#343633]/78">{project.title}</p>
+                </div>
+
+                <div className="project-row-meta grid grid-cols-[2.6rem_1fr] items-baseline gap-2 md:grid-cols-[3.5rem_1fr_auto] md:gap-5">
                   <span className="font-mono text-[8px] uppercase tracking-[.18em] text-[#666963]/58 md:text-[9px]">
                     {project.number}
                   </span>
