@@ -1,0 +1,128 @@
+:root {
+  --water-base: #e2e0da;
+  --water-light: #eceae4;
+  --water-mid: #d2d3ce;
+  --water-shadow: #bfc2be;
+  --water-deep: #aeb3af;
+  --water-ink: #343633;
+  --water-ink-soft: #666963;
+  --water-line: rgba(77, 82, 78, .22);
+  --water-line-soft: rgba(77, 82, 78, .12);
+}
+
+html,
+body {
+  background: var(--water-base) !important;
+  color: var(--water-ink) !important;
+}
+
+body {
+  position: relative;
+  isolation: isolate;
+}
+
+body::before,
+body::after {
+  content: "";
+  position: fixed;
+  inset: -14%;
+  pointer-events: none;
+  z-index: -20;
+}
+
+body::before {
+  background:
+    radial-gradient(ellipse at 14% 18%, rgba(255,255,255,.72) 0 10%, transparent 26%),
+    radial-gradient(ellipse at 62% 21%, rgba(171,177,174,.28) 0 7%, transparent 23%),
+    radial-gradient(ellipse at 83% 72%, rgba(255,255,255,.52) 0 10%, transparent 27%),
+    radial-gradient(ellipse at 32% 74%, rgba(175,181,177,.24) 0 8%, transparent 25%),
+    repeating-radial-gradient(ellipse at 48% 46%, rgba(122,130,126,.13) 0 2px, rgba(242,241,236,.15) 3px 8px, transparent 10px 24px),
+    linear-gradient(128deg, #eceae4 0%, #d7d7d2 42%, #ece9e2 72%, #cfd2cf 100%);
+  background-size: 140% 125%, 150% 130%, 145% 140%, 135% 125%, 118% 112%, 100% 100%;
+  filter: blur(7px) contrast(1.08) saturate(.62);
+  transform: scale(1.08) rotate(-1.2deg);
+  animation: water-drift-a 42s ease-in-out infinite alternate;
+}
+
+body::after {
+  background:
+    repeating-radial-gradient(ellipse at 20% 34%, transparent 0 12px, rgba(101,110,106,.11) 14px 17px, transparent 20px 37px),
+    repeating-radial-gradient(ellipse at 72% 61%, transparent 0 17px, rgba(255,255,255,.23) 19px 23px, transparent 25px 44px),
+    radial-gradient(ellipse at 50% 50%, rgba(255,255,255,.24), transparent 58%);
+  background-size: 132% 118%, 128% 126%, 100% 100%;
+  mix-blend-mode: multiply;
+  opacity: .72;
+  filter: blur(4px);
+  transform: scale(1.1) rotate(.8deg);
+  animation: water-drift-b 55s ease-in-out infinite alternate;
+}
+
+/* Global recolor only. Typography, spacing, sizing and layout remain untouched. */
+body :where(main, section, footer) {
+  background-color: transparent !important;
+}
+
+body :where([class*="bg-[#0"], [class*="bg-[#1"], [class*="bg-[#2"], [class*="bg-[linear-gradient"], [class*="bg-[radial-gradient"]) {
+  background-color: transparent !important;
+  background-image: none !important;
+}
+
+body :where(p, h1, h2, h3, h4, h5, h6, span, a, button, label, li, dt, dd) {
+  color: var(--water-ink) !important;
+}
+
+body :where([class*="text-[#"]) {
+  color: var(--water-ink) !important;
+}
+
+body :where([class*="border-[#"], [class*="hairline"]) {
+  border-color: var(--water-line) !important;
+}
+
+body :where([class*="shadow-"]) {
+  --tw-shadow-color: rgba(69, 74, 71, .12) !important;
+}
+
+.mobile-safe-nav {
+  background: rgba(226, 224, 218, .72) !important;
+  border-color: var(--water-line-soft) !important;
+  box-shadow: 0 8px 30px rgba(71, 77, 73, .08) !important;
+}
+
+.mobile-safe-nav [aria-hidden="true"] {
+  background: linear-gradient(180deg, rgba(255,255,255,.24), rgba(210,211,206,.1)) !important;
+}
+
+footer {
+  border-color: var(--water-line-soft) !important;
+}
+
+.skip-link {
+  background: rgba(236,234,228,.94) !important;
+  color: var(--water-ink) !important;
+  border-color: var(--water-line) !important;
+}
+
+::selection {
+  background: #bec3bf !important;
+  color: #2d302d !important;
+}
+
+@keyframes water-drift-a {
+  0% { transform: scale(1.08) rotate(-1.2deg) translate3d(-1.5%, -1%, 0); }
+  50% { transform: scale(1.13) rotate(.2deg) translate3d(1.2%, .8%, 0); }
+  100% { transform: scale(1.1) rotate(1deg) translate3d(-.4%, 1.6%, 0); }
+}
+
+@keyframes water-drift-b {
+  0% { transform: scale(1.1) rotate(.8deg) translate3d(1%, -1.2%, 0); }
+  50% { transform: scale(1.15) rotate(-.4deg) translate3d(-1.4%, .5%, 0); }
+  100% { transform: scale(1.12) rotate(.5deg) translate3d(.7%, 1.3%, 0); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  body::before,
+  body::after {
+    animation: none !important;
+  }
+}
