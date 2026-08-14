@@ -2,10 +2,12 @@ import type { Metadata, Viewport } from "next";
 import { Geist_Mono, Inter } from "next/font/google";
 import "./globals.css";
 import "./mobile.css";
+import "./water-theme.css";
 import MotionProvider from "@/components/MotionProvider";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import PageSignalTransition from "@/components/PageSignalTransition";
+import BrandIntro from "@/components/BrandIntro";
 import { siteConfig } from "@/data/site";
 
 const displaySans = Inter({
@@ -24,8 +26,8 @@ export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
   viewportFit: "cover",
-  themeColor: "#0d0c0a",
-  colorScheme: "dark",
+  themeColor: "#e2e0da",
+  colorScheme: "light",
 };
 
 export const metadata: Metadata = {
@@ -58,6 +60,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
         <MotionProvider>
           <PageSignalTransition />
           <Navbar />
+          <BrandIntro />
           <div id="main-content">{children}</div>
           <Footer />
         </MotionProvider>
