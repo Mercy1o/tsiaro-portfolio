@@ -24,16 +24,18 @@ const mono = Geist_Mono({
   display: "swap",
 });
 
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://trnskdesign.vercel.app";
+
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
   viewportFit: "cover",
-  themeColor: "#e2e0da",
+  themeColor: "#ece9e2",
   colorScheme: "light",
 };
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://tsiaro-portfolio.vercel.app"),
+  metadataBase: new URL(siteUrl),
   title: {
     default: siteConfig.title,
     template: "%s - Tsiaro Rakototiana",
@@ -41,8 +43,17 @@ export const metadata: Metadata = {
   description: siteConfig.description,
   applicationName: "Tsiaro Rakototiana Portfolio",
   creator: siteConfig.name,
+  authors: [{ name: siteConfig.name }],
+  alternates: {
+    canonical: "/",
+  },
+  robots: {
+    index: true,
+    follow: true,
+  },
   openGraph: {
     type: "website",
+    url: "/",
     title: siteConfig.title,
     description: siteConfig.description,
     siteName: siteConfig.name,
