@@ -112,11 +112,11 @@ export default function BrandIntro() {
         }
         transition={{
           type: "spring",
-          stiffness: docked ? 72 : 58,
-          damping: docked ? 22 : 20,
-          mass: docked ? 0.9 : 1.05,
-          restDelta: 0.15,
-          restSpeed: 0.15,
+          stiffness: docked ? 72 : 34,
+          damping: docked ? 22 : 28,
+          mass: docked ? 0.9 : 1.35,
+          restDelta: 0.08,
+          restSpeed: 0.08,
         }}
       >
         {siteConfig.brand.split("").map((letter, index) => (
