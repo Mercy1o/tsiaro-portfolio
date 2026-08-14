@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useLayoutEffect, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { usePathname } from "next/navigation";
 import { motion, useReducedMotion } from "motion/react";
 import { siteConfig } from "@/data/site";
@@ -17,6 +17,7 @@ export default function BrandIntro() {
   const [target, setTarget] = useState<Target | null>(null);
   const [viewportWidth, setViewportWidth] = useState(1200);
   const [docked, setDocked] = useState(false);
+  const returnTimer = useRef<number | null>(null);
 
   useLayoutEffect(() => {
     if (pathname !== "/" || reduceMotion) return;
@@ -44,14 +45,42 @@ export default function BrandIntro() {
   useEffect(() => {
     if (pathname !== "/" || reduceMotion || !target) return;
 
-    const onScroll = () => {
-      setDocked(window.scrollY > 32);
+    const clearReturnTimer = () => {
+      if (returnTimer.current !== null) {
+        window.clearTimeout(returnTimer.current);
+        returnTimer.current = null;
+      }
     };
 
-    onScroll();
+    const onScroll = () => {
+      const y = window.scrollY;
+
+      if (y > 56) {
+        clearReturnTimer();
+        setDocked(true);
+        return;
+      }
+
+      if (y <= 4 && docked && returnTimer.current === null) {
+        returnTimer.current = window.setTimeout(() => {
+          setDocked(false);
+          returnTimer.current = null;
+        }, 320);
+      }
+    };
+
+    if (window.scrollY > 56) {
+      setDocked(true);
+    }
+
     window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
-  }, [pathname, reduceMotion, target]);
+    onScroll();
+
+    return () => {
+      clearReturnTimer();
+      window.removeEventListener("scroll", onScroll);
+    };
+  }, [pathname, reduceMotion, target, docked]);
 
   if (pathname !== "/" || reduceMotion || !target) return null;
 
@@ -80,7 +109,7 @@ export default function BrandIntro() {
               }
         }
         transition={{
-          duration: 0.86,
+          duration: docked ? 0.82 : 1.05,
           ease: [0.22, 1, 0.36, 1],
         }}
       >
