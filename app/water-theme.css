@@ -82,29 +82,16 @@ body :where([class*="shadow-"]) {
   --tw-shadow-color: rgba(69, 74, 71, .12) !important;
 }
 
-/* Frosted navigation: the page remains visible through it, but details directly
-   behind the navigation dissolve into a soft glass field. */
+/* Navigation has no surface: only the page itself and floating text remain. */
 .mobile-safe-nav {
-  background: rgba(232, 230, 224, .46) !important;
-  border-color: rgba(77, 82, 78, .08) !important;
-  box-shadow: 0 8px 34px rgba(71, 77, 73, .045) !important;
-  backdrop-filter: blur(30px) saturate(.8) !important;
-  -webkit-backdrop-filter: blur(30px) saturate(.8) !important;
+  background: transparent !important;
+  background-image: none !important;
+  border: 0 !important;
+  box-shadow: none !important;
 }
 
-.mobile-safe-nav > [aria-hidden="true"]:first-child {
-  background: linear-gradient(
-    180deg,
-    rgba(247,246,242,.38) 0%,
-    rgba(232,230,224,.18) 58%,
-    rgba(232,230,224,.035) 100%
-  ) !important;
-}
-
-.mobile-safe-nav > [aria-hidden="true"]:nth-child(2) {
-  backdrop-filter: blur(18px) !important;
-  -webkit-backdrop-filter: blur(18px) !important;
-  opacity: .9;
+.mobile-safe-nav > [aria-hidden="true"] {
+  background: transparent !important;
 }
 
 [data-brand-target] {
@@ -116,8 +103,7 @@ html[data-brand-intro="active"] [data-brand-target] {
   opacity: 0 !important;
 }
 
-/* The footer is not a surface. It is only typography floating over the same
-   water texture as the rest of the page. */
+/* Footer has no independent rectangle or surface. */
 .site-footer,
 footer.site-footer {
   background: transparent !important;
@@ -134,10 +120,9 @@ footer.site-footer {
 }
 
 .footer-readable {
-  color: #ffffff !important;
-  mix-blend-mode: difference;
+  color: var(--water-ink) !important;
   opacity: .82;
-  text-shadow: 0 0 14px rgba(255,255,255,.14);
+  text-shadow: 0 1px 12px rgba(236,234,228,.8), 0 0 22px rgba(236,234,228,.42);
   transition: opacity .25s ease;
 }
 
