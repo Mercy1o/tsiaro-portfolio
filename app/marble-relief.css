@@ -1,0 +1,67 @@
+.water-marble__surface {
+  isolation: isolate;
+}
+
+.water-marble__surface::before,
+.water-marble__surface::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image: inherit;
+  background-size: inherit;
+  background-position: inherit;
+  background-repeat: inherit;
+  transition: opacity 1.1s cubic-bezier(.22,1,.36,1);
+}
+
+/* Upper-left highlight: gives the lighter ridges a raised edge. */
+.water-marble__surface::before {
+  transform: translate3d(-1.4px, -1.4px, 0);
+  mix-blend-mode: screen;
+  opacity: .16;
+}
+
+/* Lower-right shadow: makes recessed veins read deeper. */
+.water-marble__surface::after {
+  transform: translate3d(1.6px, 1.6px, 0);
+  mix-blend-mode: multiply;
+  opacity: .24;
+}
+
+.water-marble--sharp .water-marble__surface {
+  filter: grayscale(1) contrast(1.62) brightness(.96) !important;
+  opacity: 1 !important;
+}
+
+.water-marble--sharp .water-marble__surface::before {
+  opacity: .19;
+}
+
+.water-marble--sharp .water-marble__surface::after {
+  opacity: .28;
+}
+
+.water-marble--sharp .water-marble__wash {
+  opacity: .015 !important;
+}
+
+/* Keep the reading state softer, but retain enough depth to read as marble. */
+.water-marble--soft .water-marble__surface {
+  filter: grayscale(1) blur(5.5px) contrast(1.14) brightness(.99) !important;
+}
+
+.water-marble--soft .water-marble__surface::before {
+  opacity: .045;
+}
+
+.water-marble--soft .water-marble__surface::after {
+  opacity: .07;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .water-marble__surface::before,
+  .water-marble__surface::after {
+    transition: none !important;
+  }
+}
