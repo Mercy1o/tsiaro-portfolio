@@ -61,9 +61,6 @@ export default function BrandIntro() {
         return;
       }
 
-      // The hero text follows a spring-smoothed scroll value, so it can still be
-      // visually exiting after the browser has already reached scrollY = 0.
-      // Keep the brand docked until that motion has fully settled.
       if (y <= 1 && docked && returnTimer.current === null) {
         returnTimer.current = window.setTimeout(() => {
           if (window.scrollY <= 1) {
@@ -94,7 +91,7 @@ export default function BrandIntro() {
   return (
     <div className="pointer-events-none fixed inset-0 z-[90]" aria-hidden="true">
       <motion.div
-        className="fixed whitespace-nowrap font-medium tracking-[-.055em] text-[#343633]"
+        className="fixed whitespace-nowrap font-medium tracking-[-.055em] text-[#343633] will-change-[left,top,font-size,transform]"
         initial={false}
         animate={
           docked
@@ -114,8 +111,12 @@ export default function BrandIntro() {
               }
         }
         transition={{
-          duration: docked ? 0.82 : 1.05,
-          ease: [0.22, 1, 0.36, 1],
+          type: "spring",
+          stiffness: docked ? 72 : 58,
+          damping: docked ? 22 : 20,
+          mass: docked ? 0.9 : 1.05,
+          restDelta: 0.15,
+          restSpeed: 0.15,
         }}
       >
         {siteConfig.brand.split("").map((letter, index) => (
