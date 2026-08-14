@@ -1,6 +1,5 @@
 "use client";
 
-import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
 import {
@@ -11,7 +10,6 @@ import {
   useSpring,
   useTransform,
 } from "motion/react";
-import { getProjectMedia } from "@/data/projectMedia";
 import { projects } from "@/data/projects";
 import { siteConfig } from "@/data/site";
 
@@ -92,29 +90,22 @@ export default function HomeExperience() {
                 </div>
 
                 <div className="grid gap-5 md:grid-cols-3">
-                  {featuredProjects.map((project, index) => {
-                    const media = getProjectMedia(project.slug);
-                    return (
-                      <Link key={project.slug} href={`/work/${project.slug}`} className="group block">
-                        <div className="relative aspect-[4/3] overflow-hidden">
-                          <Image
-                            src={media.cover}
-                            alt={project.title}
-                            fill
-                            sizes="(max-width: 767px) 100vw, 33vw"
-                            className="object-cover transition-transform duration-700 ease-out group-hover:scale-[1.025]"
-                          />
+                  {featuredProjects.map((project, index) => (
+                    <Link key={project.slug} href={`/work/${project.slug}`} className="group block">
+                      <div className="flex aspect-[4/3] items-center justify-center overflow-hidden border border-[#666963]/18 bg-transparent px-6 text-center">
+                        <p className="text-[clamp(1.65rem,3vw,3.5rem)] font-medium uppercase leading-[.86] tracking-[-.055em] text-[#343633]/78 transition-opacity duration-300 group-hover:opacity-55">
+                          {project.title}
+                        </p>
+                      </div>
+                      <div className="mt-3 flex items-start justify-between gap-4 border-t pt-3">
+                        <div>
+                          <p className="font-mono text-[8px] uppercase tracking-[.18em] opacity-55">0{index + 1} · {project.category}</p>
+                          <h2 className="mt-1 text-[clamp(1.6rem,2.4vw,2.8rem)] font-medium leading-[.95] tracking-[-.045em]">{project.title}</h2>
                         </div>
-                        <div className="mt-3 flex items-start justify-between gap-4 border-t pt-3">
-                          <div>
-                            <p className="font-mono text-[8px] uppercase tracking-[.18em] opacity-55">0{index + 1} · {project.category}</p>
-                            <h2 className="mt-1 text-[clamp(1.6rem,2.4vw,2.8rem)] font-medium leading-[.95] tracking-[-.045em]">{project.title}</h2>
-                          </div>
-                          <span className="font-mono text-[8px] uppercase tracking-[.16em] opacity-55">{project.year}</span>
-                        </div>
-                      </Link>
-                    );
-                  })}
+                        <span className="font-mono text-[8px] uppercase tracking-[.16em] opacity-55">{project.year}</span>
+                      </div>
+                    </Link>
+                  ))}
                 </div>
 
                 <Link href="/work" className="mt-7 inline-flex font-mono text-[10px] uppercase tracking-[.17em] transition-opacity hover:opacity-50 md:hidden">View all work ↗</Link>
