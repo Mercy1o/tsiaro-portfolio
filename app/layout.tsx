@@ -8,6 +8,7 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import PageSignalTransition from "@/components/PageSignalTransition";
 import BrandIntro from "@/components/BrandIntro";
+import WaterMarbleBackground from "@/components/WaterMarbleBackground";
 import { siteConfig } from "@/data/site";
 
 const displaySans = Inter({
@@ -56,6 +57,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
   return (
     <html lang="en">
       <body className={`${displaySans.variable} ${mono.variable}`}>
+        <WaterMarbleBackground />
         <a href="#main-content" className="skip-link">Skip to content</a>
         <MotionProvider>
           <PageSignalTransition />
