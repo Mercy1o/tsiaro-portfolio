@@ -34,6 +34,7 @@ export default function Navbar() {
         <Link
           href="/"
           aria-label={`${siteConfig.brand} home`}
+          data-brand-target
           className="mobile-tap-target justify-self-start whitespace-nowrap text-[15px] font-medium tracking-[-.04em] text-[#ddc8a6] transition-colors hover:text-[#f0dec0] sm:text-[16px] md:text-[18px]"
         >
           {siteConfig.brand}
