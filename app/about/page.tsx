@@ -5,7 +5,7 @@ export const metadata: Metadata = { title: "About" };
 
 export default function AboutPage() {
   return (
-    <main className="relative min-h-screen overflow-hidden bg-transparent text-[#343633]">
+    <main className="page-about relative min-h-screen overflow-hidden bg-transparent text-[#343633]">
       <div className="relative z-10">
         <section className="min-h-[88svh] px-5 pb-14 pt-32 md:px-10 md:pt-40 lg:px-14">
           <div className="mx-auto flex min-h-[70svh] max-w-[1600px] flex-col justify-between">
