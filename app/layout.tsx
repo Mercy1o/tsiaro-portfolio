@@ -4,6 +4,7 @@ import "./globals.css";
 import "./mobile.css";
 import "./water-theme.css";
 import "./continuous-water.css";
+import "./marble-relief.css";
 import MotionProvider from "@/components/MotionProvider";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
