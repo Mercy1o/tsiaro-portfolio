@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 
 const vertexShader = `
 attribute vec2 a_position;
@@ -34,99 +34,81 @@ float noise(vec2 p) {
 
 float fbm(vec2 p) {
   float value = 0.0;
-  float amplitude = 0.5;
-  for (int i = 0; i < 6; i++) {
+  float amplitude = 0.53;
+  for (int i = 0; i < 4; i++) {
     value += noise(p) * amplitude;
-    p = p * 2.01 + vec2(13.7, 8.3);
-    amplitude *= 0.5;
+    p = p * 2.03 + vec2(11.7, 7.9);
+    amplitude *= 0.48;
   }
   return value;
 }
 
-vec2 flowField(vec2 p, float t) {
-  float e = 0.035;
-  float n1 = fbm(p * 0.72 + vec2(0.0, t * 0.055));
-  float nx = fbm((p + vec2(e, 0.0)) * 0.72 + vec2(0.0, t * 0.055));
-  float ny = fbm((p + vec2(0.0, e)) * 0.72 + vec2(0.0, t * 0.055));
-  vec2 grad = vec2(nx - n1, ny - n1) / e;
-  return vec2(grad.y, -grad.x);
-}
+vec2 fluidWarp(vec2 p, float t) {
+  vec2 slowDrift = vec2(t * 0.020, -t * 0.013);
 
-vec2 advect(vec2 p, float t) {
-  vec2 q = p;
-  vec2 v1 = flowField(q, t);
-  q += v1 * 0.34;
+  float a = fbm(p * 0.82 + slowDrift);
+  float b = fbm(p * 0.82 - slowDrift + vec2(4.1, -2.7));
 
-  vec2 v2 = flowField(q * 1.18 + vec2(3.2, -1.7), t + 11.0);
-  q += v2 * 0.20;
+  vec2 flow = vec2(a - 0.5, b - 0.5);
 
-  q += vec2(
-    sin(q.y * 1.35 + t * 0.09),
-    cos(q.x * 1.15 - t * 0.075)
-  ) * 0.055;
+  flow += vec2(
+    sin(p.y * 1.15 + t * 0.16),
+    cos(p.x * 1.05 - t * 0.13)
+  ) * 0.075;
 
-  return q;
+  return p + flow * 0.78;
 }
 
 float surfaceHeight(vec2 uv, float t) {
-  vec2 p = advect(uv, t);
+  vec2 p = fluidWarp(uv, t);
+  vec2 driftA = vec2(t * 0.014, -t * 0.009);
+  vec2 driftB = vec2(-t * 0.008, t * 0.012);
 
-  vec2 driftA = vec2(t * 0.022, -t * 0.014);
-  vec2 driftB = vec2(-t * 0.011, t * 0.018);
+  float broad = fbm(p * 1.05 + driftA);
+  float medium = fbm((p + vec2(broad - 0.5)) * 2.05 + driftB);
+  float detail = noise(p * 4.3 - driftA * 0.5);
 
-  vec2 warp = vec2(
-    fbm(p * 1.48 + driftA),
-    fbm(p * 1.48 + driftB + 5.2)
-  ) - 0.5;
-
-  vec2 p2 = p + warp * 0.95;
-
-  float broad = fbm(p2 * 1.02 + driftA * 0.45);
-  float medium = fbm(p2 * 2.05 - warp * 0.72 + driftB * 0.55);
-  float fine = fbm(p2 * 4.10 + warp * 0.36 - driftA * 0.32);
-
-  float h = broad * 0.56 + medium * 0.33 + fine * 0.11;
-  h += sin((p2.x + p2.y) * 1.15 + t * 0.045) * 0.018;
-
-  return smoothstep(0.22, 0.82, h);
+  float h = broad * 0.60 + medium * 0.32 + detail * 0.08;
+  return smoothstep(0.19, 0.84, h);
 }
 
 void main() {
   vec2 uv = gl_FragCoord.xy / u_resolution.xy;
   uv -= 0.5;
   uv.x *= u_resolution.x / u_resolution.y;
-  uv *= 1.42;
+  uv *= 1.38;
 
-  float t = u_time;
+  // Deliberately slow: viscous water / liquid stone rather than fast turbulence.
+  float t = u_time * 0.22;
   float h = surfaceHeight(uv, t);
 
-  float px = 1.55 / u_resolution.y;
+  float px = 2.15 / u_resolution.y;
   float hx = surfaceHeight(uv + vec2(px, 0.0), t) - surfaceHeight(uv - vec2(px, 0.0), t);
   float hy = surfaceHeight(uv + vec2(0.0, px), t) - surfaceHeight(uv - vec2(0.0, px), t);
 
-  vec3 normal = normalize(vec3(-hx * 11.0, -hy * 11.0, 0.25));
+  vec3 normal = normalize(vec3(-hx * 9.0, -hy * 9.0, 0.29));
 
   vec3 lightDir = normalize(vec3(
-    -0.52 + sin(t * 0.035) * 0.06,
-     0.66 + cos(t * 0.028) * 0.04,
-     0.74
+    -0.54 + sin(t * 0.07) * 0.035,
+     0.67 + cos(t * 0.055) * 0.025,
+     0.75
   ));
 
   vec3 viewDir = vec3(0.0, 0.0, 1.0);
   float diffuse = max(dot(normal, lightDir), 0.0);
   vec3 reflected = reflect(-lightDir, normal);
-  float specular = pow(max(dot(reflected, viewDir), 0.0), 46.0);
+  float specular = pow(max(dot(reflected, viewDir), 0.0), 48.0);
 
-  vec3 deep = vec3(0.63, 0.635, 0.615);
-  vec3 mid = vec3(0.82, 0.815, 0.79);
-  vec3 high = vec3(0.958, 0.95, 0.925);
+  vec3 deep = vec3(0.64, 0.645, 0.625);
+  vec3 mid = vec3(0.825, 0.82, 0.795);
+  vec3 high = vec3(0.962, 0.954, 0.932);
 
-  vec3 color = mix(deep, mid, smoothstep(0.10, 0.56, h));
-  color = mix(color, high, smoothstep(0.50, 0.92, h));
+  vec3 color = mix(deep, mid, smoothstep(0.10, 0.58, h));
+  color = mix(color, high, smoothstep(0.52, 0.92, h));
 
-  color *= 0.77 + diffuse * 0.35;
-  color += vec3(1.0, 0.995, 0.98) * specular * 0.78;
-  color -= (1.0 - h) * vec3(0.052);
+  color *= 0.79 + diffuse * 0.32;
+  color += vec3(1.0, 0.995, 0.98) * specular * 0.72;
+  color -= (1.0 - h) * vec3(0.048);
 
   gl_FragColor = vec4(color, 1.0);
 }
@@ -134,6 +116,25 @@ void main() {
 
 export default function LiquidMarbleBackground() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const [soft, setSoft] = useState(false);
+
+  useEffect(() => {
+    let softState = window.scrollY >= 150;
+    setSoft(softState);
+
+    const onScroll = () => {
+      // Tsiaro Rakototiana starts entering around 105px and is fully present near 260px.
+      // Blur the background during that handoff, not on the opening wordmark screen.
+      const next = window.scrollY >= 150;
+      if (next !== softState) {
+        softState = next;
+        setSoft(next);
+      }
+    };
+
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -180,9 +181,10 @@ export default function LiquidMarbleBackground() {
     const resolutionLocation = gl.getUniformLocation(program, "u_resolution");
 
     const resize = () => {
-      const dpr = Math.min(window.devicePixelRatio || 1, 1.35);
-      const width = Math.floor(window.innerWidth * dpr);
-      const height = Math.floor(window.innerHeight * dpr);
+      // Full device DPR is unnecessary for an organic background and costs heavily on 2x displays.
+      const dpr = Math.min(window.devicePixelRatio || 1, 0.9);
+      const width = Math.max(1, Math.floor(window.innerWidth * dpr));
+      const height = Math.max(1, Math.floor(window.innerHeight * dpr));
       if (canvas.width !== width || canvas.height !== height) {
         canvas.width = width;
         canvas.height = height;
@@ -191,7 +193,10 @@ export default function LiquidMarbleBackground() {
     };
 
     let frame = 0;
+    let running = true;
+
     const render = (time: number) => {
+      if (!running) return;
       resize();
       gl.uniform1f(timeLocation, time * 0.001);
       gl.uniform2f(resolutionLocation, canvas.width, canvas.height);
@@ -199,12 +204,26 @@ export default function LiquidMarbleBackground() {
       frame = requestAnimationFrame(render);
     };
 
+    const onVisibility = () => {
+      if (document.hidden) {
+        running = false;
+        cancelAnimationFrame(frame);
+      } else if (!running) {
+        running = true;
+        frame = requestAnimationFrame(render);
+      }
+    };
+
+    resize();
     frame = requestAnimationFrame(render);
     window.addEventListener("resize", resize);
+    document.addEventListener("visibilitychange", onVisibility);
 
     return () => {
+      running = false;
       cancelAnimationFrame(frame);
       window.removeEventListener("resize", resize);
+      document.removeEventListener("visibilitychange", onVisibility);
       gl.deleteBuffer(buffer);
       gl.deleteProgram(program);
       gl.deleteShader(vertex);
@@ -216,8 +235,10 @@ export default function LiquidMarbleBackground() {
     <canvas
       ref={canvasRef}
       aria-hidden="true"
-      className="pointer-events-none fixed inset-0 h-screen w-screen"
-      style={{ zIndex: 0 }}
+      className={`pointer-events-none fixed inset-0 h-screen w-screen transition-[filter,opacity] duration-[1400ms] ease-out ${
+        soft ? "blur-[5px] opacity-80" : "blur-0 opacity-100"
+      }`}
+      style={{ zIndex: 0, transform: "scale(1.025)" }}
     />
   );
 }
