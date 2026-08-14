@@ -33,14 +33,12 @@ body::after {
 
 .water-marble__surface {
   background:
-    repeating-radial-gradient(ellipse at 18% 24%, transparent 0 18px, rgba(98,103,99,.14) 20px 23px, rgba(239,237,231,.16) 24px 30px, transparent 32px 54px),
-    repeating-radial-gradient(ellipse at 74% 34%, transparent 0 22px, rgba(116,121,117,.12) 24px 28px, rgba(248,246,240,.2) 29px 36px, transparent 38px 66px),
-    repeating-radial-gradient(ellipse at 54% 82%, transparent 0 20px, rgba(92,97,93,.1) 22px 25px, rgba(244,242,236,.17) 26px 34px, transparent 36px 60px),
     radial-gradient(ellipse at 12% 18%, rgba(255,255,255,.68) 0 8%, transparent 23%),
     radial-gradient(ellipse at 62% 18%, rgba(174,178,175,.22) 0 7%, transparent 24%),
     radial-gradient(ellipse at 84% 76%, rgba(255,255,255,.5) 0 9%, transparent 26%),
+    radial-gradient(ellipse at 30% 72%, rgba(186,190,186,.18) 0 10%, transparent 30%),
     linear-gradient(128deg, #eceae4 0%, #d9d9d4 41%, #edeae3 70%, #cfd2cf 100%);
-  background-size: 122% 114%, 128% 120%, 124% 118%, 140% 125%, 150% 130%, 145% 140%, 100% 100%;
+  background-size: 140% 125%, 150% 130%, 145% 140%, 136% 128%, 100% 100%;
   filter: contrast(1.08) saturate(.18);
   opacity: 1;
   animation: marble-drift 52s ease-in-out infinite alternate;
