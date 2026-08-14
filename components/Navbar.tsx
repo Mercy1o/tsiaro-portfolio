@@ -18,20 +18,13 @@ export default function Navbar() {
 
   return (
     <header
-      className={`mobile-safe-nav fixed inset-x-0 top-0 z-50 overflow-visible border-b backdrop-blur-[28px] backdrop-saturate-[.82] transition-all duration-500 ${
-        scrolled
-          ? "border-[#737873]/12 bg-[#eceae4]/56 shadow-[0_10px_36px_rgba(60,64,61,.07)]"
-          : "border-[#737873]/8 bg-[#eceae4]/38 shadow-[0_8px_30px_rgba(60,64,61,.045)]"
+      className={`mobile-safe-nav fixed inset-x-0 top-0 z-50 overflow-visible bg-transparent transition-all duration-500 ${
+        scrolled ? "backdrop-blur-[24px]" : "backdrop-blur-[14px]"
       }`}
     >
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,rgba(255,255,255,.24),rgba(226,224,218,.06))]"
-      />
-
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute inset-x-0 -bottom-8 h-10 bg-[linear-gradient(180deg,rgba(232,230,224,.18),rgba(232,230,224,0))] backdrop-blur-[14px] [mask-image:linear-gradient(to_bottom,black,transparent)] [-webkit-mask-image:linear-gradient(to_bottom,black,transparent)]"
+        className="pointer-events-none absolute inset-x-0 -bottom-10 h-14 backdrop-blur-[12px] [mask-image:linear-gradient(to_bottom,rgba(0,0,0,.85),transparent)] [-webkit-mask-image:linear-gradient(to_bottom,rgba(0,0,0,.85),transparent)]"
       />
 
       <div
