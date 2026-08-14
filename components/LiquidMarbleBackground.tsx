@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { usePathname } from "next/navigation";
 
 const vertexShader = `
 attribute vec2 a_position;
@@ -56,19 +57,15 @@ vec2 flowField(vec2 p, float t) {
 }
 
 vec2 advect(vec2 p, float t) {
-  // A clear but gentle overall current toward the bottom-right of the screen.
-  // gl_FragCoord Y grows upward, so visual downward motion uses negative Y.
   vec2 diagonalCurrent = vec2(0.020, -0.016) * t;
   vec2 q = p - diagonalCurrent;
 
-  // Rich local circulation retained from the earlier fluid version.
   vec2 v1 = flowField(q, t);
   q += v1 * 0.30;
 
   vec2 v2 = flowField(q * 1.18 + vec2(3.2, -1.7), t + 11.0);
   q += v2 * 0.17;
 
-  // Long, soft folding rather than rapid turbulence.
   q += vec2(
     sin(q.y * 1.35 + t * 0.030),
     cos(q.x * 1.15 - t * 0.026)
@@ -106,7 +103,6 @@ void main() {
   uv.x *= u_resolution.x / u_resolution.y;
   uv *= 1.42;
 
-  // Slow master clock: preserve the rich fluid calculation without rushing it.
   float t = u_time * 0.24;
   float h = surfaceHeight(uv, t);
 
@@ -144,9 +140,15 @@ void main() {
 
 export default function LiquidMarbleBackground() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const [soft, setSoft] = useState(false);
+  const pathname = usePathname();
+  const [soft, setSoft] = useState(pathname !== "/");
 
   useEffect(() => {
+    if (pathname !== "/") {
+      setSoft(true);
+      return;
+    }
+
     let softState = window.scrollY >= 150;
     setSoft(softState);
 
@@ -160,7 +162,7 @@ export default function LiquidMarbleBackground() {
 
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
-  }, []);
+  }, [pathname]);
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -205,9 +207,9 @@ export default function LiquidMarbleBackground() {
 
     const timeLocation = gl.getUniformLocation(program, "u_time");
     const resolutionLocation = gl.getUniformLocation(program, "u_resolution");
+    const reducedMotionQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
 
     const resize = () => {
-      // Keep more visual fidelity than the simplified pass while avoiding full 2x rendering.
       const dpr = Math.min(window.devicePixelRatio || 1, 1.15);
       const width = Math.max(1, Math.floor(window.innerWidth * dpr));
       const height = Math.max(1, Math.floor(window.innerHeight * dpr));
@@ -218,38 +220,56 @@ export default function LiquidMarbleBackground() {
       }
     };
 
+    const draw = (timeSeconds: number) => {
+      resize();
+      gl.uniform1f(timeLocation, timeSeconds);
+      gl.uniform2f(resolutionLocation, canvas.width, canvas.height);
+      gl.drawArrays(gl.TRIANGLES, 0, 3);
+    };
+
     let frame = 0;
     let running = true;
 
     const render = (time: number) => {
       if (!running) return;
-      resize();
-      gl.uniform1f(timeLocation, time * 0.001);
-      gl.uniform2f(resolutionLocation, canvas.width, canvas.height);
-      gl.drawArrays(gl.TRIANGLES, 0, 3);
-      frame = requestAnimationFrame(render);
+      draw(reducedMotionQuery.matches ? 0 : time * 0.001);
+      if (!reducedMotionQuery.matches) {
+        frame = requestAnimationFrame(render);
+      }
+    };
+
+    const restart = () => {
+      cancelAnimationFrame(frame);
+      if (reducedMotionQuery.matches) {
+        running = true;
+        draw(0);
+      } else if (!document.hidden) {
+        running = true;
+        frame = requestAnimationFrame(render);
+      }
     };
 
     const onVisibility = () => {
       if (document.hidden) {
         running = false;
         cancelAnimationFrame(frame);
-      } else if (!running) {
-        running = true;
-        frame = requestAnimationFrame(render);
+      } else {
+        restart();
       }
     };
 
     resize();
-    frame = requestAnimationFrame(render);
-    window.addEventListener("resize", resize);
+    restart();
+    window.addEventListener("resize", restart);
     document.addEventListener("visibilitychange", onVisibility);
+    reducedMotionQuery.addEventListener("change", restart);
 
     return () => {
       running = false;
       cancelAnimationFrame(frame);
-      window.removeEventListener("resize", resize);
+      window.removeEventListener("resize", restart);
       document.removeEventListener("visibilitychange", onVisibility);
+      reducedMotionQuery.removeEventListener("change", restart);
       gl.deleteBuffer(buffer);
       gl.deleteProgram(program);
       gl.deleteShader(vertex);
