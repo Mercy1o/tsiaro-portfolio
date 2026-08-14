@@ -34,7 +34,7 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
   ] as const;
 
   return (
-    <main className="relative overflow-hidden bg-transparent text-[#343633]">
+    <main className="page-project relative overflow-hidden bg-transparent text-[#343633]">
       <div className="relative z-10">
         <section className="min-h-[90svh] px-5 pb-12 pt-32 md:px-10 md:pt-40 lg:px-14">
           <div className="mx-auto flex min-h-[72svh] max-w-[1600px] flex-col justify-between">
