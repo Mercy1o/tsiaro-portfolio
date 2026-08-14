@@ -17,14 +17,9 @@ export default function BrandIntro() {
   const [target, setTarget] = useState<Target | null>(null);
   const [viewportWidth, setViewportWidth] = useState(1200);
   const [docked, setDocked] = useState(false);
-  const [done, setDone] = useState(true);
 
   useLayoutEffect(() => {
-    if (pathname !== "/" || reduceMotion) {
-      document.documentElement.removeAttribute("data-brand-intro");
-      setDone(true);
-      return;
-    }
+    if (pathname !== "/" || reduceMotion) return;
 
     const measure = () => {
       const node = document.querySelector<HTMLElement>("[data-brand-target]");
@@ -49,36 +44,16 @@ export default function BrandIntro() {
   useEffect(() => {
     if (pathname !== "/" || reduceMotion || !target) return;
 
-    document.documentElement.setAttribute("data-brand-intro", "active");
-    setDocked(false);
-    setDone(false);
-
     const onScroll = () => {
-      if (window.scrollY < 6) return;
-      setDocked(true);
+      setDocked(window.scrollY > 32);
     };
 
-    window.addEventListener("scroll", onScroll, { passive: true });
     onScroll();
-
-    return () => {
-      window.removeEventListener("scroll", onScroll);
-      document.documentElement.removeAttribute("data-brand-intro");
-    };
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
   }, [pathname, reduceMotion, target]);
 
-  useEffect(() => {
-    if (!docked) return;
-
-    const finish = window.setTimeout(() => {
-      setDone(true);
-      document.documentElement.removeAttribute("data-brand-intro");
-    }, 950);
-
-    return () => window.clearTimeout(finish);
-  }, [docked]);
-
-  if (pathname !== "/" || reduceMotion || !target || done) return null;
+  if (pathname !== "/" || reduceMotion || !target) return null;
 
   const largeFont = Math.min(Math.max(viewportWidth * 0.115, 68), 188);
 
@@ -105,7 +80,7 @@ export default function BrandIntro() {
               }
         }
         transition={{
-          duration: docked ? 0.82 : 0,
+          duration: 0.86,
           ease: [0.22, 1, 0.36, 1],
         }}
       >
