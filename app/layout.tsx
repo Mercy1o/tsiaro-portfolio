@@ -4,13 +4,12 @@ import "./globals.css";
 import "./mobile.css";
 import "./water-theme.css";
 import "./continuous-water.css";
-import "./marble-relief.css";
 import MotionProvider from "@/components/MotionProvider";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import PageSignalTransition from "@/components/PageSignalTransition";
 import BrandIntro from "@/components/BrandIntro";
-import WaterMarbleBackground from "@/components/WaterMarbleBackground";
+import LiquidMarbleBackground from "@/components/LiquidMarbleBackground";
 import { siteConfig } from "@/data/site";
 
 const displaySans = Inter({
@@ -59,15 +58,17 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
   return (
     <html lang="en">
       <body className={`${displaySans.variable} ${mono.variable}`}>
-        <WaterMarbleBackground />
-        <a href="#main-content" className="skip-link">Skip to content</a>
-        <MotionProvider>
-          <PageSignalTransition />
-          <Navbar />
-          <BrandIntro />
-          <div id="main-content">{children}</div>
-          <Footer />
-        </MotionProvider>
+        <LiquidMarbleBackground />
+        <div className="relative z-10">
+          <a href="#main-content" className="skip-link">Skip to content</a>
+          <MotionProvider>
+            <PageSignalTransition />
+            <Navbar />
+            <BrandIntro />
+            <div id="main-content">{children}</div>
+            <Footer />
+          </MotionProvider>
+        </div>
       </body>
     </html>
   );
