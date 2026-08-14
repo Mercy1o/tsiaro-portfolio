@@ -61,11 +61,16 @@ export default function BrandIntro() {
         return;
       }
 
-      if (y <= 4 && docked && returnTimer.current === null) {
+      // The hero text follows a spring-smoothed scroll value, so it can still be
+      // visually exiting after the browser has already reached scrollY = 0.
+      // Keep the brand docked until that motion has fully settled.
+      if (y <= 1 && docked && returnTimer.current === null) {
         returnTimer.current = window.setTimeout(() => {
-          setDocked(false);
+          if (window.scrollY <= 1) {
+            setDocked(false);
+          }
           returnTimer.current = null;
-        }, 320);
+        }, 1050);
       }
     };
 
