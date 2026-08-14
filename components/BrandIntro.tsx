@@ -15,20 +15,25 @@ export default function BrandIntro() {
   const pathname = usePathname();
   const reduceMotion = useReducedMotion();
   const [target, setTarget] = useState<Target | null>(null);
-  const [phase, setPhase] = useState<"letters" | "hold" | "dock" | "done">("done");
+  const [viewportWidth, setViewportWidth] = useState(1200);
+  const [docked, setDocked] = useState(false);
+  const [done, setDone] = useState(true);
 
   useLayoutEffect(() => {
     if (pathname !== "/" || reduceMotion) {
       document.documentElement.removeAttribute("data-brand-intro");
-      setPhase("done");
+      setDone(true);
       return;
     }
 
     const measure = () => {
       const node = document.querySelector<HTMLElement>("[data-brand-target]");
       if (!node) return;
+
       const rect = node.getBoundingClientRect();
       const styles = window.getComputedStyle(node);
+
+      setViewportWidth(window.innerWidth);
       setTarget({
         left: rect.left,
         top: rect.top + rect.height / 2,
@@ -45,27 +50,37 @@ export default function BrandIntro() {
     if (pathname !== "/" || reduceMotion || !target) return;
 
     document.documentElement.setAttribute("data-brand-intro", "active");
-    setPhase("letters");
+    setDocked(false);
+    setDone(false);
 
-    const hold = window.setTimeout(() => setPhase("hold"), 900);
-    const dock = window.setTimeout(() => setPhase("dock"), 1450);
-    const done = window.setTimeout(() => {
-      setPhase("done");
-      document.documentElement.removeAttribute("data-brand-intro");
-    }, 2850);
+    const onScroll = () => {
+      if (window.scrollY < 6) return;
+      setDocked(true);
+    };
+
+    window.addEventListener("scroll", onScroll, { passive: true });
+    onScroll();
 
     return () => {
-      window.clearTimeout(hold);
-      window.clearTimeout(dock);
-      window.clearTimeout(done);
+      window.removeEventListener("scroll", onScroll);
       document.documentElement.removeAttribute("data-brand-intro");
     };
   }, [pathname, reduceMotion, target]);
 
-  if (pathname !== "/" || reduceMotion || !target || phase === "done") return null;
+  useEffect(() => {
+    if (!docked) return;
 
-  const largeFont = Math.min(Math.max(window.innerWidth * 0.115, 68), 188);
-  const docked = phase === "dock";
+    const finish = window.setTimeout(() => {
+      setDone(true);
+      document.documentElement.removeAttribute("data-brand-intro");
+    }, 950);
+
+    return () => window.clearTimeout(finish);
+  }, [docked]);
+
+  if (pathname !== "/" || reduceMotion || !target || done) return null;
+
+  const largeFont = Math.min(Math.max(viewportWidth * 0.115, 68), 188);
 
   return (
     <div className="pointer-events-none fixed inset-0 z-[90]" aria-hidden="true">
@@ -90,7 +105,7 @@ export default function BrandIntro() {
               }
         }
         transition={{
-          duration: docked ? 1.15 : 0.01,
+          duration: docked ? 0.82 : 0,
           ease: [0.22, 1, 0.36, 1],
         }}
       >
@@ -98,11 +113,11 @@ export default function BrandIntro() {
           <motion.span
             key={`${letter}-${index}`}
             className="inline-block"
-            initial={{ opacity: 0, y: 34, filter: "blur(10px)" }}
+            initial={{ opacity: 0, y: -72, filter: "blur(8px)" }}
             animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
             transition={{
-              duration: 0.58,
-              delay: index * 0.055,
+              duration: 0.64,
+              delay: index * 0.065,
               ease: [0.22, 1, 0.36, 1],
             }}
           >
