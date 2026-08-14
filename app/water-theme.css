@@ -1,13 +1,15 @@
 :root {
-  --water-base: #e2e0da;
-  --water-light: #eceae4;
-  --water-mid: #d2d3ce;
-  --water-shadow: #bfc2be;
-  --water-deep: #aeb3af;
-  --water-ink: #343633;
-  --water-ink-soft: #666963;
-  --water-line: rgba(77, 82, 78, .22);
-  --water-line-soft: rgba(77, 82, 78, .12);
+  --water-base: #f1f0eb;
+  --water-light: #f7f5ef;
+  --water-mid: #e5e2da;
+  --water-shadow: #c9c6bd;
+  --water-deep: #aaa79f;
+  --water-ink: #252522;
+  --water-ink-soft: #77766f;
+  --water-line: rgba(37, 37, 34, .22);
+  --water-line-soft: rgba(37, 37, 34, .11);
+  --accent-red: #a83a2d;
+  --accent-yellow: #e8c91a;
 }
 
 html,
@@ -23,38 +25,8 @@ body {
 
 body::before,
 body::after {
-  content: "";
-  position: fixed;
-  inset: -14%;
-  pointer-events: none;
-  z-index: -20;
-}
-
-body::before {
-  background:
-    radial-gradient(ellipse at 14% 18%, rgba(255,255,255,.72) 0 10%, transparent 26%),
-    radial-gradient(ellipse at 62% 21%, rgba(171,177,174,.28) 0 7%, transparent 23%),
-    radial-gradient(ellipse at 83% 72%, rgba(255,255,255,.52) 0 10%, transparent 27%),
-    radial-gradient(ellipse at 32% 74%, rgba(175,181,177,.24) 0 8%, transparent 25%),
-    repeating-radial-gradient(ellipse at 48% 46%, rgba(122,130,126,.13) 0 2px, rgba(242,241,236,.15) 3px 8px, transparent 10px 24px),
-    linear-gradient(128deg, #eceae4 0%, #d7d7d2 42%, #ece9e2 72%, #cfd2cf 100%);
-  background-size: 140% 125%, 150% 130%, 145% 140%, 135% 125%, 118% 112%, 100% 100%;
-  filter: blur(7px) contrast(1.08) saturate(.62);
-  transform: scale(1.08) rotate(-1.2deg);
-  animation: water-drift-a 42s ease-in-out infinite alternate;
-}
-
-body::after {
-  background:
-    repeating-radial-gradient(ellipse at 20% 34%, transparent 0 12px, rgba(101,110,106,.11) 14px 17px, transparent 20px 37px),
-    repeating-radial-gradient(ellipse at 72% 61%, transparent 0 17px, rgba(255,255,255,.23) 19px 23px, transparent 25px 44px),
-    radial-gradient(ellipse at 50% 50%, rgba(255,255,255,.24), transparent 58%);
-  background-size: 132% 118%, 128% 126%, 100% 100%;
-  mix-blend-mode: multiply;
-  opacity: .72;
-  filter: blur(4px);
-  transform: scale(1.1) rotate(.8deg);
-  animation: water-drift-b 55s ease-in-out infinite alternate;
+  content: none !important;
+  display: none !important;
 }
 
 body :where(main, section, footer) {
@@ -79,10 +51,9 @@ body :where([class*="border-[#"], [class*="hairline"]) {
 }
 
 body :where([class*="shadow-"]) {
-  --tw-shadow-color: rgba(69, 74, 71, .12) !important;
+  --tw-shadow-color: rgba(37, 37, 34, .10) !important;
 }
 
-/* Navigation has no surface: only the page itself and floating text remain. */
 .mobile-safe-nav {
   background: transparent !important;
   background-image: none !important;
@@ -103,7 +74,6 @@ html[data-brand-intro="active"] [data-brand-target] {
   opacity: 0 !important;
 }
 
-/* Footer has no independent rectangle or surface. */
 .site-footer,
 footer.site-footer {
   background: transparent !important;
@@ -121,8 +91,8 @@ footer.site-footer {
 
 .footer-readable {
   color: var(--water-ink) !important;
-  opacity: .82;
-  text-shadow: 0 1px 12px rgba(236,234,228,.8), 0 0 22px rgba(236,234,228,.42);
+  opacity: .78;
+  text-shadow: 0 1px 12px rgba(241,240,235,.82);
   transition: opacity .25s ease;
 }
 
@@ -131,31 +101,12 @@ footer.site-footer {
 }
 
 .skip-link {
-  background: rgba(236,234,228,.94) !important;
+  background: rgba(247,245,239,.96) !important;
   color: var(--water-ink) !important;
   border-color: var(--water-line) !important;
 }
 
 ::selection {
-  background: #bec3bf !important;
-  color: #2d302d !important;
-}
-
-@keyframes water-drift-a {
-  0% { transform: scale(1.08) rotate(-1.2deg) translate3d(-1.5%, -1%, 0); }
-  50% { transform: scale(1.13) rotate(.2deg) translate3d(1.2%, .8%, 0); }
-  100% { transform: scale(1.1) rotate(1deg) translate3d(-.4%, 1.6%, 0); }
-}
-
-@keyframes water-drift-b {
-  0% { transform: scale(1.1) rotate(.8deg) translate3d(1%, -1.2%, 0); }
-  50% { transform: scale(1.15) rotate(-.4deg) translate3d(-1.4%, .5%, 0); }
-  100% { transform: scale(1.12) rotate(.5deg) translate3d(.7%, 1.3%, 0); }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  body::before,
-  body::after {
-    animation: none !important;
-  }
+  background: var(--accent-yellow) !important;
+  color: #111110 !important;
 }
