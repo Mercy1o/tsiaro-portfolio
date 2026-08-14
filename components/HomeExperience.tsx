@@ -10,7 +10,6 @@ import {
   useSpring,
   useTransform,
 } from "motion/react";
-import WaterMarbleBackground from "@/components/WaterMarbleBackground";
 import { siteConfig } from "@/data/site";
 
 type Stage = "hero" | "choice" | "profile" | "contact";
@@ -48,8 +47,6 @@ export default function HomeExperience() {
   return (
     <main className="relative h-[6200px] overflow-clip text-[#343633] md:h-[6500px]">
       <div className="sticky top-0 h-[100svh] overflow-hidden">
-        <WaterMarbleBackground />
-
         <div className="absolute inset-0 z-10 px-5 pt-24 md:px-10 md:pt-28 lg:px-14">
           <div className="relative mx-auto h-full w-full max-w-[1600px]">
             <motion.section aria-label="Introduction" style={{ opacity: heroOpacity, y: heroY, filter: heroBlur }} className="absolute inset-0 flex items-center">
