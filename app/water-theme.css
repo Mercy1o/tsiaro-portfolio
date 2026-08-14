@@ -82,14 +82,29 @@ body :where([class*="shadow-"]) {
   --tw-shadow-color: rgba(69, 74, 71, .12) !important;
 }
 
+/* Frosted navigation: the page remains visible through it, but details directly
+   behind the navigation dissolve into a soft glass field. */
 .mobile-safe-nav {
-  background: rgba(226, 224, 218, .72) !important;
-  border-color: var(--water-line-soft) !important;
-  box-shadow: 0 8px 30px rgba(71, 77, 73, .08) !important;
+  background: rgba(232, 230, 224, .46) !important;
+  border-color: rgba(77, 82, 78, .08) !important;
+  box-shadow: 0 8px 34px rgba(71, 77, 73, .045) !important;
+  backdrop-filter: blur(30px) saturate(.8) !important;
+  -webkit-backdrop-filter: blur(30px) saturate(.8) !important;
 }
 
-.mobile-safe-nav [aria-hidden="true"] {
-  background: linear-gradient(180deg, rgba(255,255,255,.24), rgba(210,211,206,.1)) !important;
+.mobile-safe-nav > [aria-hidden="true"]:first-child {
+  background: linear-gradient(
+    180deg,
+    rgba(247,246,242,.38) 0%,
+    rgba(232,230,224,.18) 58%,
+    rgba(232,230,224,.035) 100%
+  ) !important;
+}
+
+.mobile-safe-nav > [aria-hidden="true"]:nth-child(2) {
+  backdrop-filter: blur(18px) !important;
+  -webkit-backdrop-filter: blur(18px) !important;
+  opacity: .9;
 }
 
 [data-brand-target] {
@@ -101,8 +116,33 @@ html[data-brand-intro="active"] [data-brand-target] {
   opacity: 0 !important;
 }
 
-footer {
-  border-color: var(--water-line-soft) !important;
+/* The footer is not a surface. It is only typography floating over the same
+   water texture as the rest of the page. */
+.site-footer,
+footer.site-footer {
+  background: transparent !important;
+  background-image: none !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+.site-footer::before,
+.site-footer::after {
+  content: none !important;
+}
+
+.footer-readable {
+  color: #ffffff !important;
+  mix-blend-mode: difference;
+  opacity: .82;
+  text-shadow: 0 0 14px rgba(255,255,255,.14);
+  transition: opacity .25s ease;
+}
+
+.footer-readable:hover {
+  opacity: 1;
 }
 
 .skip-link {
