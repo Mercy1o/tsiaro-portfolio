@@ -1,10 +1,8 @@
 "use client";
 
-import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { projects as allProjects, type Project } from "@/data/projects";
-import { getProjectMedia } from "@/data/projectMedia";
 
 type WorkGridProps = {
   limit?: number;
@@ -26,8 +24,6 @@ export default function WorkGrid({ limit, projects }: WorkGridProps) {
   const activeProject = items.find((project) => project.slug === activeSlug) ?? items[0];
 
   if (!activeProject) return null;
-
-  const activeMedia = getProjectMedia(activeProject.slug);
 
   function activateProject(project: Project, element: HTMLElement) {
     setActiveSlug(project.slug);
@@ -79,17 +75,10 @@ export default function WorkGrid({ limit, projects }: WorkGridProps) {
         className="absolute right-0 hidden w-[24%] transition-[top] duration-500 ease-[cubic-bezier(.22,1,.36,1)] md:block"
         style={{ top: previewTop }}
       >
-        <div className="relative aspect-[4/5] overflow-hidden bg-[#dedbd3]/45">
-          {activeMedia.cover ? (
-            <Image
-              key={activeMedia.cover}
-              src={activeMedia.cover}
-              alt={`${activeProject.title} · ${activeProject.subtitle}`}
-              fill
-              sizes="24vw"
-              className="object-cover transition-opacity duration-500"
-            />
-          ) : null}
+        <div className="flex aspect-[4/5] items-center justify-center overflow-hidden border border-[#666963]/18 bg-transparent px-5 text-center">
+          <p className="text-[clamp(1rem,1.7vw,1.8rem)] font-medium uppercase leading-[.9] tracking-[-.045em] text-[#343633]/78">
+            {activeProject.title}
+          </p>
         </div>
 
         <div className="mt-4 border-t border-[#666963]/16 pt-3">
