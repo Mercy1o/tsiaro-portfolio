@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useLayoutEffect, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useState } from "react";
 import { usePathname } from "next/navigation";
 import { motion, useReducedMotion } from "motion/react";
 import { siteConfig } from "@/data/site";
@@ -17,7 +17,6 @@ export default function BrandIntro() {
   const [target, setTarget] = useState<Target | null>(null);
   const [viewportWidth, setViewportWidth] = useState(1200);
   const [docked, setDocked] = useState(false);
-  const returnTimer = useRef<number | null>(null);
 
   useLayoutEffect(() => {
     if (pathname !== "/" || reduceMotion) return;
@@ -45,44 +44,10 @@ export default function BrandIntro() {
   useEffect(() => {
     if (pathname !== "/" || reduceMotion || !target) return;
 
-    const clearReturnTimer = () => {
-      if (returnTimer.current !== null) {
-        window.clearTimeout(returnTimer.current);
-        returnTimer.current = null;
-      }
-    };
-
-    const onScroll = () => {
-      const y = window.scrollY;
-
-      if (y > 56) {
-        clearReturnTimer();
-        setDocked(true);
-        return;
-      }
-
-      if (y <= 1 && docked && returnTimer.current === null) {
-        returnTimer.current = window.setTimeout(() => {
-          if (window.scrollY <= 1) {
-            setDocked(false);
-          }
-          returnTimer.current = null;
-        }, 1050);
-      }
-    };
-
-    if (window.scrollY > 56) {
-      setDocked(true);
-    }
-
-    window.addEventListener("scroll", onScroll, { passive: true });
-    onScroll();
-
-    return () => {
-      clearReturnTimer();
-      window.removeEventListener("scroll", onScroll);
-    };
-  }, [pathname, reduceMotion, target, docked]);
+    setDocked(false);
+    const timer = window.setTimeout(() => setDocked(true), 1050);
+    return () => window.clearTimeout(timer);
+  }, [pathname, reduceMotion, target]);
 
   if (pathname !== "/" || reduceMotion || !target) return null;
 
