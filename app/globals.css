@@ -5,6 +5,7 @@
   --text: #111111;
   --muted: #6b6b6b;
   --line: #d9d9d9;
+  --brand-brown: #4a3026;
 }
 
 @theme inline {
@@ -24,7 +25,7 @@ body {
 }
 a { color: inherit; text-decoration: none; }
 button, input, textarea { font: inherit; }
-::selection { background: #111; color: #fff; }
+::selection { background: var(--brand-brown); color: #fff; }
 
 .skip-link {
   position: fixed;
@@ -39,7 +40,7 @@ button, input, textarea { font: inherit; }
 .skip-link:focus { transform: translateY(0); }
 
 a:focus-visible, button:focus-visible {
-  outline: 2px solid #111;
+  outline: 2px solid var(--brand-brown);
   outline-offset: 4px;
 }
 
@@ -66,7 +67,11 @@ a:focus-visible, button:focus-visible {
   font-size: 1.15rem;
   font-weight: 600;
   letter-spacing: -.04em;
+  white-space: nowrap;
 }
+.site-brand-target { visibility: hidden; }
+.brand-trnsk { color: var(--brand-brown); }
+.brand-design { color: var(--text); }
 .site-nav-links {
   display: flex;
   gap: 2rem;
