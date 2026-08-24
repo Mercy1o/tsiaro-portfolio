@@ -1,6 +1,6 @@
 :root {
-  --water-base: #e2e0da;
-  --water-light: #eceae4;
+  --water-base: #ffffff;
+  --water-light: #ffffff;
   --water-mid: #d2d3ce;
   --water-shadow: #bfc2be;
   --water-deep: #aeb3af;
@@ -90,7 +90,7 @@ footer.site-footer {
 .footer-readable {
   color: var(--water-ink) !important;
   opacity: .82;
-  text-shadow: 0 1px 12px rgba(236,234,228,.8), 0 0 22px rgba(236,234,228,.42);
+  text-shadow: 0 1px 12px rgba(255,255,255,.8), 0 0 22px rgba(255,255,255,.42);
   transition: opacity .25s ease;
 }
 
@@ -99,7 +99,7 @@ footer.site-footer {
 }
 
 .skip-link {
-  background: rgba(236,234,228,.94) !important;
+  background: rgba(255,255,255,.94) !important;
   color: var(--water-ink) !important;
   border-color: var(--water-line) !important;
 }
