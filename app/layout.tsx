@@ -2,8 +2,14 @@ import type { Metadata, Viewport } from "next";
 import { Geist_Mono, Inter } from "next/font/google";
 import "./globals.css";
 import "./mobile.css";
+import "./water-theme.css";
+import "./continuous-water.css";
+import MotionProvider from "@/components/MotionProvider";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import PageSignalTransition from "@/components/PageSignalTransition";
+import BrandIntro from "@/components/BrandIntro";
+import LiquidMarbleBackground from "@/components/LiquidMarbleBackground";
 import { siteConfig } from "@/data/site";
 
 const displaySans = Inter({
@@ -24,7 +30,7 @@ export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
   viewportFit: "cover",
-  themeColor: "#ffffff",
+  themeColor: "#ece9e2",
   colorScheme: "light",
 };
 
@@ -38,7 +44,10 @@ export const metadata: Metadata = {
   applicationName: "Tsiaro Rakototiana Portfolio",
   creator: siteConfig.name,
   authors: [{ name: siteConfig.name }],
-  robots: { index: true, follow: true },
+  robots: {
+    index: true,
+    follow: true,
+  },
   openGraph: {
     type: "website",
     url: "/",
@@ -57,10 +66,17 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
   return (
     <html lang="en">
       <body className={`${displaySans.variable} ${mono.variable}`}>
-        <a href="#main-content" className="skip-link">Skip to content</a>
-        <Navbar />
-        <div id="main-content">{children}</div>
-        <Footer />
+        <LiquidMarbleBackground />
+        <div className="relative z-10">
+          <a href="#main-content" className="skip-link">Skip to content</a>
+          <MotionProvider>
+            <PageSignalTransition />
+            <Navbar />
+            <BrandIntro />
+            <div id="main-content">{children}</div>
+            <Footer />
+          </MotionProvider>
+        </div>
       </body>
     </html>
   );

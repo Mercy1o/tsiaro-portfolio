@@ -63,13 +63,17 @@ export default function BrandIntro() {
 
       if (y <= 1 && docked && returnTimer.current === null) {
         returnTimer.current = window.setTimeout(() => {
-          if (window.scrollY <= 1) setDocked(false);
+          if (window.scrollY <= 1) {
+            setDocked(false);
+          }
           returnTimer.current = null;
-        }, 850);
+        }, 1050);
       }
     };
 
-    if (window.scrollY > 56) setDocked(true);
+    if (window.scrollY > 56) {
+      setDocked(true);
+    }
 
     window.addEventListener("scroll", onScroll, { passive: true });
     onScroll();
@@ -87,7 +91,7 @@ export default function BrandIntro() {
   return (
     <div className="pointer-events-none fixed inset-0 z-[90]" aria-hidden="true">
       <motion.div
-        className="fixed whitespace-nowrap font-medium tracking-[-.055em] will-change-[left,top,font-size,transform]"
+        className="fixed whitespace-nowrap font-medium tracking-[-.055em] text-[#343633] will-change-[left,top,font-size,transform]"
         initial={false}
         animate={
           docked
@@ -118,7 +122,7 @@ export default function BrandIntro() {
         {siteConfig.brand.split("").map((letter, index) => (
           <motion.span
             key={`${letter}-${index}`}
-            className={index < 5 ? "brand-trnsk inline-block" : "brand-design inline-block"}
+            className="inline-block"
             initial={{ opacity: 0, y: -72, filter: "blur(8px)" }}
             animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
             transition={{
