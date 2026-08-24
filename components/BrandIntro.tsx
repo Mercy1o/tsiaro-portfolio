@@ -105,9 +105,9 @@ export default function BrandIntro() {
   const largeFont = introVisualSize / zoomFactor;
 
   return (
-    <div className="pointer-events-none fixed inset-0 z-[90]" aria-hidden="true">
+    <div className={`fixed inset-0 z-[90] ${docked ? "pointer-events-none" : "pointer-events-none"}`} aria-hidden="true">
       <motion.div
-        className="fixed whitespace-nowrap font-medium tracking-[-.055em] text-[#343633] will-change-[left,top,font-size,transform]"
+        className={`fixed whitespace-nowrap font-medium text-[#343633] will-change-[left,top,font-size,transform] ${docked ? "pointer-events-auto" : "pointer-events-none"}`}
         initial={false}
         animate={
           docked
@@ -139,25 +139,39 @@ export default function BrandIntro() {
               }
         }
       >
-        {siteConfig.brand.split("").map((letter, index) => (
-          <motion.span
-            key={`${letter}-${index}`}
-            className="inline-block"
-            initial={reduceMotion ? false : { opacity: 0, y: -72, filter: "blur(8px)" }}
-            animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-            transition={
-              reduceMotion
-                ? { duration: 0 }
-                : {
-                    duration: 0.64,
-                    delay: index * 0.065,
-                    ease: [0.22, 1, 0.36, 1],
-                  }
-            }
-          >
-            {letter}
-          </motion.span>
-        ))}
+        <motion.span
+          className="inline-block origin-left tracking-[-.055em]"
+          whileHover={
+            docked && !reduceMotion
+              ? {
+                  scale: 1.12,
+                  letterSpacing: "0.015em",
+                  filter: "drop-shadow(0 8px 16px rgba(52,54,51,.14))",
+                }
+              : undefined
+          }
+          transition={{ type: "spring", stiffness: 420, damping: 20, mass: 0.7 }}
+        >
+          {siteConfig.brand.split("").map((letter, index) => (
+            <motion.span
+              key={`${letter}-${index}`}
+              className="inline-block"
+              initial={reduceMotion ? false : { opacity: 0, y: -72, filter: "blur(8px)" }}
+              animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+              transition={
+                reduceMotion
+                  ? { duration: 0 }
+                  : {
+                      duration: 0.64,
+                      delay: index * 0.065,
+                      ease: [0.22, 1, 0.36, 1],
+                    }
+              }
+            >
+              {letter}
+            </motion.span>
+          ))}
+        </motion.span>
       </motion.div>
     </div>
   );
