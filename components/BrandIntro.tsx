@@ -11,11 +11,24 @@ type Target = {
   fontSize: number;
 };
 
+function getBrowserZoom() {
+  if (typeof window === "undefined") return 1;
+
+  const finePointer = window.matchMedia("(pointer: fine)").matches;
+  if (!finePointer) return 1;
+
+  const viewportWidth = window.visualViewport?.width || window.innerWidth;
+  if (!viewportWidth || !window.outerWidth) return 1;
+
+  return Math.min(Math.max(window.outerWidth / viewportWidth, 0.35), 4);
+}
+
 export default function BrandIntro() {
   const pathname = usePathname();
   const reduceMotion = useReducedMotion();
   const [target, setTarget] = useState<Target | null>(null);
-  const [viewportWidth, setViewportWidth] = useState(1200);
+  const [zoomFactor, setZoomFactor] = useState(1);
+  const [visualViewportWidth, setVisualViewportWidth] = useState(1200);
   const [docked, setDocked] = useState(false);
   const targetRef = useRef<HTMLElement | null>(null);
 
@@ -34,12 +47,14 @@ export default function BrandIntro() {
         targetRef.current = node;
         const rect = node.getBoundingClientRect();
         const styles = window.getComputedStyle(node);
+        const zoom = getBrowserZoom();
 
-        setViewportWidth(window.innerWidth);
+        setZoomFactor(zoom);
+        setVisualViewportWidth(window.innerWidth * zoom);
         setTarget({
           left: rect.left,
           top: rect.top + rect.height / 2,
-          fontSize: Number.parseFloat(styles.fontSize) || 18,
+          fontSize: (Number.parseFloat(styles.fontSize) || 18) / zoom,
         });
       });
     };
@@ -86,7 +101,8 @@ export default function BrandIntro() {
 
   if (pathname !== "/" || !target) return null;
 
-  const largeFont = Math.min(Math.max(viewportWidth * 0.115, 68), 188);
+  const introVisualSize = Math.min(Math.max(visualViewportWidth * 0.115, 68), 188);
+  const largeFont = introVisualSize / zoomFactor;
 
   return (
     <div className="pointer-events-none fixed inset-0 z-[90]" aria-hidden="true">
