@@ -24,13 +24,14 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
   const previousProject = portfolioProjects[(currentIndex - 1 + portfolioProjects.length) % portfolioProjects.length];
   const nextProject = portfolioProjects[(currentIndex + 1) % portfolioProjects.length];
   const portfolioQuery = project.portfolio === "Architectural Portfolio" ? "design" : "creative";
+  const collectionHref = `/work/${portfolioQuery}`;
 
   return (
     <main className="project-split-page bg-white text-[#343633]">
       <div className="project-split-shell">
         <section className="project-split-copy">
           <div className="project-split-topline">
-            <Link href={`/work?portfolio=${portfolioQuery}`}>← Work</Link>
+            <Link href={collectionHref}>← {portfolioQuery === "design" ? "Design" : "Creative"}</Link>
             <span>{project.number}</span>
             <span>{project.year}</span>
           </div>
@@ -84,7 +85,7 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
 
           <nav className="project-split-nav" aria-label="Project navigation">
             <Link href={`/work/${previousProject.slug}`}>← {previousProject.title}</Link>
-            <Link href={`/work?portfolio=${portfolioQuery}`}>Index</Link>
+            <Link href={collectionHref}>Index</Link>
             <Link href={`/work/${nextProject.slug}`}>{nextProject.title} →</Link>
           </nav>
         </section>
