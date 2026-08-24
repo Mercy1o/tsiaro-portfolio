@@ -85,7 +85,7 @@ export default function Navbar() {
         <Link
           href="/"
           aria-label={`${siteConfig.brand} home`}
-          className="mobile-tap-target group absolute z-10 whitespace-nowrap font-medium text-[#343633]"
+          className="mobile-tap-target absolute z-10 whitespace-nowrap font-medium tracking-[-.04em] text-[#343633] transition-opacity hover:opacity-55"
           style={{
             left: `${brandLeft}px`,
             top: `${brandTop}px`,
@@ -93,9 +93,7 @@ export default function Navbar() {
             lineHeight: 1,
           }}
         >
-          <span className="inline-block origin-left transition-[transform,letter-spacing,filter] duration-300 ease-[cubic-bezier(.22,1,.36,1)] tracking-[-.04em] group-hover:scale-[1.12] group-hover:tracking-[.015em] group-hover:drop-shadow-[0_8px_16px_rgba(52,54,51,.14)] group-focus-visible:scale-[1.12] group-focus-visible:tracking-[.015em]">
-            {siteConfig.brand}
-          </span>
+          {siteConfig.brand}
         </Link>
       )}
 
