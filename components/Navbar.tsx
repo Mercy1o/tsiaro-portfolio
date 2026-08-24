@@ -71,7 +71,7 @@ export default function Navbar() {
         <span
           data-brand-target
           aria-hidden="true"
-          className="invisible absolute z-10 block whitespace-nowrap font-medium tracking-[-.04em]"
+          className="accent-brown invisible absolute z-10 block whitespace-nowrap font-medium tracking-[-.04em]"
           style={{
             left: `${brandLeft}px`,
             top: `${brandTop}px`,
@@ -85,7 +85,7 @@ export default function Navbar() {
         <Link
           href="/"
           aria-label={`${siteConfig.brand} home`}
-          className="mobile-tap-target absolute z-10 whitespace-nowrap font-medium tracking-[-.04em] text-[#343633] transition-opacity hover:opacity-55"
+          className="accent-brown mobile-tap-target absolute z-10 whitespace-nowrap font-medium tracking-[-.04em] transition-opacity hover:opacity-55"
           style={{
             left: `${brandLeft}px`,
             top: `${brandTop}px`,
@@ -118,8 +118,10 @@ export default function Navbar() {
                   <span className="mr-1.5 hidden lg:inline">0{index + 1}</span>
                   {item.label}
                   <span
-                    className={`absolute bottom-1 left-2 right-2 h-px bg-[#666963]/55 transition-all duration-300 md:-bottom-2.5 md:left-0 md:right-auto ${
-                      active ? "opacity-100 md:w-full" : "opacity-0 md:w-0 md:group-hover:w-full md:group-hover:opacity-100"
+                    className={`absolute bottom-1 left-2 right-2 h-px transition-all duration-300 md:-bottom-2.5 md:left-0 md:right-auto ${
+                      active
+                        ? "bg-[#4A3026] opacity-100 md:w-full"
+                        : "bg-[#666963]/55 opacity-0 md:w-0 md:group-hover:w-full md:group-hover:opacity-100"
                     }`}
                   />
                 </Link>
