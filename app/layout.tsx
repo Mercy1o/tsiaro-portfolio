@@ -9,7 +9,6 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import PageSignalTransition from "@/components/PageSignalTransition";
 import BrandIntro from "@/components/BrandIntro";
-import LiquidMarbleBackground from "@/components/LiquidMarbleBackground";
 import { siteConfig } from "@/data/site";
 
 const displaySans = Inter({
@@ -30,7 +29,7 @@ export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
   viewportFit: "cover",
-  themeColor: "#ece9e2",
+  themeColor: "#ffffff",
   colorScheme: "light",
 };
 
@@ -65,9 +64,8 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="en">
-      <body className={`${displaySans.variable} ${mono.variable}`}>
-        <LiquidMarbleBackground />
-        <div className="relative z-10">
+      <body className={`${displaySans.variable} ${mono.variable}`} style={{ background: "#ffffff" }}>
+        <div className="relative z-10 min-h-screen bg-white">
           <a href="#main-content" className="skip-link">Skip to content</a>
           <MotionProvider>
             <PageSignalTransition />
