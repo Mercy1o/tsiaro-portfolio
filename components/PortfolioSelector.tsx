@@ -5,17 +5,17 @@ import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import WorkGrid from "@/components/WorkGrid";
 import { architecturalProjects, creativeProjects, type Project } from "@/data/projects";
 
-export type PortfolioMode = "architecture" | "creative";
+export type PortfolioMode = "design" | "creative";
 
 type PortfolioSelectorProps = { initialMode?: PortfolioMode | null };
 
 const portfolioOptions = [
   {
-    id: "architecture" as const,
+    id: "design" as const,
     index: "01",
-    title: "Architecture",
+    title: "Design",
     subtitle: "Space · Systems · Technical Practice",
-    description: "Measured observation, construction logic, spatial sequences and technical precision.",
+    description: "Architecture, construction logic, spatial sequences and technical precision.",
   },
   {
     id: "creative" as const,
@@ -35,12 +35,12 @@ export default function PortfolioSelector({ initialMode = null }: PortfolioSelec
   useEffect(() => {
     const portfolio = searchParams.get("portfolio");
     const nextMode: PortfolioMode | null =
-      portfolio === "architecture" || portfolio === "creative" ? portfolio : null;
+      portfolio === "design" || portfolio === "creative" ? portfolio : null;
     setMode(nextMode);
   }, [searchParams]);
 
   const activeProjects: Project[] = useMemo(() => {
-    if (mode === "architecture") return architecturalProjects;
+    if (mode === "design") return architecturalProjects;
     if (mode === "creative") return creativeProjects;
     return [];
   }, [mode]);
@@ -53,31 +53,45 @@ export default function PortfolioSelector({ initialMode = null }: PortfolioSelec
 
   return (
     <div>
-      <section className="relative min-h-[70vh] border-y border-[#737873]/16 py-16 md:py-24">
-        <div className="relative grid min-h-[55vh] items-center gap-8 md:grid-cols-[1fr_auto_1fr]">
-          <button type="button" onClick={() => selectMode("architecture")} aria-pressed={mode === "architecture"} className="group py-8 text-left focus-visible:outline-2 focus-visible:outline-offset-8 focus-visible:outline-[#343633]/55 md:py-12">
-            <p className="font-mono text-[8px] uppercase tracking-[.2em] text-[#666963]/66">01 / {portfolioOptions[0].subtitle}</p>
-            <h2 className={`mt-5 text-[clamp(3.4rem,7vw,7.5rem)] font-medium uppercase leading-[.8] tracking-[-.065em] transition-opacity duration-500 ${mode === "architecture" ? "opacity-100" : "opacity-68 group-hover:opacity-100"}`}>Architecture</h2>
-            <p className="mt-6 max-w-lg text-sm leading-6 text-[#666963] opacity-82">{portfolioOptions[0].description}</p>
-          </button>
-
-          <div className="hidden h-40 w-px bg-[linear-gradient(180deg,transparent,rgba(77,82,78,.22),transparent)] md:block" />
-
-          <button type="button" onClick={() => selectMode("creative")} aria-pressed={mode === "creative"} className="group py-8 text-left focus-visible:outline-2 focus-visible:outline-offset-8 focus-visible:outline-[#343633]/55 md:py-12 md:text-right">
-            <p className="font-mono text-[8px] uppercase tracking-[.2em] text-[#666963]/66">02 / {portfolioOptions[1].subtitle}</p>
-            <h2 className={`mt-5 text-[clamp(3.4rem,7vw,7.5rem)] font-medium uppercase leading-[.8] tracking-[-.065em] transition-opacity duration-500 ${mode === "creative" ? "opacity-100" : "opacity-68 group-hover:opacity-100"}`}>Creative</h2>
-            <p className="mt-6 max-w-lg text-sm leading-6 text-[#666963] opacity-82 md:ml-auto">{portfolioOptions[1].description}</p>
-          </button>
+      <section className="relative border-y border-[#737873]/16 py-12 md:py-16">
+        <div className="grid gap-4 md:grid-cols-2 md:gap-8">
+          {portfolioOptions.map((option) => (
+            <button
+              key={option.id}
+              type="button"
+              onClick={() => selectMode(option.id)}
+              aria-pressed={mode === option.id}
+              className="group border-b border-[#737873]/16 py-8 text-left last:border-b-0 md:border-b-0 md:py-10"
+            >
+              <p className="font-mono text-[8px] uppercase tracking-[.2em] text-[#666963]/66">
+                {option.index} / {option.subtitle}
+              </p>
+              <h2 className={`mt-4 text-[clamp(3.2rem,6vw,6.8rem)] font-medium uppercase leading-[.82] tracking-[-.06em] transition-opacity ${mode === option.id ? "opacity-100" : "opacity-65 group-hover:opacity-100"}`}>
+                {option.title}
+              </h2>
+              <p className="mt-5 max-w-xl text-sm leading-6 text-[#666963] opacity-82">
+                {option.description}
+              </p>
+            </button>
+          ))}
         </div>
       </section>
 
       {mode ? (
-        <section className="-mx-5 bg-transparent px-5 pb-12 pt-24 md:-mx-10 md:px-10 md:pt-32 lg:-mx-14 lg:px-14" aria-live="polite">
+        <section className="-mx-5 bg-transparent px-5 pb-12 pt-16 md:-mx-10 md:px-10 md:pt-20 lg:-mx-14 lg:px-14" aria-live="polite">
           <div className="mx-auto max-w-[1600px]">
-            <div className="mb-14 grid gap-8 border-b border-[#737873]/16 pb-8 md:grid-cols-12 md:items-end">
-              <p className="font-mono text-[9px] uppercase tracking-[.22em] text-[#666963]/66 md:col-span-3">{mode === "architecture" ? "ARCH / 01-04" : "CREATIVE / 01-14 + HE"}</p>
-              <h2 className="text-5xl font-medium uppercase tracking-[-.06em] text-[#343633] md:col-span-7 md:text-7xl">{mode === "creative" ? "Creative Portfolio" : "Architectural Portfolio"}</h2>
-              <button type="button" onClick={() => selectMode(null)} className="justify-self-start font-mono text-[9px] uppercase tracking-[.17em] text-[#666963]/70 transition-opacity hover:opacity-55 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#343633]/55 md:justify-self-end">Change field ↗</button>
+            <div className="mb-10 flex items-end justify-between gap-6 border-b border-[#737873]/16 pb-6">
+              <div>
+                <p className="font-mono text-[8px] uppercase tracking-[.2em] text-[#666963]/66">
+                  {mode === "design" ? "DESIGN / 01-04" : "CREATIVE / 01-14 + HE"}
+                </p>
+                <h2 className="mt-3 text-5xl font-medium uppercase tracking-[-.06em] text-[#343633] md:text-7xl">
+                  {mode === "creative" ? "Creative" : "Design"}
+                </h2>
+              </div>
+              <button type="button" onClick={() => selectMode(null)} className="font-mono text-[9px] uppercase tracking-[.17em] text-[#666963]/70 transition-opacity hover:opacity-55">
+                Change field ↗
+              </button>
             </div>
             <WorkGrid projects={activeProjects} />
           </div>
