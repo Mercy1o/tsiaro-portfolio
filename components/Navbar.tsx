@@ -5,9 +5,22 @@ import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { siteConfig } from "@/data/site";
 
+function getBrowserZoom() {
+  if (typeof window === "undefined") return 1;
+
+  const finePointer = window.matchMedia("(pointer: fine)").matches;
+  if (!finePointer) return 1;
+
+  const viewportWidth = window.visualViewport?.width || window.innerWidth;
+  if (!viewportWidth || !window.outerWidth) return 1;
+
+  return Math.min(Math.max(window.outerWidth / viewportWidth, 0.35), 4);
+}
+
 export default function Navbar() {
   const pathname = usePathname();
   const [scrolled, setScrolled] = useState(false);
+  const [brandZoom, setBrandZoom] = useState(1);
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 24);
@@ -16,7 +29,30 @@ export default function Navbar() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
+  useEffect(() => {
+    let frame = 0;
+
+    const updateZoom = () => {
+      window.cancelAnimationFrame(frame);
+      frame = window.requestAnimationFrame(() => {
+        setBrandZoom(getBrowserZoom());
+      });
+    };
+
+    updateZoom();
+    window.addEventListener("resize", updateZoom, { passive: true });
+    window.visualViewport?.addEventListener("resize", updateZoom, { passive: true });
+
+    return () => {
+      window.cancelAnimationFrame(frame);
+      window.removeEventListener("resize", updateZoom);
+      window.visualViewport?.removeEventListener("resize", updateZoom);
+    };
+  }, []);
+
   const isHome = pathname === "/";
+  const brandVisualSize = 18;
+  const compensatedBrandSize = brandVisualSize / brandZoom;
 
   return (
     <header
@@ -38,13 +74,15 @@ export default function Navbar() {
           <span
             data-brand-target
             aria-hidden="true"
-            className="invisible block h-[22px] w-[112px] justify-self-start text-[15px] font-medium tracking-[-.04em] sm:w-[120px] sm:text-[16px] md:h-[24px] md:w-[132px] md:text-[18px]"
+            className="invisible block h-[24px] w-[132px] justify-self-start font-medium tracking-[-.04em]"
+            style={{ fontSize: `${compensatedBrandSize}px` }}
           />
         ) : (
           <Link
             href="/"
             aria-label={`${siteConfig.brand} home`}
-            className="mobile-tap-target justify-self-start whitespace-nowrap text-[15px] font-medium tracking-[-.04em] text-[#343633] transition-opacity hover:opacity-55 sm:text-[16px] md:text-[18px]"
+            className="mobile-tap-target justify-self-start whitespace-nowrap font-medium tracking-[-.04em] text-[#343633] transition-opacity hover:opacity-55"
+            style={{ fontSize: `${compensatedBrandSize}px` }}
           >
             {siteConfig.brand}
           </Link>
