@@ -4,6 +4,7 @@ import "./globals.css";
 import "./mobile.css";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import BrandIntro from "@/components/BrandIntro";
 import { siteConfig } from "@/data/site";
 
 const displaySans = Inter({
@@ -59,6 +60,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
       <body className={`${displaySans.variable} ${mono.variable}`}>
         <a href="#main-content" className="skip-link">Skip to content</a>
         <Navbar />
+        <BrandIntro />
         <div id="main-content">{children}</div>
         <Footer />
       </body>
