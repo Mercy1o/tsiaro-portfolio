@@ -23,7 +23,7 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
   const currentIndex = portfolioProjects.findIndex((item) => item.slug === project.slug);
   const previousProject = portfolioProjects[(currentIndex - 1 + portfolioProjects.length) % portfolioProjects.length];
   const nextProject = portfolioProjects[(currentIndex + 1) % portfolioProjects.length];
-  const portfolioQuery = project.portfolio === "Architectural Portfolio" ? "architecture" : "creative";
+  const portfolioQuery = project.portfolio === "Architectural Portfolio" ? "design" : "creative";
 
   return (
     <main className="project-split-page bg-white text-[#343633]">
@@ -69,8 +69,8 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
               <strong>{project.category}</strong>
             </div>
             <div>
-              <span>Portfolio</span>
-              <strong>{project.portfolio}</strong>
+              <span>Collection</span>
+              <strong>{portfolioQuery === "design" ? "Design" : "Creative"}</strong>
             </div>
             <div>
               <span>Year</span>
