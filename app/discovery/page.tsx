@@ -22,7 +22,7 @@ export default function DiscoveryPage() {
       <div className="mx-auto max-w-[1600px]">
         <header className="grid gap-8 border-b border-[#666963]/16 pb-10 md:grid-cols-12 md:items-end">
           <div className="md:col-span-3">
-            <p className="font-mono text-[9px] uppercase tracking-[.22em] text-[#666963]/62">DISCOVERY / FIELD NOTES</p>
+            <p className="accent-olive font-mono text-[9px] uppercase tracking-[.22em]">DISCOVERY / FIELD NOTES</p>
           </div>
           <div className="md:col-span-8 md:col-start-5">
             <h1 className="text-[clamp(4rem,8vw,8.5rem)] font-medium uppercase leading-[.8] tracking-[-.07em]">Discovery</h1>
@@ -38,9 +38,9 @@ export default function DiscoveryPage() {
               <div className="flex aspect-[3/4] items-center justify-center border border-[#666963]/14 bg-[#fafafa] px-4 text-center transition-colors group-hover:bg-white">
                 <p className="text-[clamp(1.35rem,2.3vw,2.6rem)] font-medium uppercase leading-[.9] tracking-[-.05em] text-[#343633]/72">{label}</p>
               </div>
-              <div className="mt-3 flex items-center justify-between gap-3 font-mono text-[8px] uppercase tracking-[.16em] text-[#666963]/58">
-                <span>0{index + 1}</span>
-                <span>To document</span>
+              <div className="mt-3 flex items-center justify-between gap-3 font-mono text-[8px] uppercase tracking-[.16em]">
+                <span className="accent-olive">0{index + 1}</span>
+                <span className="text-[#666963]/58">To document</span>
               </div>
             </article>
           ))}
