@@ -8,6 +8,9 @@
   --water-ink-soft: #666963;
   --water-line: rgba(77, 82, 78, .22);
   --water-line-soft: rgba(77, 82, 78, .12);
+  --accent-brown: #4a3026;
+  --accent-olive: #6f7465;
+  --accent-rust: #9a5c43;
 }
 
 html,
@@ -42,6 +45,30 @@ body :where(p, h1, h2, h3, h4, h5, h6, span, a, button, label, li, dt, dd) {
 
 body :where([class*="text-[#"]) {
   color: var(--water-ink) !important;
+}
+
+body .accent-brown {
+  color: var(--accent-brown) !important;
+}
+
+body .accent-olive {
+  color: var(--accent-olive) !important;
+}
+
+body .accent-rust {
+  color: var(--accent-rust) !important;
+}
+
+body .accent-border-brown {
+  border-color: rgba(74, 48, 38, .34) !important;
+}
+
+body .accent-border-olive {
+  border-color: rgba(111, 116, 101, .34) !important;
+}
+
+body .accent-border-rust {
+  border-color: rgba(154, 92, 67, .32) !important;
 }
 
 body :where([class*="border-[#"], [class*="hairline"]) {
