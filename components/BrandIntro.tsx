@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useLayoutEffect, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { usePathname } from "next/navigation";
 import { motion, useReducedMotion } from "motion/react";
 import { siteConfig } from "@/data/site";
@@ -17,39 +17,74 @@ export default function BrandIntro() {
   const [target, setTarget] = useState<Target | null>(null);
   const [viewportWidth, setViewportWidth] = useState(1200);
   const [docked, setDocked] = useState(false);
+  const targetRef = useRef<HTMLElement | null>(null);
 
   useLayoutEffect(() => {
-    if (pathname !== "/" || reduceMotion) return;
+    if (pathname !== "/") return;
+
+    let frame = 0;
+    let resizeObserver: ResizeObserver | null = null;
 
     const measure = () => {
-      const node = document.querySelector<HTMLElement>("[data-brand-target]");
-      if (!node) return;
+      window.cancelAnimationFrame(frame);
+      frame = window.requestAnimationFrame(() => {
+        const node = document.querySelector<HTMLElement>("[data-brand-target]");
+        if (!node) return;
 
-      const rect = node.getBoundingClientRect();
-      const styles = window.getComputedStyle(node);
+        targetRef.current = node;
+        const rect = node.getBoundingClientRect();
+        const styles = window.getComputedStyle(node);
 
-      setViewportWidth(window.innerWidth);
-      setTarget({
-        left: rect.left,
-        top: rect.top + rect.height / 2,
-        fontSize: Number.parseFloat(styles.fontSize) || 18,
+        setViewportWidth(window.innerWidth);
+        setTarget({
+          left: rect.left,
+          top: rect.top + rect.height / 2,
+          fontSize: Number.parseFloat(styles.fontSize) || 18,
+        });
       });
     };
 
     measure();
-    window.addEventListener("resize", measure);
-    return () => window.removeEventListener("resize", measure);
-  }, [pathname, reduceMotion]);
+
+    const node = document.querySelector<HTMLElement>("[data-brand-target]");
+    if (node && typeof ResizeObserver !== "undefined") {
+      resizeObserver = new ResizeObserver(measure);
+      resizeObserver.observe(node);
+    }
+
+    window.addEventListener("resize", measure, { passive: true });
+    window.visualViewport?.addEventListener("resize", measure, { passive: true });
+
+    document.fonts?.ready.then(measure).catch(() => undefined);
+
+    return () => {
+      window.cancelAnimationFrame(frame);
+      resizeObserver?.disconnect();
+      window.removeEventListener("resize", measure);
+      window.visualViewport?.removeEventListener("resize", measure);
+    };
+  }, [pathname]);
 
   useEffect(() => {
-    if (pathname !== "/" || reduceMotion || !target) return;
+    if (pathname !== "/") {
+      setDocked(false);
+      return;
+    }
+
+    if (reduceMotion) {
+      setDocked(true);
+      return;
+    }
 
     setDocked(false);
-    const timer = window.setTimeout(() => setDocked(true), 1050);
-    return () => window.clearTimeout(timer);
-  }, [pathname, reduceMotion, target]);
+    const timer = window.setTimeout(() => {
+      setDocked(true);
+    }, 1050);
 
-  if (pathname !== "/" || reduceMotion || !target) return null;
+    return () => window.clearTimeout(timer);
+  }, [pathname, reduceMotion]);
+
+  if (pathname !== "/" || !target) return null;
 
   const largeFont = Math.min(Math.max(viewportWidth * 0.115, 68), 188);
 
@@ -75,26 +110,34 @@ export default function BrandIntro() {
                 fontSize: largeFont,
               }
         }
-        transition={{
-          type: "spring",
-          stiffness: docked ? 72 : 34,
-          damping: docked ? 22 : 28,
-          mass: docked ? 0.9 : 1.35,
-          restDelta: 0.08,
-          restSpeed: 0.08,
-        }}
+        transition={
+          reduceMotion
+            ? { duration: 0 }
+            : {
+                type: "spring",
+                stiffness: docked ? 72 : 34,
+                damping: docked ? 22 : 28,
+                mass: docked ? 0.9 : 1.35,
+                restDelta: 0.08,
+                restSpeed: 0.08,
+              }
+        }
       >
         {siteConfig.brand.split("").map((letter, index) => (
           <motion.span
             key={`${letter}-${index}`}
             className="inline-block"
-            initial={{ opacity: 0, y: -72, filter: "blur(8px)" }}
+            initial={reduceMotion ? false : { opacity: 0, y: -72, filter: "blur(8px)" }}
             animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-            transition={{
-              duration: 0.64,
-              delay: index * 0.065,
-              ease: [0.22, 1, 0.36, 1],
-            }}
+            transition={
+              reduceMotion
+                ? { duration: 0 }
+                : {
+                    duration: 0.64,
+                    delay: index * 0.065,
+                    ease: [0.22, 1, 0.36, 1],
+                  }
+            }
           >
             {letter}
           </motion.span>
