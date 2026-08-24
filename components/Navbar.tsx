@@ -53,6 +53,8 @@ export default function Navbar() {
   const isHome = pathname === "/";
   const brandVisualSize = 18;
   const compensatedBrandSize = brandVisualSize / brandZoom;
+  const brandLeft = 28 / brandZoom;
+  const brandTop = 28 / brandZoom;
 
   return (
     <header
@@ -65,30 +67,42 @@ export default function Navbar() {
         className="pointer-events-none absolute inset-x-0 -bottom-10 h-14 backdrop-blur-[12px] [mask-image:linear-gradient(to_bottom,rgba(0,0,0,.85),transparent)] [-webkit-mask-image:linear-gradient(to_bottom,rgba(0,0,0,.85),transparent)]"
       />
 
+      {isHome ? (
+        <span
+          data-brand-target
+          aria-hidden="true"
+          className="invisible absolute z-10 block whitespace-nowrap font-medium tracking-[-.04em]"
+          style={{
+            left: `${brandLeft}px`,
+            top: `${brandTop}px`,
+            fontSize: `${compensatedBrandSize}px`,
+            lineHeight: 1,
+          }}
+        >
+          {siteConfig.brand}
+        </span>
+      ) : (
+        <Link
+          href="/"
+          aria-label={`${siteConfig.brand} home`}
+          className="mobile-tap-target absolute z-10 whitespace-nowrap font-medium tracking-[-.04em] text-[#343633] transition-opacity hover:opacity-55"
+          style={{
+            left: `${brandLeft}px`,
+            top: `${brandTop}px`,
+            fontSize: `${compensatedBrandSize}px`,
+            lineHeight: 1,
+          }}
+        >
+          {siteConfig.brand}
+        </Link>
+      )}
+
       <div
-        className={`relative mx-auto grid max-w-[1600px] grid-cols-[auto_1fr] items-center gap-3 px-4 transition-all duration-500 sm:px-5 md:grid-cols-[1fr_auto_1fr] md:gap-0 md:px-10 lg:px-14 ${
+        className={`relative mx-auto flex max-w-[1600px] items-center justify-center px-4 transition-all duration-500 sm:px-5 md:px-10 lg:px-14 ${
           scrolled ? "min-h-[62px] md:h-[72px]" : "min-h-[68px] md:h-[88px]"
         }`}
       >
-        {isHome ? (
-          <span
-            data-brand-target
-            aria-hidden="true"
-            className="invisible block h-[24px] w-[132px] justify-self-start font-medium tracking-[-.04em]"
-            style={{ fontSize: `${compensatedBrandSize}px` }}
-          />
-        ) : (
-          <Link
-            href="/"
-            aria-label={`${siteConfig.brand} home`}
-            className="mobile-tap-target justify-self-start whitespace-nowrap font-medium tracking-[-.04em] text-[#343633] transition-opacity hover:opacity-55"
-            style={{ fontSize: `${compensatedBrandSize}px` }}
-          >
-            {siteConfig.brand}
-          </Link>
-        )}
-
-        <nav aria-label="Main navigation" className="justify-self-end md:justify-self-center">
+        <nav aria-label="Main navigation" className="mx-auto">
           <div className="flex items-center justify-center gap-1 sm:gap-2 md:gap-10">
             {siteConfig.navigation.map((item, index) => {
               const active = pathname === item.href || pathname.startsWith(`${item.href}/`);
@@ -113,8 +127,6 @@ export default function Navbar() {
             })}
           </div>
         </nav>
-
-        <div aria-hidden="true" className="hidden md:block" />
       </div>
     </header>
   );
