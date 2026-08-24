@@ -53,10 +53,12 @@ body :where([class*="shadow-"]) {
 }
 
 .mobile-safe-nav {
-  background: transparent !important;
+  background: rgba(255,255,255,.72) !important;
   background-image: none !important;
   border: 0 !important;
   box-shadow: none !important;
+  backdrop-filter: blur(24px) !important;
+  -webkit-backdrop-filter: blur(24px) !important;
 }
 
 .mobile-safe-nav > [aria-hidden="true"] {
@@ -74,15 +76,32 @@ html[data-brand-intro="active"] [data-brand-target] {
 
 .site-footer,
 footer.site-footer {
-  background: transparent !important;
+  position: relative;
+  isolation: isolate;
+  background: rgba(255,255,255,.72) !important;
   background-image: none !important;
   border: 0 !important;
   box-shadow: none !important;
-  backdrop-filter: none !important;
-  -webkit-backdrop-filter: none !important;
+  backdrop-filter: blur(24px) !important;
+  -webkit-backdrop-filter: blur(24px) !important;
 }
 
-.site-footer::before,
+.site-footer::before {
+  content: "" !important;
+  display: block !important;
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: -44px;
+  height: 44px;
+  pointer-events: none;
+  background: linear-gradient(to top, rgba(255,255,255,.72), rgba(255,255,255,0)) !important;
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  -webkit-mask-image: linear-gradient(to top, #000 35%, transparent 100%);
+  mask-image: linear-gradient(to top, #000 35%, transparent 100%);
+}
+
 .site-footer::after {
   content: none !important;
 }
