@@ -107,7 +107,7 @@ export default function BrandIntro() {
   return (
     <div className="pointer-events-none fixed inset-0 z-[90]" aria-hidden="true">
       <motion.div
-        className="accent-brown fixed whitespace-nowrap font-medium tracking-[-.055em] will-change-[left,top,font-size,transform]"
+        className="fixed whitespace-nowrap font-medium tracking-[-.055em] will-change-[left,top,font-size,transform]"
         initial={false}
         animate={
           docked
@@ -142,7 +142,7 @@ export default function BrandIntro() {
         {siteConfig.brand.split("").map((letter, index) => (
           <motion.span
             key={`${letter}-${index}`}
-            className="accent-brown inline-block"
+            className={index < 5 ? "accent-brown inline-block" : "inline-block"}
             initial={reduceMotion ? false : { opacity: 0, y: -72, filter: "blur(8px)" }}
             animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
             transition={
