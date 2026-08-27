@@ -1,15 +1,14 @@
 {
   "name": "Tsiaro Portfolio",
   "image": "mcr.microsoft.com/devcontainers/javascript-node:1-22-bookworm",
-  "forwardPorts": [3001],
+  "forwardPorts": [3000],
   "portsAttributes": {
-    "3001": {
+    "3000": {
       "label": "Tsiaro Portfolio",
       "onAutoForward": "openBrowser",
       "protocol": "http",
       "visibility": "public"
     }
   },
-  "postCreateCommand": "npm ci",
-  "postStartCommand": "bash -lc 'if ! curl -fsS http://localhost:3001 >/dev/null 2>&1; then nohup npm run dev >/tmp/tsiaro-portfolio-dev.log 2>&1 & fi'"
+  "postCreateCommand": "npm ci"
 }
