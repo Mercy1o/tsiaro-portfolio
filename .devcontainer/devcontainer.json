@@ -6,8 +6,10 @@
     "3001": {
       "label": "Tsiaro Portfolio",
       "onAutoForward": "openBrowser",
-      "protocol": "http"
+      "protocol": "http",
+      "visibility": "public"
     }
   },
-  "postCreateCommand": "npm ci"
+  "postCreateCommand": "npm ci",
+  "postStartCommand": "bash -lc 'if ! curl -fsS http://localhost:3001 >/dev/null 2>&1; then nohup npm run dev >/tmp/tsiaro-portfolio-dev.log 2>&1 & fi'"
 }
