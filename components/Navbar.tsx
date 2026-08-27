@@ -17,6 +17,15 @@ function getBrowserZoom() {
   return Math.min(Math.max(window.outerWidth / viewportWidth, 0.35), 4);
 }
 
+function BrandWordmark() {
+  return (
+    <>
+      <span className="accent-brown">trnsk</span>
+      <span>Design</span>
+    </>
+  );
+}
+
 export default function Navbar() {
   const pathname = usePathname();
   const [scrolled, setScrolled] = useState(false);
@@ -71,7 +80,7 @@ export default function Navbar() {
         <span
           data-brand-target
           aria-hidden="true"
-          className="accent-brown invisible absolute z-10 block whitespace-nowrap font-medium tracking-[-.04em]"
+          className="invisible absolute z-10 block whitespace-nowrap font-medium tracking-[-.04em]"
           style={{
             left: `${brandLeft}px`,
             top: `${brandTop}px`,
@@ -79,13 +88,13 @@ export default function Navbar() {
             lineHeight: 1,
           }}
         >
-          {siteConfig.brand}
+          <BrandWordmark />
         </span>
       ) : (
         <Link
           href="/"
           aria-label={`${siteConfig.brand} home`}
-          className="accent-brown mobile-tap-target absolute z-10 whitespace-nowrap font-medium tracking-[-.04em] transition-opacity hover:opacity-55"
+          className="mobile-tap-target absolute z-10 whitespace-nowrap font-medium tracking-[-.04em] transition-opacity hover:opacity-55"
           style={{
             left: `${brandLeft}px`,
             top: `${brandTop}px`,
@@ -93,7 +102,7 @@ export default function Navbar() {
             lineHeight: 1,
           }}
         >
-          {siteConfig.brand}
+          <BrandWordmark />
         </Link>
       )}
 
